@@ -39,3 +39,5 @@
 ![alt text](image-8.png)
 
 ![alt text](image-9.png)
+
+- Could not find implementation class 'com.facebook.react.ReactRootProjectPlugin' for plugin 'com.facebook.react.rootproject' specified in jar:file:/D:/Gradle/caches/jars-9/o_ae6c9dca02e4899a527d7b41e90dc058/react-native-gradle-plugin.jar!/META-INF/gradle-plugins/com.facebook.react.rootproject.properties.解决方法：windows 删除 node_modules 的方法:npkill: https://blog.csdn.net/GMLGDJ/article/details/129418280 解决上面报错问题的方法： https://stackoverflow.com/questions/78093982/react-native-android-build-errorcould-not-find-implementation-com-facebook-rea
