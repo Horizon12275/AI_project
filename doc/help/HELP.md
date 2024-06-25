@@ -12,4 +12,5 @@
         - 如果你和我一样把android studio以及它的sdk路径放在了其他盘而不是默认路径 那么很有可能你会遇到启动虚拟机失败的情况 请参考这个链接 https://zhuanlan.zhihu.com/p/636061626
         - JDK版本最好换成17 要更改jdk的版本 需要修改环境变量 首先JAVA_HOME的环境变量要填写成jdk17的安装路径 且最好写在系统变量里 然后系统变量path中的C:/ProgramData/Oracle/Java/javapath删除 最后把"%JAVA_HOME%\bin"添加到系统变量path中 应该就可以了 终端里输入javac --version查看jdk版本 如果是17就可以了 如果需要更换回原来的jdk版本 只需要修改JVA_HOME这个环境变量指向需要的路径即可
         - 启动react native最简单的方法：先进入文件夹 npm start 然后按a启动安卓应用 第一次会编译很久
+        - 想要节省系统盘空间的 和我一样在系统变量里创建一个"GRADLE_USER_HOME" 路径填其他盘的文件 这样gradle的几个g的文件就不会装到默认的c盘了 注意系统变量设置完最好重启一下电脑
     - Mac怎么安装我没有研究过 可能需要自己跟着文档试试了 如果遇到某些问题可以参考上面 有可能是相通的
