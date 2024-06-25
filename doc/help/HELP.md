@@ -25,3 +25,17 @@
 - 上面的图片的界面要像下面一样勾选两个框才是这样的。
 
 ![alt text](image-3.png)
+
+- Create Virtual Device...方法如下图所示
+
+![alt text](image-4.png)
+
+![alt text](image-5.png)
+
+![alt text](image-6.png)
+
+![alt text](image-7.png)
+
+![alt text](image-8.png)
+
+![alt text](image-9.png)
