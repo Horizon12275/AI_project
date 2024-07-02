@@ -1,4 +1,4 @@
-package com.frontend
+package com.ai_project
 
 import android.app.Application
 import com.facebook.react.PackageList
