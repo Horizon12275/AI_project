@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Ai_project.app"
-               BlueprintName = "Ai_project"
-               ReferencedContainer = "container:Ai_project.xcodeproj">
+               BuildableName = "frontend.app"
+               BlueprintName = "frontend"
+               ReferencedContainer = "container:frontend.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "Ai_projectTests.xctest"
-               BlueprintName = "Ai_projectTests"
-               ReferencedContainer = "container:Ai_project.xcodeproj">
+               BuildableName = "frontendTests.xctest"
+               BlueprintName = "frontendTests"
+               ReferencedContainer = "container:frontend.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Ai_project.app"
-            BlueprintName = "Ai_project"
-            ReferencedContainer = "container:Ai_project.xcodeproj">
+            BuildableName = "frontend.app"
+            BlueprintName = "frontend"
+            ReferencedContainer = "container:frontend.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Ai_project.app"
-            BlueprintName = "Ai_project"
-            ReferencedContainer = "container:Ai_project.xcodeproj">
+            BuildableName = "frontend.app"
+            BlueprintName = "frontend"
+            ReferencedContainer = "container:frontend.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

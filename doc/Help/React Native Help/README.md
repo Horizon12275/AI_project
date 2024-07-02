@@ -2,13 +2,13 @@
 
 - 查看文档 跟随指引完成大部分步骤https://reactnative.cn/docs/environment-setup
 - 几个踩坑点：
+
   - 安装 android studio 的 sdk 过程中需要开代理
   - 安装 sdk 步骤中 可以不用和文档里一样安装 api34 的镜像 选择最新的 35 也可以 只要勾选上 SDK Platform 和 Intel X86 Atom64 Image 的镜像即可 不过我不知道两者有什么具体区别
     可以照着我的勾选：
-
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
+    ![alt text](image.png)
+    ![alt text](image-1.png)
+    ![alt text](image-2.png)
 
 - 添加新的安卓虚拟机 选择 API35 的镜像即可 我也不知道文档说的 tiramisu api33 是哪个镜像
 
