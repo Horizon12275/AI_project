@@ -14,8 +14,12 @@
 
 ### 其余 branch 启动方法
 
+1. 运行 npm start 按 a 自动启动安卓虚拟机
+
+### Windows 系统下 如果报错 可以先尝试以下方法清理 gradle 缓存
+
 1. 进入 android 文件夹 运行./gradlew clean
 
-2. 进入 frontend 文件夹 运行 npm install
+1. 进入 frontend 文件夹 运行 npm install
 
-3. 进入 frontend 文件夹 npm start --reset-cache
+1. 进入 frontend 文件夹 npm start --reset-cache
