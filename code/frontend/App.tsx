@@ -5,7 +5,6 @@ import LoginScreen from './src/screens/login_screen';
 import SignUpScreen from './src/screens/sign_up_screen';
 import StatsScreen from './src/screens/stats_screen';
 
-
 const Stack = createNativeStackNavigator();
 
 function App() {
