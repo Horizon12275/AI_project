@@ -4,9 +4,12 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import LoginScreen from './src/screens/login_screen';
 import SignUpScreen from './src/screens/sign_up_screen';
+
 import TodayScreen from './src/screens/today_screen';
 import {Image, View} from 'react-native';
 import AddScreen from './src/screens/add_screen';
+import StatsScreen from './src/screens/stats_screen';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -85,6 +88,7 @@ function App() {
           component={TabNavigator}
           options={{headerShown: false}}
         />
+        <Stack.Screen name="Stats" component={StatsScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignUpScreen} />
       </Stack.Navigator>
