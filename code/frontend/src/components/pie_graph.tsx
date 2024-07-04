@@ -35,12 +35,12 @@ const PieGraph: React.FC<PieGraphProps> = ({data}) => {
       <View style={styles.pieGraph}>
         <VictoryPie
           colorScale={colorScale}
-          padding={70}
+          padding={70} // 设置页面内边距
           data={data}
-          innerRadius={25}
-          labelRadius={({innerRadius}) => innerRadius + 100}
-          radius={({datum}) => 10 + datum.y * 2.5}
-          labels={({datum}) => `${datum.x}: ${datum.y}%`}
+          innerRadius={25} // 设置内半径
+          labelRadius={125} // 设置标签半径
+          radius={({datum}) => 10 + (datum.y || 0) * 2.5} // 设置分块扇形的半径
+          labels={({datum}) => `${datum.x}: ${datum.y}%`} // 设置标签内容
           style={{
             labels: {fill: 'black'},
           }}
@@ -48,10 +48,10 @@ const PieGraph: React.FC<PieGraphProps> = ({data}) => {
       </View>
       <View style={styles.legend}>
         <VictoryLegend
-          x={90}
-          y={0}
+          x={90} // 设置水平位置
+          y={0} // 设置垂直位置
           orientation="horizontal"
-          gutter={20}
+          gutter={20} // 设置间距
           data={legendData}
         />
       </View>
