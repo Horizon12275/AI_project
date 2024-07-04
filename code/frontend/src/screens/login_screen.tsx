@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import Calendar from '../components/calendar';
 
 const InputField = ({label, isPassword}) => (
   <View style={styles.inputContainer}>
@@ -48,6 +49,7 @@ function LoginScreen() {
         <View style={styles.divider} />
         <View style={styles.divider} />
       </View>
+      
     </View>
   );
 }
