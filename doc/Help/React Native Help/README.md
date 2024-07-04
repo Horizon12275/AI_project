@@ -43,3 +43,7 @@
 - Could not find implementation class 'com.facebook.react.ReactRootProjectPlugin' for plugin 'com.facebook.react.rootproject' specified in jar:file:/D:/Gradle/caches/jars-9/o_ae6c9dca02e4899a527d7b41e90dc058/react-native-gradle-plugin.jar!/META-INF/gradle-plugins/com.facebook.react.rootproject.properties.解决方法：windows 删除 node_modules 的方法:npkill: https://blog.csdn.net/GMLGDJ/article/details/129418280 解决上面报错问题的方法： https://stackoverflow.com/questions/78093982/react-native-android-build-errorcould-not-find-implementation-com-facebook-rea（不要用该链接中方法的 npx react-native run-android）
 
 - 注意其他各种报错、用 npm start 启动即可，不要用上面方法的 npx react-native run-android
+
+- 下载了新的包 android 这里要重新启动 npm start --reset-cache 重新 build 不然会报错
+
+- ios 可能在数据页面（用了组件库）会出现"RNSVGRect" was not found in the UIManager.的问题、好像要手动链接：https://github.com/software-mansion/react-native-svg/issues/749
