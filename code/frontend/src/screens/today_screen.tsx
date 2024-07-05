@@ -3,16 +3,19 @@ import React, {useState} from 'react';
 import {FlatList, View} from 'react-native';
 import CalendarHeader from '../components/calendar_header';
 import EventCard from '../components/event_card';
+import Subtasks from '../components/subtasks';
 
 const TodayScreen = () => {
   const currentDate = new Date();
   const [selectedDate, setSelectedDate] = useState(currentDate);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(true);
 
   return (
     <View style={{height: '100%'}}>
       <CalendarHeader
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
+        toggleCalendar={() => setIsCalendarVisible(!isCalendarVisible)}
       />
       <View
         style={{
@@ -22,10 +25,12 @@ const TodayScreen = () => {
           display: 'flex',
           gap: 20,
         }}>
-        <Calendar
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-        />
+        {isCalendarVisible && (
+          <Calendar
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+          />
+        )}
         <FlatList
           showsHorizontalScrollIndicator={false}
           style={{flex: 1, paddingVertical: 30}}
