@@ -61,9 +61,11 @@ function getDates(selectedDate: Date) {
 const CalendarHeader = ({
   selectedDate,
   setSelectedDate,
+  toggleCalendar,
 }: {
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+  toggleCalendar: () => void;
 }) => {
   const flatListRef = useRef<FlatList>(null);
   //通过ref回调 滚动到选中日期
@@ -74,14 +76,6 @@ const CalendarHeader = ({
     });
   }, [selectedDate]);
   const dates = getDates(selectedDate);
-  //形如
-  //   [
-  //     {day: 'Mon', date: '18'},
-  //     {day: 'Tue', date: '19'},
-  //     {day: 'Wed', date: '20'},
-  //     {day: 'Thu', date: '21'},
-  //     {day: 'Fri', date: '22'},
-  //   ];
   return (
     <View style={styles.content}>
       <View style={styles.dateContainer}>
@@ -92,7 +86,7 @@ const CalendarHeader = ({
         )}, ${selectedDate.getFullYear()}`}</Text>
         <MyButton
           icon={require('../assets/icons/down-arrow.png')}
-          onPress={() => {}}
+          onPress={toggleCalendar}
           style={styles.headerImage}
         />
       </View>
