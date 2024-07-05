@@ -10,7 +10,6 @@ import {Image, View} from 'react-native';
 import AddScreen from './src/screens/add_screen';
 import StatsScreen from './src/screens/stats_screen';
 
-
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -34,8 +33,8 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Schedule"
-        component={AddScreen}
+        name="Stats"
+        component={StatsScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
@@ -88,7 +87,6 @@ function App() {
           component={TabNavigator}
           options={{headerShown: false}}
         />
-        <Stack.Screen name="Stats" component={StatsScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignUpScreen} />
       </Stack.Navigator>
