@@ -8,7 +8,10 @@ import SignUpScreen from './src/screens/sign_up_screen';
 import TodayScreen from './src/screens/today_screen';
 import {Image, View} from 'react-native';
 import AddScreen from './src/screens/add_screen';
+import AddOnScreen from './src/screens/add_screen_on';
+import AddOffScreen from './src/screens/add_screen_off';
 import StatsScreen from './src/screens/stats_screen';
+import ProfileScreen from './src/screens/profile_screen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,7 +50,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Add"
-        component={AddScreen}
+        component={AddOffScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
@@ -60,7 +63,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Settings"
-        component={AddScreen}
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
