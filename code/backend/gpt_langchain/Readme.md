@@ -4,7 +4,7 @@ ide 打开两个窗口 一个打开gpt_python folder 一个打开gptclient folde
 
 然后把gpt_python folder main.py 文件代码这里替换为自己的免费api_key
 
-![image-20240711140626976](/Users/suntianran/Library/Application Support/typora-user-images/image-20240711140626976.png)
+![截屏2024-07-11 14.06.22](/Users/suntianran/Documents/GitHub/AI_project/code/backend/gpt_langchain/截屏2024-07-11 14.06.22.png)
 
 在gpt_python folder 终端中
 
