@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {login, logout} from '../services/loginService';
 import {Alert} from 'react-native';
 import { getOtherUser, getUser } from '../services/userService';
-import { BASEURL } from '../services/requestService';
+import { BASEURL, post, postUrlencoded } from '../services/requestService';
 
 const InputField = ({
   label,
@@ -41,30 +41,11 @@ function LoginScreen() {
   const onSubmit = () => {
     form.submit();
   };
-  const handleLogin = async ({
-    username,
-    password,
-  }: {
-    username: string;
-    password: string;
-  }) => {
-    console.log({username, password});
-    login({username:"admin", password:"123"})
-      .then(res => {
-        if (res) {
-          AsyncStorage.setItem('email', username);
-          AsyncStorage.setItem('password', password);
-          AsyncStorage.setItem('user', JSON.stringify(res));
-          navigation.navigate('Tabs');
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        Alert.alert('Error', err);
-      });
-    getOtherUser(1).then(user => {
-      console.log(user);
-    });
+  const handleLogin = async (values) => {
+    console.log(values);
+    login(values).then(res => {
+      console.log(res);
+    })
   };
 
   return (
