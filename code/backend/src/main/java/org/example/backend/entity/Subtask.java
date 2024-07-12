@@ -1,5 +1,6 @@
 package org.example.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "subtasks")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","event"})//忽略event属性
 public class Subtask {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

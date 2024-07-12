@@ -86,7 +86,7 @@ const TabNavigator = () => {
 };
 
 function App() {
-  const [initialRoute, setInitialRoute] = useState('Login');
+  const [initialRoute, setInitialRoute] = useState('');
   const [user, setUser] = useState(null);
   useEffect(() => {
     AsyncStorage.getItem('user').then(data => {

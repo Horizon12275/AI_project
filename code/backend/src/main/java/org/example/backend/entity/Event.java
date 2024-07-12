@@ -1,5 +1,6 @@
 package org.example.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,18 +17,18 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "events")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","user"})//忽略user属性
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String title;
     private String details;
-    @Enumerated(EnumType.STRING)
-    private categoryT category;
+    private String category;
     private String location;
     private Integer priority;
-    private LocalTime start;
-    private LocalTime end;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private LocalDate date;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uid")
