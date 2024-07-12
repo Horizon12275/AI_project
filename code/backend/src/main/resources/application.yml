@@ -1,3 +1,8 @@
+server:
+  port: 8080
+
+
+
 spring:
   datasource:
     url: jdbc:postgresql://aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres
@@ -8,4 +13,5 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+

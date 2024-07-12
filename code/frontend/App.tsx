@@ -7,12 +7,15 @@ import PortraitIdentityScreen from './src/screens/portrait_identity_screen';
 import IdentityDetailsScreen from './src/screens/identity_details_screen';
 import PortraitQuestionScreen from './src/screens/portrait_question_screen';
 import TodayScreen from './src/screens/today_screen';
-import {Image, View} from 'react-native';
+import {Alert, Image, Text, View} from 'react-native';
 import AddScreen from './src/screens/add_screen';
 import AddOnScreen from './src/screens/add_screen_on';
 import AddOffScreen from './src/screens/add_screen_off';
 import StatsScreen from './src/screens/stats_screen';
 import ProfileScreen from './src/screens/profile_screen';
+import {useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import MyHeader from './src/components/my_header';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -22,7 +25,9 @@ const TabNavigator = () => {
     headerShown: false,
   };
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      //initialRouteName='Add'
+    >
       <Tab.Screen
         name="Today"
         component={TodayScreen}
@@ -59,7 +64,8 @@ const TabNavigator = () => {
               style={{width: size, height: size, tintColor: color}}
             />
           ),
-          ...options,
+          headerTitle: props => <MyHeader />,
+          headerStyle: {backgroundColor: '#f0f0f0'},
         }}
       />
       <Tab.Screen
@@ -80,21 +86,46 @@ const TabNavigator = () => {
 };
 
 function App() {
+  const [initialRoute, setInitialRoute] = useState('Login');
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    AsyncStorage.getItem('user').then(data => {
+      if (data) {
+        setInitialRoute('Tabs');
+        setUser(data);
+      } else {
+        setInitialRoute('Login');
+      }
+    });
+  }, [initialRoute]);
+  const options = {
+    headerShown: false,
+  };
   return (
     <NavigationContainer>
+      <Text>{user}</Text>
       <Stack.Navigator
         screenOptions={{
           contentStyle: {backgroundColor: 'blue'},
-        }}>
+        }}
+        initialRouteName={initialRoute}>
+        <Stack.Screen name="Tabs" component={TabNavigator} options={options} />
+        <Stack.Screen name="Login" component={LoginScreen} options={options} />
         <Stack.Screen
-          name="Tabs"
-          component={TabNavigator}
-          options={{headerShown: false}}
+          name="Signup"
+          component={SignUpScreen}
+          options={options}
         />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignUpScreen} />
-        <Stack.Screen name="Portrait_Identity" component={PortraitIdentityScreen} />
-        <Stack.Screen name="Identity_Details" component={IdentityDetailsScreen} />
+        <Stack.Screen
+          name="Portrait_Identity"
+          component={PortraitIdentityScreen}
+          options={options}
+        />
+        <Stack.Screen
+          name="Identity_Details"
+          component={IdentityDetailsScreen}
+          options={options}
+        />
         <Stack.Screen
           name="Question1"
           component={PortraitQuestionScreen}
@@ -120,26 +151,26 @@ function App() {
               'A few times a month',
               'Rarely',
             ],
-            nextScreen: 'Question3'
+            nextScreen: 'Question3',
           }}
         />
         <Stack.Screen
           name="Question3"
           component={PortraitQuestionScreen}
           initialParams={{
-            question: 'The main challenges you face \n with time management is ...',
+            question:
+              'The main challenges you face \n with time management is ...',
             options: [
-                'Inability to concentrate',
-                'To many tasks',
-                'Lack of prioritisation',
-                'Confusing schedule',
-                'Others',
+              'Inability to concentrate',
+              'To many tasks',
+              'Lack of prioritisation',
+              'Confusing schedule',
+              'Others',
             ],
           }}
         />
       </Stack.Navigator>
     </NavigationContainer>
-
   );
 }
 

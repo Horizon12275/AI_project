@@ -1,10 +1,11 @@
 package org.example.backend.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
@@ -17,7 +18,7 @@ public class Subtask {
     private Integer id;
     private String content;
     private boolean isDone;
-    private LocalDateTime ddl;
+    private LocalDate ddl;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "eid")
     private Event event;

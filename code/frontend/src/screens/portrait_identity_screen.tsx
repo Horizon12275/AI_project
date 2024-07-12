@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import IdentityCard from '../components/IdentityCard';
+import IdentityCard from '../components/identity_card';
 
 const IdentityRow = ({ cards }) => (
   <View style={styles.row}>

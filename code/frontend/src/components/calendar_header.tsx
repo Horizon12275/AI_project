@@ -124,7 +124,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter, sans-serif',
   },
   headerImage: {
-    width: 12,
+    height: 20,
+    aspectRatio: 1,
     marginLeft: 5,
   },
   content: {

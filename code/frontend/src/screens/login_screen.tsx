@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   View,
   StyleSheet,
@@ -7,49 +6,124 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import Calendar from '../components/calendar';
+import {Form, Input} from '@ant-design/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const InputField = ({label, isPassword}) => (
+import {login, logout} from '../services/loginService';
+import {Alert} from 'react-native';
+import { getOtherUser, getUser } from '../services/userService';
+import { BASEURL } from '../services/requestService';
+
+const InputField = ({
+  label,
+  isPassword,
+  props,
+}: {
+  label: string;
+  isPassword?: boolean;
+  props?: object;
+}) => (
   <View style={styles.inputContainer}>
     <Text style={styles.inputLabel}>{label}</Text>
-    <TextInput
-      style={styles.input}
-      secureTextEntry={isPassword}
-      accessibilityLabel={label}
-    />
+    <Form.Item {...props}>
+      <Input
+        style={styles.input}
+        secureTextEntry={isPassword}
+        accessibilityLabel={label}
+      />
+    </Form.Item>
   </View>
 );
 
 function LoginScreen() {
   const navigation = useNavigation();
+  const [form] = Form.useForm();
+  const onSubmit = () => {
+    form.submit();
+  };
+  const handleLogin = async ({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }) => {
+    console.log({username, password});
+    login({username:"admin", password:"123"})
+      .then(res => {
+        if (res) {
+          AsyncStorage.setItem('email', username);
+          AsyncStorage.setItem('password', password);
+          AsyncStorage.setItem('user', JSON.stringify(res));
+          navigation.navigate('Tabs');
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        Alert.alert('Error', err);
+      });
+    getOtherUser(1).then(user => {
+      console.log(user);
+    });
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
-      <View style={styles.formContainer}>
-        <Text style={styles.formInstructions}>
-          Enter your email and password
+      <Form
+        onFinish={handleLogin}
+        form={form}
+        initialValues={{
+          email: '',
+          password: '',
+        }}>
+        <Text style={styles.title}>Log In</Text>
+        <View style={styles.formContainer}>
+          <Text style={styles.formInstructions}>
+            Enter your email and password
+          </Text>
+          <InputField
+            label="Email"
+            props={{
+              name: 'username',
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your email!',
+                },
+              ],
+            }}
+          />
+          <InputField
+            label="Password"
+            isPassword
+            props={{
+              name: 'password',
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your password!',
+                },
+              ],
+            }}
+          />
+          <TouchableOpacity>
+            <Text style={styles.forgotPassword}>Forgot password?</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.loginButton} onPress={onSubmit}>
+          <Text style={styles.loginButtonText}>LOGIN</Text>
+        </TouchableOpacity>
+        <Text style={styles.signUpText}>
+          Don't have an account?{' '}
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.signUpLink}>Sign up</Text>
+          </TouchableOpacity>
         </Text>
-        <InputField label="Email" />
-        <InputField label="Password" isPassword />
-        <TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>LOGIN</Text>
-      </TouchableOpacity>
-      <Text style={styles.signUpText}>
-        Don't have an account?{' '}
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.signUpLink}>Sign up</Text>
-        </TouchableOpacity>
-      </Text>
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <View style={styles.divider} />
-      </View>
-      
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <View style={styles.divider} />
+        </View>
+      </Form>
     </View>
   );
 }
@@ -61,6 +135,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     maxWidth: 480,
     width: '100%',
+    height: '100%',
     paddingBottom: 57,
     flexDirection: 'column',
     margin: '0 auto',
