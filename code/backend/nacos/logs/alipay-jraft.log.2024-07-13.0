@@ -1,4 +1,0 @@
-2024-07-13 00:03:23,484 INFO Truncated prefix logs in data path: E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\log from log index 1 to 3, cost 1 ms.
-
-2024-07-13 00:07:12,465 INFO Truncated prefix logs in data path: E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\log from log index 1 to 3, cost 0 ms.
-
