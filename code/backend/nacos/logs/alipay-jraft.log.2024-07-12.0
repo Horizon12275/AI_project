@@ -1,0 +1,194 @@
+2024-07-12 23:09:56,300 INFO SPI service [com.alipay.sofa.jraft.JRaftServiceFactory - com.alipay.sofa.jraft.core.DefaultJRaftServiceFactory] loading.
+
+2024-07-12 23:09:56,359 INFO SPI service [com.alipay.sofa.jraft.rpc.RaftRpcFactory - com.alipay.sofa.jraft.rpc.impl.GrpcRaftRpcFactory] loading.
+
+2024-07-12 23:09:56,477 INFO SPI service [com.alipay.sofa.jraft.util.timer.RaftTimerFactory - com.alipay.sofa.jraft.util.timer.DefaultRaftTimerFactory] loading.
+
+2024-07-12 23:09:56,483 INFO The number of active nodes increment to 1.
+
+2024-07-12 23:09:57,143 INFO Starts FSMCaller successfully.
+
+2024-07-12 23:09:57,148 WARN No data for snapshot reader E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\snapshot.
+
+2024-07-12 23:09:57,153 INFO Node <naming_persistent_service_v2/192.168.31.1:7848> init, term=0, lastLogId=LogId [index=0, term=0], conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:09:57,154 INFO Node <naming_persistent_service_v2/192.168.31.1:7848> start vote and grant vote self, term=0.
+
+2024-07-12 23:09:57,203 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\meta-data on windows.
+
+2024-07-12 23:09:57,207 INFO Save raft meta, path=E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\meta-data, term=1, votedFor=192.168.31.1:7848, cost time=48 ms
+
+2024-07-12 23:09:57,207 INFO Node <naming_persistent_service_v2/192.168.31.1:7848> become leader of group, term=1, conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:09:57,209 INFO -Djraft.recyclers.maxCapacityPerThread: 4096.
+
+2024-07-12 23:09:57,211 WARN RPC server is not started in RaftGroupService.
+
+2024-07-12 23:09:57,211 INFO Start the RaftGroupService successfully.
+
+2024-07-12 23:09:57,261 INFO The number of active nodes increment to 2.
+
+2024-07-12 23:09:57,268 INFO Creating new channel to: 192.168.31.1:7848.
+
+2024-07-12 23:09:57,296 INFO onLeaderStart: term=1.
+
+2024-07-12 23:09:57,296 INFO The channel 192.168.31.1:7848 is in state: CONNECTING.
+
+2024-07-12 23:09:57,397 INFO The channel 192.168.31.1:7848 is in state: READY.
+
+2024-07-12 23:09:57,397 INFO The channel 192.168.31.1:7848 has successfully established.
+
+2024-07-12 23:09:57,608 INFO Starts FSMCaller successfully.
+
+2024-07-12 23:09:57,609 WARN No data for snapshot reader E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\snapshot.
+
+2024-07-12 23:09:57,609 INFO Node <naming_instance_metadata/192.168.31.1:7848> init, term=0, lastLogId=LogId [index=0, term=0], conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:09:57,609 INFO Node <naming_instance_metadata/192.168.31.1:7848> start vote and grant vote self, term=0.
+
+2024-07-12 23:09:57,644 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\meta-data on windows.
+
+2024-07-12 23:09:57,644 INFO Save raft meta, path=E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\meta-data, term=1, votedFor=192.168.31.1:7848, cost time=34 ms
+
+2024-07-12 23:09:57,644 INFO Node <naming_instance_metadata/192.168.31.1:7848> become leader of group, term=1, conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:09:57,644 WARN RPC server is not started in RaftGroupService.
+
+2024-07-12 23:09:57,644 INFO Start the RaftGroupService successfully.
+
+2024-07-12 23:09:57,728 INFO The number of active nodes increment to 3.
+
+2024-07-12 23:09:57,763 INFO onLeaderStart: term=1.
+
+2024-07-12 23:09:58,215 INFO Starts FSMCaller successfully.
+
+2024-07-12 23:09:58,215 WARN No data for snapshot reader E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\snapshot.
+
+2024-07-12 23:09:58,215 INFO Node <naming_service_metadata/192.168.31.1:7848> init, term=0, lastLogId=LogId [index=0, term=0], conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:09:58,216 INFO Node <naming_service_metadata/192.168.31.1:7848> start vote and grant vote self, term=0.
+
+2024-07-12 23:09:58,260 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\meta-data on windows.
+
+2024-07-12 23:09:58,261 INFO Save raft meta, path=E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\meta-data, term=1, votedFor=192.168.31.1:7848, cost time=45 ms
+
+2024-07-12 23:09:58,261 INFO Node <naming_service_metadata/192.168.31.1:7848> become leader of group, term=1, conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:09:58,261 WARN RPC server is not started in RaftGroupService.
+
+2024-07-12 23:09:58,261 INFO Start the RaftGroupService successfully.
+
+2024-07-12 23:09:58,315 INFO onLeaderStart: term=1.
+
+2024-07-12 23:12:05,082 INFO SPI service [com.alipay.sofa.jraft.JRaftServiceFactory - com.alipay.sofa.jraft.core.DefaultJRaftServiceFactory] loading.
+
+2024-07-12 23:12:05,165 INFO SPI service [com.alipay.sofa.jraft.rpc.RaftRpcFactory - com.alipay.sofa.jraft.rpc.impl.GrpcRaftRpcFactory] loading.
+
+2024-07-12 23:12:05,286 INFO SPI service [com.alipay.sofa.jraft.util.timer.RaftTimerFactory - com.alipay.sofa.jraft.util.timer.DefaultRaftTimerFactory] loading.
+
+2024-07-12 23:12:05,292 INFO The number of active nodes increment to 1.
+
+2024-07-12 23:12:05,733 INFO Starts FSMCaller successfully.
+
+2024-07-12 23:12:05,737 WARN No data for snapshot reader E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\snapshot.
+
+2024-07-12 23:12:05,737 INFO Node <naming_persistent_service_v2/192.168.31.1:7848> target priority value has changed from: 0, to: -1.
+
+2024-07-12 23:12:05,742 INFO Node <naming_persistent_service_v2/192.168.31.1:7848> init, term=1, lastLogId=LogId [index=1, term=1], conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:12:05,743 INFO Node <naming_persistent_service_v2/192.168.31.1:7848> start vote and grant vote self, term=1.
+
+2024-07-12 23:12:05,795 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\meta-data on windows.
+
+2024-07-12 23:12:05,798 INFO Save raft meta, path=E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\meta-data, term=2, votedFor=192.168.31.1:7848, cost time=50 ms
+
+2024-07-12 23:12:05,798 INFO Node <naming_persistent_service_v2/192.168.31.1:7848> become leader of group, term=2, conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:12:05,800 INFO -Djraft.recyclers.maxCapacityPerThread: 4096.
+
+2024-07-12 23:12:05,803 WARN RPC server is not started in RaftGroupService.
+
+2024-07-12 23:12:05,803 INFO Start the RaftGroupService successfully.
+
+2024-07-12 23:12:05,814 INFO The number of active nodes increment to 2.
+
+2024-07-12 23:12:05,847 INFO onLeaderStart: term=2.
+
+2024-07-12 23:12:05,869 INFO Creating new channel to: 192.168.31.1:7848.
+
+2024-07-12 23:12:05,904 INFO The channel 192.168.31.1:7848 is in state: CONNECTING.
+
+2024-07-12 23:12:06,005 INFO The channel 192.168.31.1:7848 is in state: READY.
+
+2024-07-12 23:12:06,005 INFO The channel 192.168.31.1:7848 has successfully established.
+
+2024-07-12 23:12:06,142 INFO Starts FSMCaller successfully.
+
+2024-07-12 23:12:06,142 WARN No data for snapshot reader E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\snapshot.
+
+2024-07-12 23:12:06,142 INFO Node <naming_instance_metadata/192.168.31.1:7848> target priority value has changed from: 0, to: -1.
+
+2024-07-12 23:12:06,143 INFO Node <naming_instance_metadata/192.168.31.1:7848> init, term=1, lastLogId=LogId [index=1, term=1], conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:12:06,143 INFO Node <naming_instance_metadata/192.168.31.1:7848> start vote and grant vote self, term=1.
+
+2024-07-12 23:12:06,186 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\meta-data on windows.
+
+2024-07-12 23:12:06,186 INFO Save raft meta, path=E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\meta-data, term=2, votedFor=192.168.31.1:7848, cost time=42 ms
+
+2024-07-12 23:12:06,186 INFO Node <naming_instance_metadata/192.168.31.1:7848> become leader of group, term=2, conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:12:06,186 WARN RPC server is not started in RaftGroupService.
+
+2024-07-12 23:12:06,186 INFO Start the RaftGroupService successfully.
+
+2024-07-12 23:12:06,189 INFO The number of active nodes increment to 3.
+
+2024-07-12 23:12:06,220 INFO onLeaderStart: term=2.
+
+2024-07-12 23:12:06,502 INFO Starts FSMCaller successfully.
+
+2024-07-12 23:12:06,502 WARN No data for snapshot reader E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\snapshot.
+
+2024-07-12 23:12:06,502 INFO Node <naming_service_metadata/192.168.31.1:7848> target priority value has changed from: 0, to: -1.
+
+2024-07-12 23:12:06,503 INFO Node <naming_service_metadata/192.168.31.1:7848> init, term=1, lastLogId=LogId [index=1, term=1], conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:12:06,503 INFO Node <naming_service_metadata/192.168.31.1:7848> start vote and grant vote self, term=1.
+
+2024-07-12 23:12:06,536 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\meta-data on windows.
+
+2024-07-12 23:12:06,537 INFO Save raft meta, path=E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\meta-data, term=2, votedFor=192.168.31.1:7848, cost time=33 ms
+
+2024-07-12 23:12:06,537 INFO Node <naming_service_metadata/192.168.31.1:7848> become leader of group, term=2, conf=192.168.31.1:7848, oldConf=.
+
+2024-07-12 23:12:06,537 WARN RPC server is not started in RaftGroupService.
+
+2024-07-12 23:12:06,537 INFO Start the RaftGroupService successfully.
+
+2024-07-12 23:12:06,570 INFO onLeaderStart: term=2.
+
+2024-07-12 23:33:23,556 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\snapshot\temp on windows.
+
+2024-07-12 23:33:23,556 INFO Deleting snapshot E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\snapshot\snapshot_2.
+
+2024-07-12 23:33:23,556 INFO Renaming E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\snapshot\temp to E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\snapshot\snapshot_2.
+
+2024-07-12 23:33:23,557 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_persistent_service_v2\snapshot on windows.
+
+2024-07-12 23:37:12,481 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\snapshot\temp on windows.
+
+2024-07-12 23:37:12,481 INFO Deleting snapshot E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\snapshot\snapshot_2.
+
+2024-07-12 23:37:12,482 INFO Renaming E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\snapshot\temp to E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\snapshot\snapshot_2.
+
+2024-07-12 23:37:12,482 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_instance_metadata\snapshot on windows.
+
+2024-07-12 23:40:04,293 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\snapshot\temp on windows.
+
+2024-07-12 23:40:04,293 INFO Deleting snapshot E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\snapshot\snapshot_2.
+
+2024-07-12 23:40:04,293 INFO Renaming E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\snapshot\temp to E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\snapshot\snapshot_2.
+
+2024-07-12 23:40:04,294 WARN Unable to fsync directory E:\AI_project\code\backend\nacos\data\protocol\raft\naming_service_metadata\snapshot on windows.
+

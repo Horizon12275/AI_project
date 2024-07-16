@@ -1,0 +1,36 @@
+2024-07-12 23:09:56,267 INFO Initializes the Raft protocol, raft-config info : {"data":{},"members":["192.168.31.1:7848"],"selfMember":"192.168.31.1:7848"}
+
+2024-07-12 23:09:56,426 INFO ========= The raft protocol is starting... =========
+
+2024-07-12 23:09:56,448 INFO ========= The raft protocol start finished... =========
+
+2024-07-12 23:09:56,462 INFO create raft group : naming_persistent_service_v2
+
+2024-07-12 23:09:57,261 INFO create raft group : naming_instance_metadata
+
+2024-07-12 23:09:57,297 INFO This Raft event changes : RaftEvent{groupId='naming_persistent_service_v2', leader='192.168.31.1:7848', term=1, raftClusterInfo=[192.168.31.1:7848]}
+
+2024-07-12 23:09:57,727 INFO create raft group : naming_service_metadata
+
+2024-07-12 23:09:57,763 INFO This Raft event changes : RaftEvent{groupId='naming_instance_metadata', leader='192.168.31.1:7848', term=1, raftClusterInfo=[192.168.31.1:7848]}
+
+2024-07-12 23:09:58,316 INFO This Raft event changes : RaftEvent{groupId='naming_service_metadata', leader='192.168.31.1:7848', term=1, raftClusterInfo=[192.168.31.1:7848]}
+
+2024-07-12 23:12:05,045 INFO Initializes the Raft protocol, raft-config info : {"data":{},"members":["192.168.31.1:7848"],"selfMember":"192.168.31.1:7848"}
+
+2024-07-12 23:12:05,236 INFO ========= The raft protocol is starting... =========
+
+2024-07-12 23:12:05,257 INFO ========= The raft protocol start finished... =========
+
+2024-07-12 23:12:05,274 INFO create raft group : naming_persistent_service_v2
+
+2024-07-12 23:12:05,813 INFO create raft group : naming_instance_metadata
+
+2024-07-12 23:12:05,848 INFO This Raft event changes : RaftEvent{groupId='naming_persistent_service_v2', leader='192.168.31.1:7848', term=2, raftClusterInfo=[192.168.31.1:7848]}
+
+2024-07-12 23:12:06,188 INFO create raft group : naming_service_metadata
+
+2024-07-12 23:12:06,220 INFO This Raft event changes : RaftEvent{groupId='naming_instance_metadata', leader='192.168.31.1:7848', term=2, raftClusterInfo=[192.168.31.1:7848]}
+
+2024-07-12 23:12:06,570 INFO This Raft event changes : RaftEvent{groupId='naming_service_metadata', leader='192.168.31.1:7848', term=2, raftClusterInfo=[192.168.31.1:7848]}
+

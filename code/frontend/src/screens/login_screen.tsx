@@ -11,18 +11,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {login, logout} from '../services/loginService';
 import {Alert} from 'react-native';
-import { getOtherUser, getUser } from '../services/userService';
-import { BASEURL, post, postUrlencoded } from '../services/requestService';
+import {getOtherUser, getUser} from '../services/userService';
+import {BASEURL, post, postUrlencoded} from '../services/requestService';
 
-const InputField = ({
-  label,
-  isPassword,
-  props,
-}: {
-  label: string;
-  isPassword?: boolean;
-  props?: object;
-}) => (
+const InputField = ({label, isPassword, props}:
+  {label: string; isPassword?: boolean; props: any}
+) => (
   <View style={styles.inputContainer}>
     <Text style={styles.inputLabel}>{label}</Text>
     <Form.Item {...props}>
@@ -41,11 +35,29 @@ function LoginScreen() {
   const onSubmit = () => {
     form.submit();
   };
-  const handleLogin = async (values) => {
-    console.log(values);
-    login(values).then(res => {
-      console.log(res);
-    })
+  const handleLogin = async values => {
+    if (1) {
+      //记住我
+      let auth = {
+        username: values.username,
+        password: values.password,
+        rememberMe: true,
+      };
+      AsyncStorage.setItem('auth', JSON.stringify(auth));
+    }
+    
+    login(values)
+      .then(res => {
+        getUser()
+          .then(user => {
+            AsyncStorage.setItem('user', JSON.stringify(user));
+            navigation.navigate('Tabs');
+          })
+          .catch(err => console.log(err));
+      })
+      .catch(err => {
+        Alert.alert('Error', err);
+      });
   };
 
   return (

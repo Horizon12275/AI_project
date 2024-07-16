@@ -1,13 +1,13 @@
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import LoginScreen from './src/screens/login_screen';
+import LoginScreen from './src/screens/login_screen.tsx';
 import SignUpScreen from './src/screens/sign_up_screen';
 import PortraitIdentityScreen from './src/screens/portrait_identity_screen';
 import IdentityDetailsScreen from './src/screens/identity_details_screen';
 import PortraitQuestionScreen from './src/screens/portrait_question_screen';
 import TodayScreen from './src/screens/today_screen';
-import {Alert, Image, Text, View} from 'react-native';
+import {Alert, Image, Text, TouchableOpacity, View} from 'react-native';
 import AddScreen from './src/screens/add_screen';
 import AddOnScreen from './src/screens/add_screen_on';
 import AddOffScreen from './src/screens/add_screen_off';
@@ -16,6 +16,9 @@ import ProfileScreen from './src/screens/profile_screen';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MyHeader from './src/components/my_header';
+import {login} from './src/services/loginService';
+import {getUser} from './src/services/userService';
+import MyButton from './src/utils/my_button';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -26,7 +29,7 @@ const TabNavigator = () => {
   };
   return (
     <Tab.Navigator
-      //initialRouteName='Add'
+    //initialRouteName='Add'
     >
       <Tab.Screen
         name="Today"
@@ -56,7 +59,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Add"
-        component={AddOffScreen}
+        component={AddOnScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
@@ -64,8 +67,7 @@ const TabNavigator = () => {
               style={{width: size, height: size, tintColor: color}}
             />
           ),
-          headerTitle: props => <MyHeader />,
-          headerStyle: {backgroundColor: '#f0f0f0'},
+          ...options,
         }}
       />
       <Tab.Screen
@@ -81,34 +83,59 @@ const TabNavigator = () => {
           ...options,
         }}
       />
+      <Tab.Screen name="Login" component={LoginScreen} options={options} />
     </Tab.Navigator>
   );
 };
 
 function App() {
-  const [initialRoute, setInitialRoute] = useState('');
+  const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState(null);
   useEffect(() => {
-    AsyncStorage.getItem('user').then(data => {
-      if (data) {
-        setInitialRoute('Tabs');
-        setUser(data);
-      } else {
-        setInitialRoute('Login');
-      }
-    });
-  }, [initialRoute]);
+    AsyncStorage.getItem('auth')
+      .then(auth => {
+        if (auth) {
+          console.log(auth);
+          const {rememberMe, username, password} = JSON.parse(auth);
+          if (rememberMe) {
+            login({username, password})
+              .then(res => {
+                console.log(res);
+                getUser()
+                  .then(user => {
+                    AsyncStorage.setItem('user', JSON.stringify(user));
+                    setIsLogin(true);
+                  })
+                  .catch(err => console.log(err));
+              })
+              .catch(err => console.log(err));
+          } else {
+            // 如果没有 remembered，可能需要其他处理
+            setIsLogin(false);
+          }
+        } else {
+          // 如果没有 auth 数据，可能需要其他处理
+          setIsLogin(false);
+        }
+      })
+      .catch(error => {
+        console.error('Error reading auth from AsyncStorage:', error);
+        // 处理错误情况，可能需要设置一个默认的初始路由
+        setIsLogin(false);
+      });
+  }, []);
   const options = {
     headerShown: false,
   };
+
   return (
     <NavigationContainer>
-      <Text>{user}</Text>
       <Stack.Navigator
         screenOptions={{
           contentStyle: {backgroundColor: 'blue'},
         }}
-        initialRouteName={initialRoute}>
+        //initialRouteName={isLogin ? 'Tabs' : 'Login'}
+      >
         <Stack.Screen name="Tabs" component={TabNavigator} options={options} />
         <Stack.Screen name="Login" component={LoginScreen} options={options} />
         <Stack.Screen

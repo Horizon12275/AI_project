@@ -1,0 +1,46 @@
+2024-07-15 17:53:32,619 INFO [PUSH-SUCC] 181ms, all delay time 790ms for subscriber 192.168.31.1, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=13}, originalSize=1, DataSize=1
+
+2024-07-15 17:57:51,334 INFO [PUSH-SUCC] 11ms, all delay time 562ms for subscriber 192.168.31.1, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=13}, originalSize=1, DataSize=1
+
+2024-07-15 18:03:21,707 INFO [PUSH-SUCC] 10ms, all delay time 617ms for subscriber 192.168.31.1, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=13}, originalSize=1, DataSize=1
+
+2024-07-15 18:03:43,364 INFO [PUSH-SUCC] 9ms, all delay time 516ms, SLA 516ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=14}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:03:53,983 INFO [PUSH-SUCC] 7ms, all delay time 518ms, SLA 518ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=15}, originalSize=1, DataSize=1, target=192.168.31.1
+
+2024-07-15 18:20:47,940 INFO [PUSH-SUCC] 7ms, all delay time 590ms, SLA 590ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=16}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:20:58,771 INFO [PUSH-SUCC] 7ms, all delay time 529ms, SLA 529ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=17}, originalSize=1, DataSize=1, target=192.168.31.1
+
+2024-07-15 18:32:00,162 INFO [PUSH-SUCC] 9ms, all delay time 580ms, SLA 580ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=18}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:32:09,791 INFO [PUSH-SUCC] 13ms, all delay time 555ms, SLA 555ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=19}, originalSize=1, DataSize=1, target=192.168.31.1
+
+2024-07-15 18:34:04,985 INFO [PUSH-SUCC] 8ms, all delay time 520ms, SLA 520ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=20}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:34:14,708 INFO [PUSH-SUCC] 7ms, all delay time 542ms, SLA 542ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=21}, originalSize=1, DataSize=1, target=192.168.31.1
+
+2024-07-15 18:39:49,386 INFO [PUSH-SUCC] 7ms, all delay time 609ms, SLA 609ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=22}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:39:58,914 INFO [PUSH-SUCC] 7ms, all delay time 532ms, SLA 532ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=23}, originalSize=1, DataSize=1, target=192.168.31.1
+
+2024-07-15 18:40:36,896 INFO [PUSH-SUCC] 7ms, all delay time 530ms, SLA 530ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=24}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:40:47,613 INFO [PUSH-SUCC] 6ms, all delay time 605ms, SLA 605ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=25}, originalSize=1, DataSize=1, target=192.168.31.1
+
+2024-07-15 18:48:07,867 INFO [PUSH-SUCC] 8ms, all delay time 616ms, SLA 616ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=26}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:48:17,488 INFO [PUSH-SUCC] 8ms, all delay time 609ms, SLA 609ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=27}, originalSize=1, DataSize=1, target=192.168.31.1
+
+2024-07-15 18:49:55,960 INFO [PUSH-SUCC] 8ms, all delay time 520ms, SLA 520ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=28}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:50:05,692 INFO [PUSH-SUCC] 6ms, all delay time 530ms, SLA 530ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=29}, originalSize=1, DataSize=1, target=192.168.31.1
+
+2024-07-15 18:55:07,395 INFO [PUSH-SUCC] 7ms, all delay time 564ms, SLA 564ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=30}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:55:17,677 INFO [PUSH-SUCC] 6ms, all delay time 577ms, SLA 577ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=31}, originalSize=1, DataSize=1, target=192.168.31.1
+
+2024-07-15 18:57:05,585 INFO [PUSH-SUCC] 7ms, all delay time 611ms, SLA 611ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=32}, originalSize=0, DataSize=0, target=192.168.31.1
+
+2024-07-15 18:57:15,861 INFO [PUSH-SUCC] 6ms, all delay time 513ms, SLA 513ms, Service{namespace='public', group='DEFAULT_GROUP', name='event-service', ephemeral=true, revision=33}, originalSize=1, DataSize=1, target=192.168.31.1
+

@@ -1,0 +1,100 @@
+2024-07-15 14:48:27,840 INFO use local db service for init
+
+2024-07-15 14:48:28,733 WARN Lexical error at line 4, column 66.  Encountered: <EOF> after : "".
+
+2024-07-15 14:48:28,737 WARN Syntax error: Encountered "*" at line 1, column 1.
+
+2024-07-15 14:48:28,826 WARN Table/View 'CONFIG_INFO' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:28,965 WARN Table/View 'HIS_CONFIG_INFO' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,027 WARN Table/View 'CONFIG_INFO_BETA' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,102 WARN Table/View 'CONFIG_INFO_TAG' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,185 WARN Table/View 'CONFIG_INFO_AGGR' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,285 WARN Table/View 'APP_LIST' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,336 WARN Table/View 'APP_CONFIGDATA_RELATION_SUBS' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,397 WARN Table/View 'APP_CONFIGDATA_RELATION_PUBS' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,451 WARN Table/View 'CONFIG_TAGS_RELATION' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,518 WARN Table/View 'GROUP_CAPACITY' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,576 WARN Table/View 'TENANT_CAPACITY' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,652 WARN Table/View 'TENANT_INFO' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,719 WARN Table/View 'USERS' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,777 WARN Table/View 'ROLES' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,843 WARN Table/View 'PERMISSIONS' already exists in Schema 'NACOS'.
+
+2024-07-15 14:48:29,985 WARN The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by 'SQL240712230954990' defined on 'USERS'.
+
+2024-07-15 14:48:30,019 WARN The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by 'UK_USERNAME_ROLE' defined on 'ROLES'.
+
+2024-07-15 14:48:30,020 WARN Lexical error at line 4, column 13.  Encountered: "`" (96), after : "".
+
+2024-07-15 14:48:30,020 WARN Lexical error at line 1, column 13.  Encountered: "`" (96), after : "".
+
+2024-07-15 14:48:30,021 WARN Lexical error at line 1, column 13.  Encountered: "`" (96), after : "".
+
+2024-07-15 14:48:30,021 WARN Lexical error at line 1, column 13.  Encountered: "`" (96), after : "".
+
+2024-07-15 14:48:30,021 INFO use StandaloneDatabaseOperateImpl
+
+2024-07-15 14:56:26,159 INFO use local db service for init
+
+2024-07-15 14:56:26,693 WARN Lexical error at line 4, column 66.  Encountered: <EOF> after : "".
+
+2024-07-15 14:56:26,696 WARN Syntax error: Encountered "*" at line 1, column 1.
+
+2024-07-15 14:56:26,787 WARN Table/View 'CONFIG_INFO' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:26,865 WARN Table/View 'HIS_CONFIG_INFO' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:26,938 WARN Table/View 'CONFIG_INFO_BETA' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:26,988 WARN Table/View 'CONFIG_INFO_TAG' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,062 WARN Table/View 'CONFIG_INFO_AGGR' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,130 WARN Table/View 'APP_LIST' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,188 WARN Table/View 'APP_CONFIGDATA_RELATION_SUBS' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,238 WARN Table/View 'APP_CONFIGDATA_RELATION_PUBS' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,312 WARN Table/View 'CONFIG_TAGS_RELATION' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,371 WARN Table/View 'GROUP_CAPACITY' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,422 WARN Table/View 'TENANT_CAPACITY' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,480 WARN Table/View 'TENANT_INFO' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,541 WARN Table/View 'USERS' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,595 WARN Table/View 'ROLES' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,646 WARN Table/View 'PERMISSIONS' already exists in Schema 'NACOS'.
+
+2024-07-15 14:56:27,677 WARN The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by 'SQL240712230954990' defined on 'USERS'.
+
+2024-07-15 14:56:27,682 WARN The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by 'UK_USERNAME_ROLE' defined on 'ROLES'.
+
+2024-07-15 14:56:27,683 WARN Lexical error at line 4, column 13.  Encountered: "`" (96), after : "".
+
+2024-07-15 14:56:27,683 WARN Lexical error at line 1, column 13.  Encountered: "`" (96), after : "".
+
+2024-07-15 14:56:27,683 WARN Lexical error at line 1, column 13.  Encountered: "`" (96), after : "".
+
+2024-07-15 14:56:27,683 WARN Lexical error at line 1, column 13.  Encountered: "`" (96), after : "".
+
+2024-07-15 14:56:27,683 INFO use StandaloneDatabaseOperateImpl
+

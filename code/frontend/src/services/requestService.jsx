@@ -49,7 +49,7 @@ export async function postUrlencoded(url, data) {
   }
   let opts = {
     method: "POST",
-    body: formData,
+    body: formData.toString(),
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
@@ -99,14 +99,10 @@ export async function put(url, data) {
 // export const BASEURL = "http://localhost:8080";
 // export const PEERURL = "localhost";
 
-// On Sever Settings Below
+// On Server Settings Below
 export const WSURL = "wss://localhost:8080/ws";
-export const BASEURL = "http://192.168.233.1:8080";
+export const BASEURL = "http://192.168.31.1";
+export const USERPORT = "8082";
+export const EVENTPORT = "8083";
 export const PEERURL = "localhost";
 
-export const PREFIX = `${BASEURL}/api`;
-//export const API_DOCS_URL = `${BASEURL}/api-docs`;
-export const DUMMY_RESPONSE = {
-  ok: false,
-  message: "网络错误！",
-};

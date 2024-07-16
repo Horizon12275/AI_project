@@ -60,8 +60,8 @@ const DateCell: React.FC<DateProps> = ({
     <Text
       style={[
         styles.dateText,
-        isToday && styles.todayText,
         hasEvent && styles.highlightedText,
+        isToday && styles.todayText,
       ]}>
       {date}
     </Text>
@@ -82,9 +82,11 @@ const NotificationBadge = ({color}: {color: string}) => {
 const Calendar = ({
   selectedDate,
   setSelectedDate,
+  eventNums,
 }: {
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+  eventNums?: number[];
 }) => {
   const [currentMonth, setCurrentMonth] = useState(selectedDate.getMonth());
   const [currentYear, setCurrentYear] = useState(selectedDate.getFullYear());
@@ -160,7 +162,7 @@ const Calendar = ({
                   currentMonth == selectedDate.getMonth() &&
                   currentYear == selectedDate.getFullYear()
                 }
-                hasEvent={date == '22'}
+                hasEvent={eventNums && eventNums[parseInt(date) - 1] > 0}
                 handlePress={() =>
                   setSelectedDate(
                     new Date(currentYear, currentMonth, parseInt(date)),

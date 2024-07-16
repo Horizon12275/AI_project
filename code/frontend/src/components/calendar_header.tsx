@@ -62,10 +62,12 @@ const CalendarHeader = ({
   selectedDate,
   setSelectedDate,
   toggleCalendar,
+  eventNums,
 }: {
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
   toggleCalendar: () => void;
+  eventNums: number[];
 }) => {
   const flatListRef = useRef<FlatList>(null);
   //通过ref回调 滚动到选中日期
@@ -102,7 +104,7 @@ const CalendarHeader = ({
             date={item.date.toString()}
             day={weekDays[item.day]}
             isSelected={item.date == selectedDate.getDate()}
-            hasEvent={Math.floor(Math.random() * 10)}
+            hasEvent={eventNums[item.date - 1]}
             handlePress={() =>
               setSelectedDate(new Date(selectedDate.setDate(item.date)))
             }
