@@ -122,5 +122,8 @@ CREATE USER 'your_user'@'202.120.8.117' IDENTIFIED BY 'your_password';
 -- 授予用户访问权限
 GRANT ALL PRIVILEGES ON your_database.\* TO 'your_user'@'202.120.8.117';
 
+-- 指定 ip 段访问
+GRANT ALL PRIVILEGES ON your_database.\* TO 'your_user'@'202.120.8.%';
+
 -- 刷新权限以使更改生效
 FLUSH PRIVILEGES;

@@ -1,5 +1,5 @@
-import { BASEURL, get, post, put } from "./requestService";
-const PREFIX = `${BASEURL}/api/user`;
+import { BASEURL, USERPORT, get, post, put } from "./requestService";
+const PREFIX = `${BASEURL}:${USERPORT}/api/user`;
 
 export async function getUser() {
   const url = `${PREFIX}/get`;

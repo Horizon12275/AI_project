@@ -1,45 +1,77 @@
-import * as React from 'react';
 import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 import Divider from './divider';
 import MyButton from '../utils/my_button';
+import {categoryColors} from '../utils/offline';
+import {changeSubtaskDone, deleteSubtask} from '../services/subtaskService';
+import {useEffect, useState} from 'react';
 
-const EventCard = ({
-  isEditing,
-  setIsEditing,
-  startTime,
-  endTime,
-  title,
-  location,
-  color,
-  additionalInfo,
-}: {
-  isEditing: boolean;
-  setIsEditing: (isEditing: number) => void;
+type eventProps = {
+  id: number;
   startTime: string;
   endTime: string;
   title: string;
   location: string;
-  iconUri: string;
-  color: string;
-  additionalInfo?: {
-    text: string;
-    count?: number;
-  };
+  subtasks: Array<{
+    id: number;
+    content: string;
+    ddl: string;
+    done: boolean;
+  }>;
+};
+
+const EventCard = ({
+  isEditing,
+  setIsEditing,
+  event,
+}: {
+  isEditing: number;
+  setIsEditing: (isEditing: number) => void;
+  event: eventProps;
 }) => {
+  const [refresh, setRefresh] = useState(0); //setEvent逻辑太麻烦 偷懒使用refresh手动刷新渲染
+  useEffect(() => {}, [refresh]);
+
   const handleExpand = () => {
-    if (isEditing) {
-      setIsEditing(null);
+    if (isEditing === event.id) {
+      setIsEditing(-1);
     } else {
-      setIsEditing(1);
+      setIsEditing(event.id);
     }
   };
 
+  const handleCheck = (sid: number) => {
+    changeSubtaskDone(sid)
+      .then(() => {
+        const eventIndex = event.subtasks.findIndex(
+          subtask => subtask.id === sid,
+        );
+        const newSubtasks = [...event.subtasks];
+        newSubtasks[eventIndex].done = !newSubtasks[eventIndex].done;
+        event.subtasks = newSubtasks;
+        setRefresh(refresh + 1);
+      })
+      .catch(error => console.log(error));
+  };
+
+  const handleDelete = (sid: number) => {
+    deleteSubtask(sid)
+      .then(() => {
+        const newSubtasks = event.subtasks.filter(
+          subtask => subtask.id !== sid,
+        );
+        event.subtasks = newSubtasks;
+        setRefresh(refresh + 1);
+      })
+      .catch(error => console.log(error));
+  };
+
+  const color = categoryColors[event.id % 6];
   return (
     <View style={styles.scheduleItemContainer}>
       <View style={styles.timeContainer}>
         <MyButton
           icon={
-            isEditing
+            isEditing === event.id
               ? require('../assets/icons/down-arrow.png')
               : require('../assets/icons/right-arrow.png')
           }
@@ -48,37 +80,40 @@ const EventCard = ({
         />
         <View style={styles.iconWrapper}>
           <View style={styles.startTimeWrapper}>
-            <Text>{startTime}</Text>
+            <Text>{event.startTime}</Text>
           </View>
           <View style={styles.endTimeWrapper}>
-            <Text>{endTime}</Text>
+            <Text>{event.endTime}</Text>
           </View>
         </View>
       </View>
       <Divider direction="vertical" color={color} marginHorizontal={15} />
       <View style={styles.contentContainer}>
         <View style={styles.titleWrapper}>
-          <Text style={[styles.title, {color}]}>{title}</Text>
+          <Text style={[styles.title, {color}]}>{event.title}</Text>
         </View>
         <View style={styles.detailsWrapper}>
           <View style={styles.locationWrapper}>
-            <Text>{location}</Text>
+            <Text>{event.location}</Text>
           </View>
-          {additionalInfo && (
+          {/* {event.subtasks.length && (
             <View style={styles.additionalInfoWrapper}>
               <Divider color="black" thickness={0.5} marginHorizontal={6} />
-              {additionalInfo.count && (
+              {event.subtasks.length && (
                 <View style={styles.countBadge}>
-                  <Text style={styles.countText}>{additionalInfo.count}</Text>
+                  <Text style={styles.countText}>{event.subtasks.length}</Text>
                 </View>
               )}
-              <View style={styles.additionalInfoTextWrapper}>
-                <Text>{additionalInfo.text}</Text>
-              </View>
+              {event.subtasks.map((subtask, index) => (
+                <View key={index} style={styles.additionalInfoTextWrapper}>
+                  <Text>{subtask.content}</Text>
+                </View>
+              ))}
+
             </View>
-          )}
+          )} */}
         </View>
-        {isEditing && (
+        {isEditing === event.id && event.subtasks.length > 0 && (
           <View style={styles.checklistWrapper}>
             <View style={styles.checklistHeader}>
               <Text style={styles.checklist}>Checklists</Text>
@@ -91,30 +126,42 @@ const EventCard = ({
                 gap: 8,
                 marginTop: 10,
               }}>
-              <View style={styles.taskItemContainer}>
-                <MyButton
-                  icon={
-                    1
-                      ? require('../assets/icons/checked.png')
-                      : require('../assets/icons/checkbox.png')
-                  }
-                  style={styles.taskIcon}
-                />
-                <Text
-                  style={[styles.taskTitle, 1 && styles.completedText]}
-                  numberOfLines={2}
-                  ellipsizeMode="tail">
-                  {title}
-                </Text>
-                <MyButton
-                  icon={require('../assets/icons/delete.png')}
-                  onPress={() => {}}
-                  style={styles.deleteIcon}
-                />
-              </View>
-              <Text style={[styles.dueDate, 1 && styles.completedText]}>
-                Due: 9/19
-              </Text>
+              {event.subtasks.map((subtask, index) => (
+                <View key={index}>
+                  <View style={styles.taskItemContainer}>
+                    <MyButton
+                      icon={
+                        subtask.done
+                          ? require('../assets/icons/checked.png')
+                          : require('../assets/icons/checkbox.png')
+                      }
+                      style={styles.taskIcon}
+                      onPress={() => handleCheck(subtask.id)}
+                    />
+                    <Text
+                      style={[
+                        styles.taskTitle,
+                        subtask.done && styles.completedText,
+                      ]}
+                      numberOfLines={2}
+                      ellipsizeMode="tail">
+                      {subtask.content}
+                    </Text>
+                    <MyButton
+                      icon={require('../assets/icons/delete.png')}
+                      onPress={() => handleDelete(subtask.id)}
+                      style={styles.deleteIcon}
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.dueDate,
+                      subtask.done && styles.completedText,
+                    ]}>
+                    {`DUE: ${subtask.ddl}`}
+                  </Text>
+                </View>
+              ))}
               <View style={styles.buttonWrapper}>
                 <TouchableOpacity
                   style={[styles.button, styles.secondaryButton]}>

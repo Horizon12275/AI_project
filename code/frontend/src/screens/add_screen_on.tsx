@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,131 +7,218 @@ import {
   TextInput,
   ScrollView,
   Modal,
+  Alert,
 } from 'react-native';
 import MyButton from '../utils/my_button';
 import Calendar from '../components/calendar';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import DropdownInput from '../components/dropdown_input';
 import {categoryOptions} from '../utils/offline';
+import {Form, Input} from '@ant-design/react-native';
+import MyHeader from '../components/my_header';
+import {toDate, toTime} from '../utils/date';
+import {addEvent} from '../services/eventService';
 
 const InputField = ({
   label,
   placeholder,
+  props,
+  inputStyle,
 }: {
   label: string;
   placeholder?: string;
+  props: any;
+  inputStyle?: any;
 }) => (
   <View style={styles.inputContainer}>
     <Text style={styles.inputLabel}>{label}</Text>
-    <TextInput
-      style={styles.input}
-      accessibilityLabel={label}
-      placeholder={placeholder}
-    />
-  </View>
-);
-
-const TextinputField = ({label}: {label: string}) => (
-  <View style={styles.inputContainer}>
-    <Text style={styles.inputLabel}>{label}</Text>
-    <TextInput
-      style={styles.textInput} // 使用独立的样式
-      textAlignVertical="top"
-      accessibilityLabel={label}
-    />
+    <Form.Item {...props}>
+      <Input
+        style={[styles.input, inputStyle]}
+        accessibilityLabel={label}
+        placeholder={placeholder}
+      />
+    </Form.Item>
   </View>
 );
 
 const AddOnScreen = () => {
-  const ddlDate = new Date();
-  const [selectedDdlDate, setSelectedDdlDate] = useState(ddlDate);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
+  const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+  const [category, setCategory] = useState('Select a category');
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
+  const [ddlDate, setDdlDate] = useState(new Date());
+  const [form] = Form.useForm();
 
+  useEffect(() => {}, [ddlDate, startTime, endTime]);
+
+  const onSubmit = () => {
+    form.submit();
+  };
+  const handleSave = (values: any) => {
+    values.startTime = toTime(startTime);
+    values.endTime = toTime(endTime);
+    values.date = toDate(ddlDate);
+    values.category = category;
+    values.subtasks = [];
+    console.log(values);
+    addEvent(values)
+      .then(() => {
+        Alert.alert('Success', 'Event added successfully');
+      })
+      .catch(err => {
+        Alert.alert('Error', err);
+      });
+  };
   return (
-    <View
-      style={{
-        backgroundColor: '#fff',
-        height: '100%',
-        padding: 30,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 10,
-      }}>
-      <View style={styles.container}>
-        <Text style={styles.titleText}>New Schedule</Text>
-      </View>
-      <InputField label="Title" />
-      <InputField label="Location" />
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Category</Text>
-        <DropdownInput
-          data={categoryOptions}
-          onSelect={value => console.log(value)}
-          style={styles.input}
-          placeholder="Select a category"
-        />
-      </View>
-      <TextinputField label="Details" />
-      <View style={styles.ddlContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.ddlText}>DDL</Text>
-          <Text style={styles.dateText}>{selectedDdlDate.toDateString()}</Text>
+    <Form onFinish={handleSave} form={form}>
+      <MyHeader onSave={onSubmit} />
+      <View
+        style={{
+          backgroundColor: '#fff',
+          height: '100%',
+          padding: 20,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+        }}>
+        <View style={styles.container}>
+          <Text style={styles.titleText}>New Schedule</Text>
         </View>
-        <MyButton
-          icon={require('../assets/icons/time-select.png')}
-          onPress={() => setShowCalendar(!showCalendar)}
-          style={styles.timeZoneIcon}
-          buttonStyle={styles.timeZoneButton}
+        <InputField
+          label="Title"
+          props={{
+            name: 'title',
+            rules: [
+              {
+                required: true,
+                message: 'Please input the title!',
+              },
+            ],
+          }}
         />
-      </View>
-      <View style={styles.timeSelectContainer}>
-        {showTimePicker && (
-          <RNDateTimePicker
-            mode="time"
-            display="clock"
-            value={new Date()}
-            onChange={(event, selectedDate) => {
-              setShowTimePicker(false);
-              console.log(selectedDate);
-            }}
+        <InputField
+          label="Location"
+          props={{
+            name: 'location',
+            rules: [
+              {
+                required: true,
+                message: 'Please input the location!',
+              },
+            ],
+          }}
+        />
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>Category</Text>
+          <DropdownInput
+            data={categoryOptions}
+            onSelect={setCategory}
+            style={styles.input}
+            placeholder="Select a category"
           />
-        )}
-        <TouchableOpacity
-          style={styles.startButton}
-          onPress={() => setShowTimePicker(true)}>
-          <Text style={styles.startButtonText}>Start Time</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.startButton}>
-          <Text style={styles.startButtonText}>End Time</Text>
-        </TouchableOpacity>
-      </View>
-      {showCalendar && (
-        <Modal
-          animationType="fade" // 动画效果
-          transparent={true} // 透明背景
-          visible={showCalendar}
-          onRequestClose={() => {
-            setShowCalendar(!showCalendar);
-          }}>
-          <View style={styles.modalView}>
-            <Text style={styles.calendarSpanTitle}>DDL Date</Text>
-            <Calendar
-              selectedDate={selectedDdlDate}
-              setSelectedDate={setSelectedDdlDate}
-            />
-            <TouchableOpacity
-              onPress={() => setShowCalendar(!showCalendar)}
-              style={styles.doneButton}>
-              <Text style={styles.doneButtonText}>Done</Text>
-            </TouchableOpacity>
+        </View>
+        <InputField
+          label="Details"
+          props={{
+            name: 'details',
+            rules: [
+              {
+                required: true,
+                message: 'Please input the details!',
+              },
+            ],
+          }}
+          inputStyle={styles.textInput}
+        />
+        <View style={styles.ddlContainer}>
+          <View style={styles.textContainer}>
+            <Text style={styles.ddlText}>DDL</Text>
+            <Text style={styles.dateText}>{`${toDate(ddlDate)} ${toTime(
+              startTime,
+            )}~${toTime(endTime)}`}</Text>
           </View>
-        </Modal>
-      )}
-      {/* <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
+          <MyButton
+            icon={require('../assets/icons/time-select.png')}
+            onPress={() => setShowCalendar(!showCalendar)}
+            style={styles.timeZoneIcon}
+            buttonStyle={styles.timeZoneButton}
+          />
+        </View>
+        <View style={styles.timeSelectContainer}>
+          {showStartTimePicker && (
+            <RNDateTimePicker
+              mode="time"
+              display="clock"
+              value={startTime}
+              onChange={(event, selectedDate) => {
+                if (selectedDate > endTime) {
+                  Alert.alert(
+                    'Error',
+                    'Start time should be earlier than end time',
+                  );
+                  return;
+                }
+                setStartTime(selectedDate || startTime);
+                setShowStartTimePicker(false);
+              }}
+            />
+          )}
+          {showEndTimePicker && (
+            <RNDateTimePicker
+              mode="time"
+              display="clock"
+              value={endTime}
+              onChange={(event, selectedDate) => {
+                if (selectedDate < startTime) {
+                  Alert.alert(
+                    'Error',
+                    'End time should be later than start time',
+                  );
+                  return;
+                }
+                setEndTime(selectedDate || endTime);
+                setShowEndTimePicker(false);
+              }}
+            />
+          )}
+          <TouchableOpacity
+            style={styles.startButton}
+            onPress={() => setShowStartTimePicker(true)}>
+            <Text style={styles.startButtonText}>Start Time</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.startButton}
+            onPress={() => setShowEndTimePicker(true)}>
+            <Text style={styles.startButtonText}>End Time</Text>
+          </TouchableOpacity>
+        </View>
+        {showCalendar && (
+          <Modal
+            animationType="fade" // 动画效果
+            transparent={true} // 透明背景
+            visible={showCalendar}
+            onRequestClose={() => {
+              setShowCalendar(!showCalendar);
+            }}>
+            <View style={styles.modalView}>
+              <Text style={styles.calendarSpanTitle}>DDL Date</Text>
+              <Calendar selectedDate={ddlDate} setSelectedDate={setDdlDate} />
+              <TouchableOpacity
+                onPress={() => setShowCalendar(!showCalendar)}
+                style={styles.doneButton}>
+                <Text style={styles.doneButtonText}>Done</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        )}
+        {/* <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
         <Text style={styles.saveButtonText}>Save</Text>
       </TouchableOpacity> */}
-    </View>
+      </View>
+    </Form>
   );
 };
 
@@ -179,7 +266,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
-    padding: 10,
+    paddingHorizontal: 10,
   },
   textInput: {
     borderRadius: 10,
