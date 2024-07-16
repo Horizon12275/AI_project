@@ -10,6 +10,7 @@ const MyHeader = ({
   return (
     <View
       style={{
+        padding: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

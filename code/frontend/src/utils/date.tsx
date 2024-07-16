@@ -31,4 +31,13 @@ export function convertToOrdinal(number: number) {
     }
   }
 }
-
+// 日期转换为2024-07-10格式
+export function toDate(date: Date) {
+  return `${date.getFullYear()}-${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+}
+// 日期转换为23：59:00格式
+export function toTime(date: Date) {
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:00`;
+}
