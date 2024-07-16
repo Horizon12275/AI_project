@@ -3,77 +3,69 @@ package org.example.backend.controller;
 import org.example.backend.entity.Result;
 import org.example.backend.entity.User;
 import org.example.backend.service.UserService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(UserController.class)
 class UserControllerTest {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
     private UserService userService;
 
-    @InjectMocks
-    private UserController userController;
-
-    private AutoCloseable closeable;
+    private User user;
 
     @BeforeEach
     void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        closeable.close();
-    }
-
-    @Test
-    void addUser() {
-        User user = new User();
-        Result<User> expectedResult = Result.success(user);
-
-        when(userService.addUser(any(User.class))).thenReturn(expectedResult);
-
-        Result<User> result = userController.addUser(user);
-
-        assertNotNull(result);
-        assertEquals(expectedResult.getCode(), result.getCode());
-        assertEquals(expectedResult.getMessage(), result.getMessage());
-        assertEquals(expectedResult.getData(), result.getData());
+        MockitoAnnotations.openMocks(this);
+        user = new User();
+        user.setUsername("testuser");
+        user.setPassword("password123");
     }
 
     @Test
-    void getUserByUsername() throws ExecutionException, InterruptedException {
-        String username = "testUser";
-        User user = new User();
-        user.setUsername(username);
-        Result<User> expectedResult = Result.success(user);
+    void addUser() throws Exception {
+        when(userService.addUser(any(User.class))).thenReturn(Result.success(user));
 
-        when(userService.getUserByUsername(eq(username))).thenReturn(expectedResult);
-
-        Result<User> result = userController.getUserByUsername(username);
-
-        assertNotNull(result);
-        assertEquals(expectedResult.getCode(), result.getCode());
-        assertEquals(expectedResult.getMessage(), result.getMessage());
-        assertEquals(expectedResult.getData(), result.getData());
+        mockMvc.perform(post("/api/user/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"testuser\", \"password\":\"password123\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.username").value("testuser"))
+                .andExpect(jsonPath("$.code").value(200));
     }
 
     @Test
-    void test1() {
-        ResponseEntity<String> response = userController.test();
-        assertNotNull(response);
-        assertEquals(ResponseEntity.ok("test"), response);
+    void getUserByUsername() throws Exception {
+        when(userService.getUserByUsername(eq("testuser"))).thenReturn(Result.success(user));
+
+        mockMvc.perform(get("/api/user/get")
+                        .param("username", "testuser")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.username").value("testuser"))
+                .andExpect(jsonPath("$.code").value(200));
+    }
+
+    @Test
+    void testEndpoint() throws Exception {
+        mockMvc.perform(get("/api/user/test")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("test"));
     }
 }
