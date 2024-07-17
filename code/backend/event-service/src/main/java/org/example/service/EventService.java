@@ -11,4 +11,6 @@ public interface EventService {
     int[] getNumsByMonth(int year, int month, int uid);
     List<Event> getEventsByDate(LocalDate date, int uid);
     Result<Event> addEvent(Event event, int uid);
+
+    Result<List<Object>> summary(LocalDate start, LocalDate end, int uid);
 }

@@ -1,31 +1,23 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import IdentityCard from '../components/identity_card';
+import {identityOptions} from '../utils/offline';
 
-const IdentityRow = ({ cards }) => (
+const IdentityRow = ({
+  cards,
+}: {
+  cards: {src: any; label: string; value: string}[];
+}) => (
   <View style={styles.row}>
     {cards.map((card, index) => (
-      <IdentityCard key={index} {...card} />
+      <IdentityCard key={index} ImageStyle={styles.card} {...card} />
     ))}
   </View>
 );
 
 const PortraitIdentityScreen = () => {
-  const identityCards = [
-    [
-      { src: require('../assets/images/portrait_student.png'), title: 'Student', ImageStyle: { width: 110, height: 145 } },
-      { src: require('../assets/images/portrait_officeworker.png'), title: 'Office Worker', ImageStyle: { width: 112, height: 150 } },
-      { src: require('../assets/images/portrait_freelancer.png'), title: 'Freelancer', ImageStyle: { width: 112, height: 147 } },
-    ],
-    [
-      { src: require('../assets/images/portrait_homemaker.png'), title: 'Homemaker', ImageStyle: { width: 110, height: 147 } },
-      { src: require('../assets/images/portrait_entrepreneur.png'), title: 'Entrepreneur', ImageStyle: { width: 111, height: 152 } },
-      { src: require('../assets/images/portrait_others.png'), title: 'Others', ImageStyle: { width: 106, height: 148 } },
-    ],
-  ];
-
   return (
-    <ScrollView contentContainerStyle={{ alignItems: 'center', padding: 20 }}>
+    <ScrollView contentContainerStyle={{alignItems: 'center', padding: 20}}>
       <View style={styles.header}>
         <Text style={styles.headerText}>
           The more we know ,{'\n'}
@@ -35,14 +27,19 @@ const PortraitIdentityScreen = () => {
       <View style={styles.subHeader}>
         <Text style={styles.subHeaderText}>Please select your identity.</Text>
       </View>
-      <View style={styles.identityRowContainer}>
-        <IdentityRow cards={identityCards[0]} />
-      </View>
-      <View style={styles.identityRowContainer}>
-        <IdentityRow cards={identityCards[1]} />
-      </View>
+      {identityOptions.map(
+        (option, index) =>
+          index % 3 === 0 && (
+            <View key={index} style={styles.identityRowContainer}>
+              <IdentityRow cards={identityOptions.slice(index, index + 3)} />
+            </View>
+          ),
+      )}
+
       <View style={styles.footer}>
-        <Text style={styles.footerText}>You can fill in the details after selecting the card.</Text>
+        <Text style={styles.footerText}>
+          You can fill in the details after selecting the card.
+        </Text>
       </View>
     </ScrollView>
   );
@@ -83,7 +80,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 0, height: 4 },
+    textShadowOffset: {width: 0, height: 4},
     textShadowRadius: 4,
     fontSize: 32,
     fontWeight: 'bold',
@@ -113,6 +110,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'black',
     opacity: 0.7,
+  },
+  card: {
+    width: 110,
+    height: 145,
   },
 });
 

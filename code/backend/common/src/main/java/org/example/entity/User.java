@@ -21,10 +21,12 @@ public class User {
     private String email;
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
     private roleT role;
     private Integer sleep_schedule;
     private Integer identity;
     private Integer challenge;
+    private Integer exercise;
 
     public enum identityT{
         Student,Office_Worker,Freelancer,Homemaker,Entrepreneur,Other

@@ -23,12 +23,12 @@ public class Event {
     private Integer id;
     private String title;
     private String details;
-    private String category;
+    private Integer category;
     private String location;
     private Integer priority;
     private LocalTime startTime;
     private LocalTime endTime;
-    private LocalDate date;
+    private LocalDate ddl;
     private int uid;//分库 因此无法使用外键
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Subtask> subtasks;

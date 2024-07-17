@@ -46,9 +46,9 @@ const AddOnScreen = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
-  const [category, setCategory] = useState('Select a category');
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
+  const [category, setCategory] = useState(0);
+  const [startTime, setStartTime] = useState<null | Date>(null);
+  const [endTime, setEndTime] = useState<null | Date>(null);
   const [ddlDate, setDdlDate] = useState(new Date());
   const [form] = Form.useForm();
 
@@ -58,8 +58,8 @@ const AddOnScreen = () => {
     form.submit();
   };
   const handleSave = (values: any) => {
-    values.startTime = toTime(startTime);
-    values.endTime = toTime(endTime);
+    if (startTime) values.startTime = toTime(startTime);
+    if (endTime) values.endTime = toTime(endTime);
     values.date = toDate(ddlDate);
     values.category = category;
     values.subtasks = [];
@@ -115,7 +115,8 @@ const AddOnScreen = () => {
           <Text style={styles.inputLabel}>Category</Text>
           <DropdownInput
             data={categoryOptions}
-            onSelect={setCategory}
+            selectedValue={category}
+            setSelectedValue={setCategory}
             style={styles.input}
             placeholder="Select a category"
           />
@@ -136,9 +137,12 @@ const AddOnScreen = () => {
         <View style={styles.ddlContainer}>
           <View style={styles.textContainer}>
             <Text style={styles.ddlText}>DDL</Text>
-            <Text style={styles.dateText}>{`${toDate(ddlDate)} ${toTime(
-              startTime,
-            )}~${toTime(endTime)}`}</Text>
+            <Text style={styles.dateText}>
+              {`${toDate(ddlDate)}  `}
+              {startTime &&
+                endTime &&
+                `${toTime(startTime)}~${toTime(endTime)}`}
+            </Text>
           </View>
           <MyButton
             icon={require('../assets/icons/time-select.png')}
@@ -152,16 +156,18 @@ const AddOnScreen = () => {
             <RNDateTimePicker
               mode="time"
               display="clock"
-              value={startTime}
+              value={startTime || new Date()}
               onChange={(event, selectedDate) => {
-                if (selectedDate > endTime) {
+                if (endTime && selectedDate > endTime) {
                   Alert.alert(
                     'Error',
                     'Start time should be earlier than end time',
                   );
+                  setShowStartTimePicker(false);
                   return;
                 }
                 setStartTime(selectedDate || startTime);
+                if(!endTime) setEndTime(selectedDate || startTime);
                 setShowStartTimePicker(false);
               }}
             />
@@ -170,16 +176,18 @@ const AddOnScreen = () => {
             <RNDateTimePicker
               mode="time"
               display="clock"
-              value={endTime}
+              value={endTime || new Date()}
               onChange={(event, selectedDate) => {
-                if (selectedDate < startTime) {
+                if (startTime && selectedDate < startTime) {
                   Alert.alert(
                     'Error',
                     'End time should be later than start time',
                   );
+                  setShowEndTimePicker(false);
                   return;
                 }
                 setEndTime(selectedDate || endTime);
+                if(!startTime) setStartTime(selectedDate || endTime);
                 setShowEndTimePicker(false);
               }}
             />

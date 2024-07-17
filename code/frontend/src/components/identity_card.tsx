@@ -1,14 +1,27 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
-const IdentityCard = ({ src, title, ImageStyle }) => {
+const IdentityCard = ({
+  src,
+  label,
+  value,
+  ImageStyle,
+}: {
+  src: any;
+  label: string;
+  value: string;
+  ImageStyle?: any;
+}) => {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('Identity_Details', { title })}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('Question1', {portrait:{identity: value}})//传参给下一个页面
+      }>
       <View style={styles.cardContainer}>
-        <Text style={styles.cardTitle}>{title}</Text>
+        <Text style={styles.cardTitle}>{label}</Text>
         <Image source={src} style={[styles.image, ImageStyle]} />
       </View>
     </TouchableOpacity>
@@ -28,7 +41,7 @@ const styles = StyleSheet.create({
     height: 172,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'center',
   },
