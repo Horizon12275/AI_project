@@ -19,6 +19,11 @@ import MyHeader from './src/components/my_header';
 import {login} from './src/services/loginService';
 import {getUser} from './src/services/userService';
 import MyButton from './src/utils/my_button';
+import {
+  challengeOptions,
+  exerciseOptions,
+  sleepOptions,
+} from './src/utils/offline.tsx';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -83,68 +88,27 @@ const TabNavigator = () => {
           ...options,
         }}
       />
-      <Tab.Screen name="Login" component={LoginScreen} options={options} />
     </Tab.Navigator>
   );
 };
 
 function App() {
-  const [isLogin, setIsLogin] = useState(false);
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    AsyncStorage.getItem('auth')
-      .then(auth => {
-        if (auth) {
-          console.log(auth);
-          const {rememberMe, username, password} = JSON.parse(auth);
-          if (rememberMe) {
-            login({username, password})
-              .then(res => {
-                console.log(res);
-                getUser()
-                  .then(user => {
-                    AsyncStorage.setItem('user', JSON.stringify(user));
-                    setIsLogin(true);
-                  })
-                  .catch(err => console.log(err));
-              })
-              .catch(err => console.log(err));
-          } else {
-            // 如果没有 remembered，可能需要其他处理
-            setIsLogin(false);
-          }
-        } else {
-          // 如果没有 auth 数据，可能需要其他处理
-          setIsLogin(false);
-        }
-      })
-      .catch(error => {
-        console.error('Error reading auth from AsyncStorage:', error);
-        // 处理错误情况，可能需要设置一个默认的初始路由
-        setIsLogin(false);
-      });
-  }, []);
   const options = {
     headerShown: false,
   };
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          contentStyle: {backgroundColor: 'blue'},
-        }}
-        //initialRouteName={isLogin ? 'Tabs' : 'Login'}
-      >
-        <Stack.Screen name="Tabs" component={TabNavigator} options={options} />
+      <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={options} />
+        <Stack.Screen name="Tabs" component={TabNavigator} options={options} />
         <Stack.Screen
           name="Signup"
           component={SignUpScreen}
           options={options}
         />
         <Stack.Screen
-          name="Portrait_Identity"
+          name="Portrait"
           component={PortraitIdentityScreen}
           options={options}
         />
@@ -157,44 +121,34 @@ function App() {
           name="Question1"
           component={PortraitQuestionScreen}
           initialParams={{
+            type: 'sleep_schedule',
             question: 'Your usual sleep schedule is like ...',
-            options: [
-              'Less than 6 hours',
-              '6-8 hours',
-              '8-10 hours',
-              'More than 10 hours',
-            ],
+            options: sleepOptions,
             nextScreen: 'Question2',
           }}
+          options={options}
         />
         <Stack.Screen
           name="Question2"
           component={PortraitQuestionScreen}
           initialParams={{
+            type: 'exercise',
             question: 'How often do you exercise?',
-            options: [
-              'Every day',
-              'A few times a week',
-              'A few times a month',
-              'Rarely',
-            ],
+            options: exerciseOptions,
             nextScreen: 'Question3',
           }}
+          options={options}
         />
         <Stack.Screen
           name="Question3"
           component={PortraitQuestionScreen}
           initialParams={{
+            type: 'challenge',
             question:
               'The main challenges you face \n with time management is ...',
-            options: [
-              'Inability to concentrate',
-              'To many tasks',
-              'Lack of prioritisation',
-              'Confusing schedule',
-              'Others',
-            ],
+            options: challengeOptions,
           }}
+          options={options}
         />
       </Stack.Navigator>
     </NavigationContainer>

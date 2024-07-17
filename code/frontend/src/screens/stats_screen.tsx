@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,34 +7,58 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  Alert,
 } from 'react-native';
 import PieGraph from '../components/pie_graph';
 import SummaryBox from '../components/summary_box';
 import MyButton from '../utils/my_button';
 import Calendar from '../components/calendar';
-
-const data = [
-  {x: 'Learn', y: 25},
-  {x: 'Eat', y: 35},
-  {x: 'Sleep', y: 40},
-];
+import {getSummary} from '../services/eventService';
+import {toDate} from '../utils/date';
+import {categoryOptions} from '../utils/offline';
 
 const summaryData = 'You have been spending most of your time eating!';
-const startDate = '2021-01-01';
-const endDate = '2021-01-07';
 
 const StatsScreen: React.FC = () => {
-  const startDate = new Date();
-  const endDate = new Date();
-  const [selectedStartDate, setSelectedStartDate] = useState(startDate);
-  const [selectedEndDate, setSelectedEndDate] = useState(endDate);
+  const [data, setData] = useState([]);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
+
+  // useEffect(() => {
+  //   getSummary(startDate, endDate)
+  //     .then(data => {
+  //       console.log(data);
+  //       setData(data);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // }, [startDate, endDate]);
+
+  const handleSummary = () => {
+    getSummary(toDate(startDate), toDate(endDate))
+      .then(res => {
+        if (res.length === 0)
+          Alert.alert('No data found for the selected date range');
+        let data = res.map(item => {
+          return {
+            x: categoryOptions.find(cat => cat.value === item.category)?.label,
+            y: item.percentage.toFixed(2),
+          };
+        });
+        setData(data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   return (
     <ScrollView style={styles.container}>
       <View>
         <Text style={styles.header}>Visualize Time</Text>
-        <PieGraph data={data} />
+        {data.length > 0 && <PieGraph data={data} />}
       </View>
       <View style={styles.timeZoneSelector}>
         <Text style={styles.timeZoneText}>Select a time zone</Text>
@@ -54,14 +78,11 @@ const StatsScreen: React.FC = () => {
             <View style={styles.modalView}>
               <Text style={styles.calendarSpanTitle}>Start Date</Text>
               <Calendar
-                selectedDate={selectedStartDate}
-                setSelectedDate={setSelectedStartDate}
+                selectedDate={startDate}
+                setSelectedDate={setStartDate}
               />
               <Text style={styles.calendarSpanTitle}>End Date</Text>
-              <Calendar
-                selectedDate={selectedEndDate}
-                setSelectedDate={setSelectedEndDate}
-              />
+              <Calendar selectedDate={endDate} setSelectedDate={setEndDate} />
               <TouchableOpacity
                 onPress={() => setShowCalendar(!showCalendar)}
                 style={styles.doneButton}>
@@ -71,13 +92,13 @@ const StatsScreen: React.FC = () => {
           </Modal>
         )}
       </View>
-      <TouchableOpacity style={styles.summaryButton}>
+      <TouchableOpacity style={styles.summaryButton} onPress={handleSummary}>
         <Text style={styles.summaryButtonText}>Get your Summary</Text>
       </TouchableOpacity>
       <SummaryBox
         data={summaryData}
-        startDate={selectedStartDate.toDateString()}
-        endDate={selectedEndDate.toDateString()}
+        startDate={startDate.toDateString()}
+        endDate={endDate.toDateString()}
       />
     </ScrollView>
   );

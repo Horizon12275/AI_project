@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, StyleSheet, Text, Pressable, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native'
+import {View, StyleSheet, Text, Pressable, Alert} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {studentOptions} from '../utils/offline';
 
 type OptionButtonProps = {
   label: string;
   onPress: () => void;
 };
 
-const OptionButton: React.FC<OptionButtonProps> = ({ label, onPress }) => (
+const OptionButton: React.FC<OptionButtonProps> = ({label, onPress}) => (
   <Pressable style={styles.optionButton} onPress={onPress}>
     <Text style={styles.optionButtonText}>{label}</Text>
   </Pressable>
@@ -15,36 +16,36 @@ const OptionButton: React.FC<OptionButtonProps> = ({ label, onPress }) => (
 
 type StudentTypeProps = {
   title: string;
-  options: string[];
+  options: {label: string; value: string}[];
+  params?: {portrait:object};
 };
 
-const StudentType: React.FC<StudentTypeProps> = ({ title, options }) => {
-    const navigation = useNavigation();
+const StudentType: React.FC<StudentTypeProps> = ({title, options, params}) => {
+  const navigation = useNavigation();
 
-    return (
-        <View style={styles.studentTypeContainer}>
-            <Text style={styles.studentTypeTitle}>{title}</Text>
-            {options.map((option, index) => (
-                    <OptionButton
-                      key={index}
-                      label={option}
-                      onPress={() => Alert.alert('Selected Option', option)}
-                    />
-            ))}
-            <Pressable style={styles.backButton}>
-                <Text style={styles.backButtonText}>Back to previous step</Text>
-            </Pressable>
-        </View>
-    );
+  return (
+    <View style={styles.studentTypeContainer}>
+      <Text style={styles.studentTypeTitle}>{title}</Text>
+      {options.map((option, index) => (
+        <OptionButton
+          key={index}
+          label={option.label}
+          onPress={() =>
+            navigation.navigate('Question1', {
+              portrait: {...(params.portrait), studentType: option.value},//传参给下一个页面
+            })
+          } //传参给下一个页面
+        />
+      ))}
+      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Text style={styles.backButtonText}>Back to previous step</Text>
+      </Pressable>
+    </View>
+  );
 };
 
-const IdentityDetailsScreen: React.FC = () => {
-  const studentOptions = [
-    'Junior High Student',
-    'Senior High School Student',
-    'Undergraduate Student',
-    'Postgraduates',
-  ];
+const IdentityDetailsScreen = ({route}: {route: {params: {portrait:object}}}) => {
+  console.log(route.params);
 
   return (
     <View style={styles.container}>
@@ -54,7 +55,7 @@ const IdentityDetailsScreen: React.FC = () => {
         </Text>
       </View>
       <Text style={styles.subHeaderText}>More details...</Text>
-      <StudentType title="Student" options={studentOptions} />
+      <StudentType title="Student" options={studentOptions} params={route.params}/>
     </View>
   );
 };
@@ -62,7 +63,6 @@ const IdentityDetailsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    maxWidth: 381,
     flexDirection: 'column',
     alignItems: 'center',
     fontWeight: '700',
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 0, height: 4 },
+    textShadowOffset: {width: 0, height: 4},
     textShadowRadius: 4,
     fontSize: 32,
     fontWeight: 'bold',

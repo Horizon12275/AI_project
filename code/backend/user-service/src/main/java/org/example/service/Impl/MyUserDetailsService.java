@@ -1,6 +1,7 @@
 package org.example.service.Impl;
 
 
+import org.example.entity.RegisterRequest;
 import org.example.entity.Result;
 import org.example.entity.User;
 import org.example.repository.UserRepo;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -64,4 +66,26 @@ public class MyUserDetailsService implements UserDetailsService {
         return Result.success(user);
     }
 
+    public Result<User> register(RegisterRequest request) {
+        if (userRepository.findUserByEmail(request.getEmail()) != null) {
+            return Result.error(400, "用户已存在！");
+        }
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setUsername(request.getUsername());
+        user.setPassword(new BCryptPasswordEncoder().encode(request.getPassword()));
+        userRepository.save(user);
+        return Result.success(user);
+    }
+
+    public Result<User> portrait(User user) {
+        String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        User newUser = userRepository.findUserByEmail(username);
+        newUser.setChallenge(user.getChallenge());
+        newUser.setSleep_schedule(user.getSleep_schedule());
+        newUser.setIdentity(user.getIdentity());
+        newUser.setExercise(user.getExercise());
+        userRepository.save(newUser);
+        return Result.success(newUser);
+    }
 }
