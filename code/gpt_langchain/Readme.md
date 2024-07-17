@@ -11,7 +11,7 @@ ide 打开两个窗口 一个打开 gpt_python folder 一个打开 gptclient fol
 运行
 
 ```
-pip install openai==0.28 uvicorn langchain-openai langchain fastapi
+pip install openai==0.28 uvicorn langchain-openai langchain fastapi langchain_community
 ```
 
 可能还有一些库遗漏的，如果报错 直接 pip install 报错信息里缺少的库就可以
