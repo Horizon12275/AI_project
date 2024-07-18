@@ -1,3 +1,5 @@
+import time
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import logging
@@ -114,6 +116,7 @@ async def generate_priority(event: EventDetails):
 
 @app.post("/generate_reminders")
 async def generate_reminders(event: EventDetails):
+
     user_details = user_memory.get("user_details")
     if not user_details:
         raise HTTPException(status_code=400, detail="User details not set")
@@ -158,7 +161,7 @@ async def generate_reminders(event: EventDetails):
         raise HTTPException(status_code=500, detail=str(e))
 
     reminders = result.strip().split("\n")
-    formatted_reminders = [{ reminder.strip()} for reminder in reminders if reminder]
+    formatted_reminders = [ reminder.strip() for reminder in reminders if reminder]
     print(formatted_reminders[:3])  # 打印返回的内容
     return formatted_reminders[:3]
 
@@ -166,6 +169,7 @@ async def generate_reminders(event: EventDetails):
 
 @app.post("/generate_subtasks")
 async def generate_subtasks(event: EventDetails):
+    start_time = time.time()
     user_details = user_memory.get("user_details")
     if not user_details:
         raise HTTPException(status_code=400, detail="User details not set")
@@ -215,6 +219,9 @@ async def generate_subtasks(event: EventDetails):
                 content, ddl = parts
                 formatted_subtasks.append({"content": content.strip(), "ddl": ddl.strip()})
 
+    end_time = time.time()
+    processing_time = end_time - start_time
+    print(processing_time)
     print(formatted_subtasks[:3])  # 打印返回的内容
     return formatted_subtasks[:3]
 
