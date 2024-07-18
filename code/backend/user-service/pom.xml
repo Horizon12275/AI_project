@@ -60,10 +60,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <!-- 启动类的全类名 -->
-                <configuration>
-                    <mainClass>com.example.UserApplication</mainClass>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>

@@ -154,8 +154,35 @@ docker logs -f user-service
 docker logs -f event-service
 ```
 
-- 会报一个 no main manifest attribute, in target/user-service-0.0.1-SNAPSHOT.jar 的错误
+- 会报一个 no main manifest attribute, in target/user-service-0.0.1-SNAPSHOT.jar 的错误，原因是 springcloud 项目中打包的时候、没有指定主类，需要在各模块的 pom.xml 中添加如下配置（貌似还需要删掉父模块里 build 中的内容）
 
 ```xml
+<build>
+	<!-- 打包之后jar包的名字 -->
+    <finalName>itoo-gateway</finalName>
+
+    <plugins>
+
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+
+            <!-- 启动类的全类名 -->
+            <configuration>
+                <mainClass>com.test.eric.MainClassName</mainClass>
+            </configuration>
+
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+
+    </plugins>
+
+</build>
 
 ```
