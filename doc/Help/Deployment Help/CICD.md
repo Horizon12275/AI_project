@@ -154,7 +154,7 @@ docker logs -f user-service
 docker logs -f event-service
 ```
 
-- 会报一个 no main manifest attribute, in target/user-service-0.0.1-SNAPSHOT.jar 的错误，导致打包出来的 jar 包很小，原因是 springcloud 项目中打包的时候、没有指定主类，需要在各模块的 pom.xml 中添加如下配置（貌似还需要删掉父模块里 build 中的内容）
+- 会报一个 no main manifest attribute, in target/user-service-0.0.1-SNAPSHOT.jar 的错误，导致打包出来的 jar 包很小（20KB），原因是 springcloud 项目中打包的时候、没有指定主类，需要在各模块的 pom.xml 中添加如下配置，repackage（貌似还需要删掉父模块里 build 中的内容）
 
 ```xml
 <build>
@@ -174,6 +174,29 @@ docker logs -f event-service
 </build>
 ```
 
+- 在 github action 中，如果要用到环境变量，也可以这么设置、不过最后没用到
+
+```yaml
+# 设置环境变量
+- name: Set up environment variables
+  run: |
+    echo "DB1_URL=${{secrets.DB1_URL}}" >> $GITHUB_ENV
+    echo "DB1_USERNAME=${{secrets.DB1_USERNAME}}" >> $GITHUB_ENV
+    echo "DB1_PASSWORD=${{secrets.DB1_PASSWORD}}" >> $GITHUB_ENV
+    echo "DB2_URL=${{secrets.DB2_URL}}" >> $GITHUB_ENV
+    echo "DB2_USERNAME=${{secrets.DB2_USERNAME}}" >> $GITHUB_ENV
+    echo "DB2_PASSWORD=${{secrets.DB2_PASSWORD}}" >> $GITHUB_ENV
+    echo "NACOS_SERVER_ADDR=${{secrets.NACOS_SERVER_ADDR}}" >> $GITHUB_ENV
+    echo "USER_SERVICE_PORT=${{secrets.USER_SERVICE_PORT}}" >> $GITHUB_ENV
+    echo "EVENT_SERVICE_PORT=${{secrets.EVENT_SERVICE_PORT}}" >> $GITHUB_ENV
+    echo "USER_SERVER_IP=${{secrets.USER_SERVER_IP}}" >> $GITHUB_ENV
+# 打印环境变量，检查是否设置成功
+- name: Debug environment variables
+  run: |
+    echo "EVENT_SERVICE_PORT: $EVENT_SERVICE_PORT"
+    echo "USER_SERVICE_PORT: $USER_SERVICE_PORT"
+```
+
 - 注入环境变量到配置文件的方法如下：
 
-- 要开放服务器的 nacos 的 9848 端口，否则无法注册服务
+- 要开放服务器的 nacos 的 9848 端口，否则无法注册服务，这里选择在安全组里配置一下
