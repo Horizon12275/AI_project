@@ -2,6 +2,7 @@ package org.example.service.Impl;
 
 
 import org.example.entity.Event;
+import org.example.entity.Reminder;
 import org.example.entity.Result;
 import org.example.entity.Subtask;
 import org.example.repository.EventRepo;
@@ -37,12 +38,61 @@ public class EventServiceImpl implements EventService {
     @Override
     public Result<Event> addEvent(Event event, int uid) {
         event.setUid(uid);
-        List<Subtask> subtasks = event.getSubtasks();
-        for (Subtask subtask : subtasks) {
-            subtask.setEvent(event);//设置子任务的事件 否则subtask表中的eid为null
-        }
+        if (event.getSubtasks() != null)
+            event.getSubtasks().forEach(subtask -> subtask.setEvent(event));//设置subtask的event属性 否则保存的subtask中的eid为空
+        if (event.getReminders() != null)
+            event.getReminders().forEach(reminder -> reminder.setEvent(event));//设置reminder的event属性 否则保存的reminder中的eid为空
         repo.save(event);
         return Result.success(event);
+    }
+    @Override
+    public Result<Event> updateEvent(int id, Event event, int uid) {
+        Event oldEvent = repo.findById(id).orElse(null);
+        if (oldEvent == null) {
+            return Result.error(404, "Event not found");
+        }
+        if (oldEvent.getUid() != uid) {
+            return Result.error(403, "Permission denied");
+        }
+        //为了避免前端传入的event中的属性为null导致覆盖原有数据 逐个判断是否为null 不知道有没有更好的方法
+        if (event.getTitle() != null) {
+            oldEvent.setTitle(event.getTitle());
+        }
+        if (event.getCategory() != null) {
+            oldEvent.setCategory(event.getCategory());
+        }
+        if (event.getStartTime() != null) {
+            oldEvent.setStartTime(event.getStartTime());
+        }
+        if (event.getEndTime() != null) {
+            oldEvent.setEndTime(event.getEndTime());
+        }
+        if (event.getDdl() != null) {
+            oldEvent.setDdl(event.getDdl());
+        }
+        if(event.getDetails()!=null){
+            oldEvent.setDetails(event.getDetails());
+        }
+        if(event.getLocation()!=null){
+            oldEvent.setLocation(event.getLocation());
+        }
+        if(event.getPriority()!=null){
+            oldEvent.setPriority(event.getPriority());
+        }
+        if(event.getReminders()!=null){
+            List<Reminder> reminders = oldEvent.getReminders();
+            reminders.clear();
+            reminders.addAll(event.getReminders());
+            oldEvent.getReminders().forEach(reminder -> reminder.setEvent(oldEvent));
+        }
+        if (event.getSubtasks() != null) {
+            List<Subtask> subtasks = oldEvent.getSubtasks();
+            subtasks.clear();
+            subtasks.addAll(event.getSubtasks());
+            oldEvent.getSubtasks().forEach(subtask -> subtask.setEvent(oldEvent));
+        }
+        repo.save(oldEvent);
+        return Result.success(oldEvent);
     }
     @Override
     public Result<List<Object>> summary(LocalDate start, LocalDate end, int uid) {

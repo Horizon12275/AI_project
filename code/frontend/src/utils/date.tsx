@@ -41,3 +41,34 @@ export function toDate(date: Date) {
 export function toTime(date: Date) {
   return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:00`;
 }
+// 把标准日期格式转换为好看的格式
+export function formatDate(inputDate: string): string {
+  const dateParts = inputDate.split('-');
+  const year = parseInt(dateParts[0]);
+  const month = parseInt(dateParts[1]);
+  const day = parseInt(dateParts[2]);
+
+  // Create a Date object (months are zero-based in JavaScript)
+  const date = new Date(year, month - 1, day);
+
+  // Define month names and suffixes for days
+  const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June', 
+      'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const daySuffixes = ['st', 'nd', 'rd', 'th'];
+
+  // Get month name and day with suffix
+  const monthName = monthNames[date.getMonth()];
+  const dayNumber = date.getDate();
+  let daySuffix = 'th';
+  if (dayNumber <= 3) {
+      daySuffix = daySuffixes[dayNumber - 1];
+  }
+
+  // Construct formatted date string
+  const formattedDate = `${monthName} ${dayNumber}${daySuffix}, ${year}`;
+
+  return formattedDate;
+}

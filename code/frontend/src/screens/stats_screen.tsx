@@ -25,17 +25,6 @@ const StatsScreen: React.FC = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
 
-  // useEffect(() => {
-  //   getSummary(startDate, endDate)
-  //     .then(data => {
-  //       console.log(data);
-  //       setData(data);
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     });
-  // }, [startDate, endDate]);
-
   const handleSummary = () => {
     getSummary(toDate(startDate), toDate(endDate))
       .then(res => {
@@ -66,6 +55,7 @@ const StatsScreen: React.FC = () => {
           icon={require('../assets/icons/time-select.png')}
           onPress={() => setShowCalendar(!showCalendar)}
           style={styles.timeZoneIcon}
+          buttonStyle={styles.timeZoneButton}
         />
         {showCalendar && (
           <Modal
@@ -134,8 +124,15 @@ const styles = StyleSheet.create({
     color: '#010618',
   },
   timeZoneIcon: {
-    height: 29,
-    width: 45,
+    width: 30,
+  },
+  timeZoneButton: {
+    backgroundColor: '#80B3FF',
+    height: 40,
+    width: 50,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   summaryButton: {
     backgroundColor: '#4A90E2',

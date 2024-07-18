@@ -35,6 +35,10 @@ public class EventController {
 
         return service.addEventOnline(event,eventDetails);
     }
+    @PostMapping("/update/{id}")
+    public Result<Event> updateEvent(@PathVariable int id, @RequestBody Event event) {
+        return service.updateEvent(id, event);
+    }
     @PostMapping("/add_offline")
     public Result<Event> addEventOffline(@RequestBody Event event) {
         return Result.success(null);

@@ -42,7 +42,8 @@ const InputField = ({
   </View>
 );
 
-const AddOnScreen = () => {
+const AddOnScreen = ({navigation}: {navigation: any}) => {
+  const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
@@ -57,18 +58,29 @@ const AddOnScreen = () => {
   const onSubmit = () => {
     form.submit();
   };
-  const handleSave = (values: any) => {
-    if (startTime) values.startTime = toTime(startTime);
-    if (endTime) values.endTime = toTime(endTime);
-    values.date = toDate(ddlDate);
-    values.category = category;
-    values.subtasks = [];
-    console.log(values);
-    addEvent(values)
-      .then(() => {
-        Alert.alert('Success', 'Event added successfully');
+  const handleSave = (event: any) => {
+    if (startTime) event.startTime = toTime(startTime);
+    if (endTime) event.endTime = toTime(endTime);
+    event.ddl = toDate(ddlDate);
+    event.category = category;
+    let eventDetails = {
+      category: categoryOptions[category].label,
+      ddl: event.ddl,
+      details: event.details,
+      location: event.location,
+      title: event.title,
+    };
+    setLoading(true);
+    addEvent({
+      event,
+      eventDetails,
+    })
+      .then(event => {
+        setLoading(false);
+        navigation.navigate('AI', {event}); //传入响应的event给ai界面 来渲染ai的帮助内容
       })
       .catch(err => {
+        console.log(err);
         Alert.alert('Error', err);
       });
   };
@@ -167,7 +179,7 @@ const AddOnScreen = () => {
                   return;
                 }
                 setStartTime(selectedDate || startTime);
-                if(!endTime) setEndTime(selectedDate || startTime);
+                if (!endTime) setEndTime(selectedDate || startTime);
                 setShowStartTimePicker(false);
               }}
             />
@@ -187,7 +199,7 @@ const AddOnScreen = () => {
                   return;
                 }
                 setEndTime(selectedDate || endTime);
-                if(!startTime) setStartTime(selectedDate || endTime);
+                if (!startTime) setStartTime(selectedDate || endTime);
                 setShowEndTimePicker(false);
               }}
             />
