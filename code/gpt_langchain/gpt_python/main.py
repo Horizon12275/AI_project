@@ -11,8 +11,8 @@ app = FastAPI()
 # Set OpenAI API key and base URL
 
 
-os.environ["OPENAI_API_KEY"] = "sk-XysyZtmVqlQayx6tD75eBc6705B5426fA9F422Ad2a38D44c"
-os.environ["OPENAI_API_BASE"] = "https://api.openai-hub.com/v1"
+# os.environ["OPENAI_API_KEY"] = "sk-XysyZtmVqlQayx6tD75eBc6705B5426fA9F422Ad2a38D44c"
+# os.environ["OPENAI_API_BASE"] = "https://api.openai-hub.com/v1"
 logging.basicConfig(level=logging.INFO)
 
 
