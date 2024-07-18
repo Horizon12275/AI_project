@@ -147,31 +147,15 @@ docker image prune -af
 
 - 文件夹中的路径名有时可能会错误、要注意是中折线-还是下划线\_
 
-- 查看 docker 容器的日志
+- 查看 docker 容器的日志 去/var/lib/docker/containers/ 或者
 
 ```shell
 docker logs -f user-service
 docker logs -f event-service
 ```
 
-- 会报一个 no main manifest attribute, in target/user-service-0.0.1-SNAPSHOT.jar 的错误（https://blog.csdn.net/m0_62201229/article/details/134620533），这时候去 pom.xml 文件中把 plugin 里的配置改一下就行了，就是把里面的<skip>true</skip>改为<layout>JAR</layout>，如下所示(下面是已经改好了的)
+- 会报一个 no main manifest attribute, in target/user-service-0.0.1-SNAPSHOT.jar 的错误
 
 ```xml
-<plugin>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-maven-plugin</artifactId>
-    <version>${spring-boot.version}</version>
-    <configuration>
-        <mainClass>org.example.backend.BackendApplication</mainClass>
-        <layout>JAR</layout>
-    </configuration>
-    <executions>
-        <execution>
-            <id>repackage</id>
-            <goals>
-                <goal>repackage</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
+
 ```
