@@ -13,6 +13,7 @@ To start Metro, run the following command from the _root_ of your React Native p
 ```bash
 # using npm
 npm start
+npm start --reset-cache
 
 # OR using Yarn
 yarn start

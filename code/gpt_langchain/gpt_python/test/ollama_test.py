@@ -14,11 +14,11 @@ import time
 app = FastAPI()
 
 # 设置 OpenAI API 密钥
-api_key = "sk-x5x013KqfDXilu2h98RX6PmRbAkklEe7yDhH5dr6BXl9VD7m"
-api_base = "https://api.chatanywhere.tech/v1"
+# api_key = "sk-x5x013KqfDXilu2h98RX6PmRbAkklEe7yDhH5dr6BXl9VD7m"
+# api_base = "https://api.chatanywhere.tech/v1"
 
-os.environ["OPENAI_API_KEY"] = api_key
-os.environ["OPENAI_API_BASE"] = api_base
+# os.environ["OPENAI_API_KEY"] = api_key
+# os.environ["OPENAI_API_BASE"] = api_base
 logging.basicConfig(level=logging.INFO)
 
 class UserDetails(BaseModel):
@@ -38,7 +38,7 @@ class PriorityLevelResponse(BaseModel):
 
 # Initialize LLM and Memory
 # llm = OpenAI(model_name="gpt-3.5-turbo")
-llm = ChatOllama(model="llama3")
+llm = ChatOllama(model="llama2")
 memory = ConversationBufferMemory()
 
 user_memory = {}
@@ -137,7 +137,7 @@ async def generate_reminders(event: EventDetails):
 
     messages = [
     HumanMessage(  
-        content=formatted_prompt+"each reminder should be less than 15 words,just give your answer as simple as possible",
+        content=formatted_prompt,
       )
     ]
 
