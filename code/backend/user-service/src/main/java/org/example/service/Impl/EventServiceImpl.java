@@ -54,7 +54,7 @@ public class EventServiceImpl implements EventService {
         String[] reminderContents= aiClient.generateReminders(eventDetails);
         List<Subtask> subtaskContents = aiClient.generateSubtasks(eventDetails);
 
-        client.addEvent(event, getUid());//添加事件 下一次请求时才能保存用户选择保留的子任务和提醒
+        int id=client.addEvent(event, getUid()).getData().getId();//添加事件 下一次请求时才能保存用户选择保留的子任务和提醒 另外需要保存id 用于前端后续发起请求更新此事件
 
         List<Reminder> reminders=new ArrayList<>();
         List<Subtask> subtasks=new ArrayList<>();
@@ -75,6 +75,7 @@ public class EventServiceImpl implements EventService {
         }
         event.setReminders(reminders);
         event.setSubtasks(subtasks);
+        event.setId(id);
         return Result.success(event);
     }
     @Override

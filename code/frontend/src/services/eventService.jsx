@@ -18,9 +18,8 @@ export const getEventNums = async (year, month) => {
 };
 //为当前登录用户添加事件 body是json格式
 export async function addEvent(event) {
-  const url = `${PREFIX}/add`;
+  const url = `${PREFIX}/add_online`;
   let result;
-
   result = await post(url, event);
   return result;
 }
@@ -32,4 +31,10 @@ export async function getSummary(startDate, endDate) {
   result = await get(url);
   return result;
 }
-
+//更新某个id的事件
+export async function updateEvent(event) {
+  const url = `${PREFIX}/update/${event.id}`;
+  let result;
+  result = await post(url, event);
+  return result;
+}

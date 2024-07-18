@@ -1,101 +1,87 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Image, Text} from 'react-native';
 import MyButton from '../utils/my_button';
-
+import {formatDate} from '../utils/date';
 
 type TaskItemProps = {
-  title: string;
-  dueDate: string;
-  isCompleted?: boolean;
-  onPress?: () => void;
+  content: string;
+  ddl: string;
+  saved: boolean;
+  handleCheck: () => void;
+  handleDelete: () => void;
 };
 
 const TaskItem: React.FC<TaskItemProps> = ({
-  title,
-  dueDate,
-  isCompleted = false,
-  onPress,
+  content,
+  ddl,
+  saved,
+  handleCheck,
+  handleDelete,
 }) => (
   <View
     style={{
+      width: '100%',
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignContent: 'center',
+      alignItems: 'center',
       marginTop: 16,
     }}>
     <View style={styles.taskItemContainer}>
       <View style={styles.taskItemContent}>
         <MyButton
           icon={
-            isCompleted
+            saved
               ? require('../assets/icons/checked.png')
               : require('../assets/icons/checkbox.png')
           }
           style={styles.taskIcon}
-          onPress={onPress}
+          onPress={handleCheck}
         />
-        <Text style={[styles.taskTitle, isCompleted && styles.completedText]}>
-          {title}
+        <Text style={[styles.taskTitle, saved && styles.completedText]}>
+          {content}
         </Text>
       </View>
-      <Text style={[styles.dueDate, isCompleted && styles.completedText]}>
-        Due: {dueDate}
+      <Text style={[styles.dueDate, saved && styles.completedText]}>
+        Due: {ddl}
       </Text>
     </View>
     <MyButton
       icon={require('../assets/icons/delete.png')}
-      onPress={() => {}}
+      onPress={handleDelete}
       style={styles.deleteIcon}
     />
   </View>
 );
 
-const Subtasks: React.FC = () => {
-  const [tasks, setTasks] = useState([
-    {
-      title: 'Class note Chapter1 review',
-      dueDate: '9/19',
-      isCompleted: true,
-    },
-    {
-      title: 'Class note Chapter1 review',
-      dueDate: '9/19',
-      isCompleted: true,
-    },
-    {title: 'Checklist title 3', dueDate: '9/19', isCompleted: false},
-    {title: 'Checklist title 4', dueDate: '9/19', isCompleted: false},
-  ]);
-
+const Subtasks = ({
+  subtasks,
+}: {
+  subtasks: {content: string; ddl: string; saved: boolean}[];
+}) => {
+  const [refresh, setRefresh] = useState(0);
+  useEffect(() => {}, [refresh]);
   const handleCheck = (index: number) => {
-    setTasks(prevTasks =>
-      prevTasks.map((task, i) =>
-        i === index ? {...task, isCompleted: !task.isCompleted} : task,
-      ),
-    );
+    subtasks[index].saved = !subtasks[index].saved;
+    setRefresh(refresh + 1);
+  };
+  const handleDelete = (index: number) => {
+    subtasks.splice(index, 1);
+    setRefresh(refresh + 1);
   };
 
   return (
     <>
       <View style={styles.container}>
         <View style={styles.content}>
-          <View style={styles.dateContainer}>
-            <Text style={styles.dateText}>Today - October 18th, 2023</Text>
-          </View>
           <View style={styles.tasksContainer}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Tests - ICS TEST</Text>
-              <MyButton
-                icon={require('../assets/icons/edit.png')}
-                style={styles.sectionIcon}
-                onPress={() => {}}
-              />
-            </View>
-            {tasks.map((task, index) => (
+            {subtasks.map((task, index) => (
               <TaskItem
                 key={index}
                 {...task}
-                onPress={() => handleCheck(index)}
+                handleCheck={() => handleCheck(index)}
+                handleDelete={() => handleDelete(index)}
               />
             ))}
           </View>
@@ -119,50 +105,24 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     display: 'flex',
     flexDirection: 'column',
-    padding: 32,
     paddingBottom: 16,
-    paddingHorizontal: 16,
-    flex: 1,
   },
   content: {
     alignItems: 'stretch',
     display: 'flex',
     flexDirection: 'column',
   },
-  dateContainer: {
-    marginBottom: 16,
-  },
-  dateText: {
-    color: '#010618',
-    fontFamily: 'Inter, sans-serif',
-    fontSize: 24,
-    fontWeight: '700',
-  },
+
   tasksContainer: {
     display: 'flex',
     flexDirection: 'column',
   },
-  sectionHeader: {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    color: '#FFC374',
-    fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  sectionIcon: {
-    width: 24,
-    height: 24,
-  },
+
   taskItemContainer: {
     alignItems: 'stretch',
     display: 'flex',
     flexDirection: 'column',
+    flex: 1,
   },
   taskItemContent: {
     alignItems: 'center',
@@ -176,23 +136,22 @@ const styles = StyleSheet.create({
     height: 24,
   },
   deleteIcon: {
-    width: 16,
-    height: 16,
+    width: 20,
+    height: 20,
+    alignSelf: 'center',
   },
   taskTitle: {
     color: '#010618',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '400',
+    flex: 1,
   },
   dueDate: {
     color: '#21283F',
     fontFamily: 'Inter, sans-serif',
     fontSize: 13,
     fontWeight: '400',
-  },
-  completedText: {
-    textDecorationLine: 'line-through',
   },
   plusIcon: {
     position: 'absolute',

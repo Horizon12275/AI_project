@@ -38,8 +38,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public Result<Event> addEvent(Event event, int uid) {
         event.setUid(uid);
-        event.getSubtasks().forEach(subtask -> subtask.setEvent(event));//设置subtask的event属性 否则保存的subtask中的eid为空
-        event.getReminders().forEach(reminder -> reminder.setEvent(event));//设置reminder的event属性 否则保存的reminder中的eid为空
+        if (event.getSubtasks() != null)
+            event.getSubtasks().forEach(subtask -> subtask.setEvent(event));//设置subtask的event属性 否则保存的subtask中的eid为空
+        if (event.getReminders() != null)
+            event.getReminders().forEach(reminder -> reminder.setEvent(event));//设置reminder的event属性 否则保存的reminder中的eid为空
         repo.save(event);
         return Result.success(event);
     }
