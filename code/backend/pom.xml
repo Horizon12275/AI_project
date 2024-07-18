@@ -80,19 +80,8 @@
     </dependencyManagement>
 
     <build>
-        <!--maven资源插件 扫描已$开头，已$结尾的所有配置-->
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <delimiters>
-                        <delimiter>
-                            $
-                        </delimiter>
-                    </delimiters>
-                </configuration>
-            </plugin>
+
         </plugins>
     </build>
 
