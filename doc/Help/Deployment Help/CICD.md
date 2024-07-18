@@ -1,4 +1,4 @@
-## CICD
+## CICD 笔记
 
 - 主要参考文章：
 
@@ -133,6 +133,8 @@ docker image prune -af
 
 - 大体流程和上面差不多，就是有几个细节要改一下
 
+- 其中在 dockerfile 和 workflow 的 yaml 文件中、有很多关于文件路径的参数、只要时刻记得、当前路径就是在 github repository 的根目录下，就不会搞错，然后目录就跟着文件结构填、具体可以参考其中的 dockerfile 已经 workflow 的 yaml 文件中的编写（因为在自己的 ActionTest 中、springboot 项目是默认在根目录下的，这里的项目分布在交错复杂的文件结构中）
+
 - 如果要用 github action 运行脚本的话，需要提前给这个 sh 文件权限，如下所示（不过这里没有用到脚本运行）
 
 ```shell
@@ -171,10 +173,16 @@ docker logs -f event-service
             </executions>
         </plugin>
     </plugins>
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
+    </resources>
 </build>
 ```
 
-- 在 github action 中，如果要用到环境变量，也可以这么设置、不过最后没用到
+- 在 github action 中，如果要用到环境变量，也可以这么设置、不过最后没用到。。。
 
 ```yaml
 # 设置环境变量
@@ -197,6 +205,25 @@ docker logs -f event-service
     echo "USER_SERVICE_PORT: $USER_SERVICE_PORT"
 ```
 
-- 注入环境变量到配置文件的方法如下：
+- 注入环境变量到配置文件的方法如下，这里是使用 maven 命令行后 -D 的方式
+
+```yaml
+# 编译打包，传入环境变量参数
+- name: Build with Maven
+  run: |
+    cd ./code/backend
+    mvn package \
+        -Dmaven.test.skip=true \
+        -DDB1_URL=${{ secrets.DB1_URL }} \
+        -DDB1_USERNAME=${{ secrets.DB1_USERNAME }} \
+        -DDB1_PASSWORD=${{ secrets.DB1_PASSWORD }} \
+        -DDB2_URL=${{ secrets.DB2_URL }} \
+        -DDB2_USERNAME=${{ secrets.DB2_USERNAME }} \
+        -DDB2_PASSWORD=${{ secrets.DB2_PASSWORD }} \
+        -DNACOS_SERVER_ADDR=${{ secrets.NACOS_SERVER_ADDR }} \
+        -DUSER_SERVICE_PORT=${{ secrets.USER_SERVICE_PORT }} \
+        -DEVENT_SERVICE_PORT=${{ secrets.EVENT_SERVICE_PORT }} \
+        -DUSER_SERVER_IP=${{ secrets.USER_SERVER_IP }}
+```
 
 - 要开放服务器的 nacos 的 9848 端口，否则无法注册服务，这里选择在安全组里配置一下
