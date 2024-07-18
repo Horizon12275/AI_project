@@ -1,3 +1,5 @@
+# uvicorn ollama_test:app --host 0.0.0.0 --port 8000
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import logging
@@ -36,7 +38,7 @@ class PriorityLevelResponse(BaseModel):
 
 # Initialize LLM and Memory
 # llm = OpenAI(model_name="gpt-3.5-turbo")
-llm = ChatOllama(model_name="llama3")
+llm = ChatOllama(model="llama3")
 memory = ConversationBufferMemory()
 
 user_memory = {}
@@ -204,3 +206,4 @@ async def generate_subtasks(event: EventDetails):
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
