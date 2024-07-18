@@ -26,7 +26,7 @@ type TabBarProps = {
 };
 
 const TabBar: React.FC<TabBarProps> = ({tabs, activeTab, onTabPress}) => (
-  <View style={styles.tabBarContainer}>
+  <View style={styles.tabBarContainer} testID="tab-bar-container">
     <View style={styles.tabBar}>
       {tabs.map(tab => (
         <Tab
@@ -52,7 +52,7 @@ const Switch = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="switch-container">
       <TabBar
         tabs={['Subtasks', 'Reminders']}
         activeTab={tab}

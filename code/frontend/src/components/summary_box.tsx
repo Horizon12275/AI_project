@@ -10,7 +10,7 @@ interface SummaryBoxProps {
 
 const SummaryBox: React.FC<SummaryBoxProps> = ({data, startDate, endDate}) => {
   return (
-    <View>
+    <View testID="summary-box">
       <Text style={styles.summaryHeader}>Generated Result:</Text>
       <Text style={styles.summaryPeriod}>
         During {startDate} and {endDate}

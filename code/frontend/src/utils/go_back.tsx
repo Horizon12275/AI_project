@@ -10,11 +10,11 @@ const GoBack: React.FC<GoBackProps> = ({ title }) => {
   const navigation = useNavigation();
 
   const handleGoBack = () => {
-    //自己添加
+    //什么也不用做
   };
 
   return (
-    <View style={styles.headerContainer}>
+    <View style={styles.headerContainer} testID="go-back">
       <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
         <Text style={styles.backButtonText}>{'<'}</Text>
       </TouchableOpacity>

@@ -1,7 +1,5 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, Image, Text} from 'react-native';
-import MyButton from '../utils/my_button';
 
+<<<<<<< Updated upstream
 type ChecklistItemProps = {
   title: string;
   dueDate: string;
@@ -33,12 +31,19 @@ const ChecklistItem: React.FC<ChecklistItemProps> = ({
     </Text>
   </View>
 );
+=======
+import React, { useState } from 'react';
+import { View, StyleSheet, Image, Text } from 'react-native';
+import MyButton from '../utils/my_button';
+>>>>>>> Stashed changes
 
 type TaskItemProps = {
   title: string;
   dueDate: string;
   isCompleted?: boolean;
   onPress?: () => void;
+  onDelete?: () => void;
+  taskId: number; // 添加taskId
 };
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -46,6 +51,8 @@ const TaskItem: React.FC<TaskItemProps> = ({
   dueDate,
   isCompleted = false,
   onPress,
+  onDelete,
+  taskId,
 }) => (
   <View
     style={{
@@ -54,7 +61,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
       justifyContent: 'space-between',
       alignContent: 'center',
       marginTop: 16,
-    }}>
+    }}
+    testID="task-item"
+  >
     <View style={styles.taskItemContainer}>
       <View style={styles.taskItemContent}>
         <MyButton
@@ -65,6 +74,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           }
           style={styles.taskIcon}
           onPress={onPress}
+          testID="task-icon"
         />
         <Text style={[styles.taskTitle, isCompleted && styles.completedText]}>
           {title}
@@ -76,8 +86,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
     </View>
     <MyButton
       icon={require('../assets/icons/delete.png')}
-      onPress={() => {}}
+      onPress={onDelete}
       style={styles.deleteIcon}
+      testID={`delete-icon-${taskId}`} // 使用taskId生成唯一的testID
     />
   </View>
 );
@@ -88,27 +99,33 @@ const Subtasks: React.FC = () => {
       title: 'Class note Chapter1 review',
       dueDate: '9/19',
       isCompleted: true,
+      id: 0,
     },
     {
-      title: 'Class note Chapter1 review',
+      title: 'Class note Chapter2 review',
       dueDate: '9/19',
       isCompleted: true,
+      id: 1,
     },
-    {title: 'Checklist title 3', dueDate: '9/19', isCompleted: false},
-    {title: 'Checklist title 4', dueDate: '9/19', isCompleted: false},
+    { title: 'Checklist title 3', dueDate: '9/19', isCompleted: false, id: 2 },
+    { title: 'Checklist title 4', dueDate: '9/19', isCompleted: false, id: 3 },
   ]);
 
   const handleCheck = (index: number) => {
     setTasks(prevTasks =>
       prevTasks.map((task, i) =>
-        i === index ? {...task, isCompleted: !task.isCompleted} : task,
-      ),
+        i === index ? { ...task, isCompleted: !task.isCompleted } : task
+      )
     );
+  };
+
+  const handleDelete = (taskId: number) => {
+    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
   };
 
   return (
     <>
-      <View style={styles.container}>
+      <View style={styles.container} testID="subtasks">
         <View style={styles.content}>
           <View style={styles.dateContainer}>
             <Text style={styles.dateText}>Today - October 18th, 2023</Text>
@@ -124,9 +141,11 @@ const Subtasks: React.FC = () => {
             </View>
             {tasks.map((task, index) => (
               <TaskItem
-                key={index}
+                key={task.id}
                 {...task}
+                taskId={task.id}
                 onPress={() => handleCheck(index)}
+                onDelete={() => handleDelete(task.id)}
               />
             ))}
           </View>
@@ -239,4 +258,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Subtasks;
+export { TaskItem, Subtasks };

@@ -32,7 +32,7 @@ type DayProps = {
 };
 // 星期header
 const Day: React.FC<DayProps> = ({day}) => (
-  <View style={styles.dayContainer}>
+  <View style={styles.dayContainer} testID={`day-${day}`}>
     <Text style={styles.dayText}>{day}</Text>
   </View>
 );
@@ -56,7 +56,7 @@ const DateCell: React.FC<DateProps> = ({
       styles.dateContainer,
       isToday && styles.todayContainer,
       hasEvent && styles.highlightedContainer,
-    ]}>
+    ]} testID={`date-cell-${date}`}>
     <Text
       style={[
         styles.dateText,
@@ -114,19 +114,9 @@ const Calendar = ({
     );
   }
   const chunkedDates = chunk(dates, 7); //将日期分成7天一组
-  //形如:
-  // [
-  //   ['', '', '', '', '', '1', '2'],
-  //   ['3', '4', '5', '6', '7', '8', '9'],
-  //   ['10', '11', '12', '13', '14', '15', '16'],
-  //   ['17', '18', '19', '20', '21', '22', '23'],
-  //   ['24', '25', '26', '27', '28', '29', '30'],
-  //   ['31', '', '', '', '', '', ''],
-  // ];
-
   return (
-    <View style={styles.calendarContainer}>
-      <View style={styles.headerContainer}>
+    <View style={styles.calendarContainer} testID="calendar-container">
+      <View style={styles.headerContainer} testID="header-container">
         <Text style={styles.monthText}>
           {`${months[currentMonth]} ${currentYear}`}{' '}
         </Text>
@@ -135,11 +125,13 @@ const Calendar = ({
             icon={require('../assets/icons/left-arrow.png')}
             onPress={goToPreviousMonth}
             style={styles.icon}
+            testID="previous-month-button"
           />
           <MyButton
             icon={require('../assets/icons/right-arrow.png')}
             onPress={goToNextMonth}
             style={styles.icon}
+            testID="next-month-button"
           />
         </View>
       </View>
@@ -150,7 +142,7 @@ const Calendar = ({
       </View>
       <View style={styles.datesContainer}>
         {chunkedDates.map((week, weekIndex) => (
-          <View key={weekIndex} style={styles.weekContainer}>
+          <View key={weekIndex} style={styles.weekContainer} testID={`week-${weekIndex}`}>
             {week.map((date, dateIndex) => (
               <DateCell
                 key={dateIndex}

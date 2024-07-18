@@ -25,12 +25,13 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
   additionalInfo,
 }) => {
   return (
-    <View style={styles.scheduleItemContainer}>
+    <View style={styles.scheduleItemContainer} testID="event-card">
       <View style={styles.timeContainer}>
         <MyButton
           icon={require('../assets/icons/right-arrow.png')}
           onPress={() => {}}
           style={styles.icon}
+          testID="event-expand-button"
         />
         <View style={styles.iconWrapper}>
           <View style={styles.startTimeWrapper}>
@@ -48,7 +49,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
         marginHorizontal={15}
       />
       <View style={styles.contentContainer}>
-        <View style={styles.titleWrapper}>
+        <View style={styles.titleWrapper} testID="event-title">
           <Text style={[styles.title, {color}]}>{title}</Text>
         </View>
         <View style={styles.detailsWrapper}>
@@ -74,6 +75,64 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({
             </View>
           )}
         </View>
+<<<<<<< Updated upstream
+=======
+        {isEditing && (
+          <View style={styles.checklistWrapper}>
+            <View style={styles.checklistHeader}>
+              <Text style={styles.checklist} testID='checklist'>Checklists</Text>
+            </View>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: 8,
+                marginTop: 10,
+              }}>
+              <View style={styles.taskItemContainer}>
+                <MyButton
+                  icon={
+                    1
+                      ? require('../assets/icons/checked.png')
+                      : require('../assets/icons/checkbox.png')
+                  }
+                  style={styles.taskIcon}
+                  testID="task-button"
+                />
+                <Text
+                  style={[styles.taskTitle, 1 && styles.completedText]}
+                  numberOfLines={2}
+                  ellipsizeMode="tail">
+                  {title}
+                </Text>
+                <MyButton
+                  icon={require('../assets/icons/delete.png')}
+                  onPress={() => {}}
+                  style={styles.deleteIcon}
+                  testID="delete-button"
+                />
+              </View>
+              <Text style={[styles.dueDate, 1 && styles.completedText]}>
+                Due: 9/19
+              </Text>
+              <View style={styles.buttonWrapper}>
+                <TouchableOpacity
+                  style={[styles.button, styles.secondaryButton]}>
+                  <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.primaryButton]}>
+                  <Text style={[styles.buttonText, styles.primaryButtonText]}>
+                    + Checklist
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
+>>>>>>> Stashed changes
       </View>
     </View>
   );
@@ -204,4 +263,9 @@ const styles = StyleSheet.create({
   },
 });
 
+<<<<<<< Updated upstream
 export default MyComponent;
+=======
+export default EventCard;
+export {styles};
+>>>>>>> Stashed changes

@@ -26,6 +26,7 @@ const DateItem: React.FC<DateItemProps> = ({
   handlePress,
 }) => (
   <TouchableOpacity
+    testID={`date-item-${date}`}
     style={[styles.dateItem, isSelected && styles.selectedDateItem]}
     onPress={handlePress}>
     <Text style={[styles.dateText, isSelected && styles.selectedDateText]}>
@@ -91,6 +92,7 @@ const CalendarHeader = ({
           selectedDate.getDate(),
         )}, ${selectedDate.getFullYear()}`}</Text>
         <MyButton
+          testID="toggle-calendar-button"
           icon={require('../assets/icons/down-arrow.png')}
           onPress={() => {}}
           style={styles.headerImage}

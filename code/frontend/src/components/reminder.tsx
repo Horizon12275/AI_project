@@ -15,7 +15,7 @@ type TaskItemProps = {
 };
 
 const TaskItem: React.FC<TaskItemProps> = ({text, checked}) => (
-  <View style={styles.taskItem}>
+  <View style={styles.taskItem} testID="task-item">
     <View style={styles.taskCheckbox}>
       <View style={[styles.checkbox, checked && styles.checkedBox]} />
     </View>
@@ -37,7 +37,7 @@ type CourseItemProps = {
 };
 
 const CourseItem: React.FC<CourseItemProps> = ({title, color}) => (
-  <View style={styles.courseItem}>
+  <View style={styles.courseItem} testID="course-item">
     <View style={styles.courseTitle}>
       <Text style={[styles.courseTitleText, {color: color}]}>{title}</Text>
     </View>
@@ -58,7 +58,7 @@ const TaskList: React.FC = () => {
   ];
 
   return (
-    <View style={styles.taskList}>
+    <View style={styles.taskList} testID="task-list">
       <View style={styles.taskListContent}>
         {tasks.map((task, index) => (
           <TaskItem key={index} {...task} />
@@ -75,7 +75,7 @@ const TaskList: React.FC = () => {
 
 const Reminder: React.FC = () => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} testID="reminder">
       <View style={styles.header}>
         <Text style={styles.dateText}>Today - October 18th, 2023</Text>
       </View>
@@ -179,4 +179,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Reminder;
+export {TaskItem, TaskList, CourseItem, Reminder};

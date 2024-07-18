@@ -11,16 +11,18 @@ const MyButton = ({
   onPress,
   style,
   buttonStyle,
+  testID,
 }: {
   icon?: any;
   onPress?: () => void;
   style?: any;
   buttonStyle?: any;
+  testID?: any;
 }) => {
   // Assuming icon is a string representing the image path
   return (
-    <TouchableOpacity onPress={onPress} style={buttonStyle}>
-      <Image source={icon} style={style} />
+    <TouchableOpacity onPress={onPress} style={buttonStyle} testID={testID} >
+      <Image source={icon} style={style}  testID="image-button"/>
     </TouchableOpacity>
   );
 };

@@ -32,7 +32,7 @@ const Divider = ({
     containerStyles.push({width: 1, marginHorizontal: marginHorizontal || 0});
   }
 
-  return <View style={containerStyles} />;
+  return <View style={containerStyles} testID="divider"/>;
 };
 
 export default Divider;
