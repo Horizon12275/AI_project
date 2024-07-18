@@ -5,7 +5,8 @@ import {useState} from 'react';
 import MyButton from '../utils/my_button';
 import Subtasks from '../components/subtasks';
 
-const AddScreen = () => {
+const AIScreen = ({route}: {route: {params: {event: any}}}) => {
+  console.log(route.params.event);
   const [tab, setTab] = useState('Subtasks');
   return (
     <View style={{backgroundColor: 'white', height: '100%'}}>
@@ -60,4 +61,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddScreen;
+export default AIScreen;

@@ -8,7 +8,7 @@ import IdentityDetailsScreen from './src/screens/identity_details_screen';
 import PortraitQuestionScreen from './src/screens/portrait_question_screen';
 import TodayScreen from './src/screens/today_screen';
 import {Alert, Image, Text, TouchableOpacity, View} from 'react-native';
-import AddScreen from './src/screens/add_screen';
+import AIScreen from './src/screens/AI_screen.tsx';
 import AddOnScreen from './src/screens/add_screen_on';
 import AddOffScreen from './src/screens/add_screen_off';
 import StatsScreen from './src/screens/stats_screen';
@@ -107,6 +107,7 @@ function App() {
           component={SignUpScreen}
           options={options}
         />
+        <Stack.Screen name="AI" component={AIScreen} options={options} />
         <Stack.Screen
           name="Portrait"
           component={PortraitIdentityScreen}

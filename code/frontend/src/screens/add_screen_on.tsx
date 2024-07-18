@@ -42,7 +42,7 @@ const InputField = ({
   </View>
 );
 
-const AddOnScreen = () => {
+const AddOnScreen = ({navigation}: {navigation: any}) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
@@ -65,7 +65,9 @@ const AddOnScreen = () => {
     values.subtasks = [];
     console.log(values);
     addEvent(values)
-      .then(() => {
+      .then(event => {
+        console.log(event);
+        navigation.navigate('AI', {event});
         Alert.alert('Success', 'Event added successfully');
       })
       .catch(err => {
@@ -167,7 +169,7 @@ const AddOnScreen = () => {
                   return;
                 }
                 setStartTime(selectedDate || startTime);
-                if(!endTime) setEndTime(selectedDate || startTime);
+                if (!endTime) setEndTime(selectedDate || startTime);
                 setShowStartTimePicker(false);
               }}
             />
@@ -187,7 +189,7 @@ const AddOnScreen = () => {
                   return;
                 }
                 setEndTime(selectedDate || endTime);
-                if(!startTime) setStartTime(selectedDate || endTime);
+                if (!startTime) setStartTime(selectedDate || endTime);
                 setShowEndTimePicker(false);
               }}
             />
