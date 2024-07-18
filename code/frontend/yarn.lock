@@ -6752,6 +6752,11 @@ react-native-collapsible@^1.6.0:
   resolved "https://registry.npmmirror.com/react-native-collapsible/-/react-native-collapsible-1.6.1.tgz"
   integrity sha512-orF4BeiXd2hZW7fu9YcqIJXzN6TJcFcddY807D3MAOVktLuW9oQ+RIkrTJ5DR3v9ZOFfREkOjEmS79qeUTvkBQ==
 
+react-native-config@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.npmjs.org/react-native-config/-/react-native-config-1.5.2.tgz"
+  integrity sha512-jIx/21Ryr7+NXfULG1lQoct4KgmVae2KZ7/mt5fY2tm4s7N0jAxRm5Js8FX6adgkHuhV2fiizEBJDn/fWIFWiw==
+
 react-native-dropdown-picker@^5.4.6:
   version "5.4.6"
   resolved "https://registry.npmmirror.com/react-native-dropdown-picker/-/react-native-dropdown-picker-5.4.6.tgz"

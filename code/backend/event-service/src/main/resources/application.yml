@@ -1,21 +1,23 @@
 server:
-  port: 8083
+  port: ${EVENT_SERVICE_PORT}
 
 spring:
   datasource:
-    url: jdbc:postgresql://aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres?prepareThreshold=0
-    username: postgres.eykpwvioyepjiomiuuey
-    password: timegenie@sjtu
+    url: ${DB2_URL}
+    username: ${DB2_USERNAME}
+    password: ${DB2_PASSWORD}
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   application:
     name: event-service
-  cloud: # 服务注册
+  cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: ${NACOS_SERVER_ADDR}
 
+myapp:
+  user_server_ip: ${USER_SERVER_IP}

@@ -4,6 +4,7 @@ package org.example.config;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.entity.Result;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
@@ -28,13 +29,15 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
     List<IpAddressMatcher> hasIpAddress = new ArrayList<>();
-    public SecurityConfig() {
-        hasIpAddress.add(new IpAddressMatcher("0:0:0:0:0:0:0:1"));//本地ip postman测试的ip是ipv6
-        hasIpAddress.add(new IpAddressMatcher("192.168.31.1"));//其他服务注册到nacos的ip
-    }
-
+    @Value("${myapp.user_server_ip}")
+    private String user_server_ip;
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        //进行ip拦截设置
+        hasIpAddress.add(new IpAddressMatcher("0:0:0:0:0:0:0:1"));//本地ip postman测试的ip是ipv6
+        hasIpAddress.add(new IpAddressMatcher(user_server_ip));//用户服务注册到nacos的ip
+
          http.authorizeHttpRequests((requests) ->{requests
                                 .requestMatchers("**").access((authentication, context) -> //对所有请求进行ip地址拦截
                                  new AuthorizationDecision(hasIpAddress.stream().map(ipAddressMatcher ->

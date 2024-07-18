@@ -1,3 +1,5 @@
+import Config from "react-native-config";
+
 export async function handleResponse(res) {
   if (res.code === 200) {
     return res.data;
@@ -8,11 +10,11 @@ export async function handleResponse(res) {
 
 export async function get(url) {
   let opts = {
-    method: "GET",
+    method: 'GET',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    credentials: "include",
+    credentials: 'include',
   };
   let res = await fetch(url, opts);
   return await res.json().then(handleResponse);
@@ -20,24 +22,24 @@ export async function get(url) {
 
 export async function post(url, data) {
   let opts = {
-    method: "POST",
+    method: 'POST',
     body: JSON.stringify(data),
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    credentials: "include",
+    credentials: 'include',
   };
   let res = await fetch(url, opts);
   return await res.json().then(handleResponse);
 }
 export async function postText(url, data) {
   let opts = {
-    method: "POST",
+    method: 'POST',
     body: data,
     headers: {
-      "Content-Type": "text/plain",
+      'Content-Type': 'text/plain',
     },
-    credentials: "include",
+    credentials: 'include',
   };
   let res = await fetch(url, opts);
   return await res.json().then(handleResponse);
@@ -48,12 +50,12 @@ export async function postUrlencoded(url, data) {
     formData.append(key, data[key]);
   }
   let opts = {
-    method: "POST",
+    method: 'POST',
     body: formData.toString(),
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
-    credentials: "include",
+    credentials: 'include',
   };
   let res = await fetch(url, opts);
   return await res.json().then(handleResponse);
@@ -61,9 +63,9 @@ export async function postUrlencoded(url, data) {
 export async function postFormData(url, formData) {
   //千万不能手动设置Content-Type 浏览器会自动根据formData设置并且生成webkitboundary 如果手动设置会导致boundary不匹配
   let opts = {
-    method: "POST",
+    method: 'POST',
     body: formData,
-    credentials: "include",
+    credentials: 'include',
   };
   let res = await fetch(url, opts);
   return await res.json().then(handleResponse);
@@ -71,11 +73,11 @@ export async function postFormData(url, formData) {
 
 export async function Delete(url) {
   let opts = {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    credentials: "include",
+    credentials: 'include',
   };
   let res = await fetch(url, opts);
   return await res.json().then(handleResponse);
@@ -83,26 +85,25 @@ export async function Delete(url) {
 
 export async function put(url, data) {
   let opts = {
-    method: "PUT",
+    method: 'PUT',
     body: JSON.stringify(data),
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    credentials: "include",
+    credentials: 'include',
   };
   let res = await fetch(url, opts);
   return await res.json().then(handleResponse);
 }
 
-// On Local Settings Below
+// On Server Settings Below
 // export const WSURL = "ws://localhost:8080/ws";
 // export const BASEURL = "http://localhost:8080";
 // export const PEERURL = "localhost";
 
-// On Server Settings Below
-export const WSURL = "wss://localhost:8080/ws";
-export const BASEURL = "http://192.168.31.1";
-export const USERPORT = "8082";
-export const EVENTPORT = "8083";
-export const PEERURL = "localhost";
+// On Local Settings Below
+export const WSURL = Config.WSURL;
+export const BASEURL = Config.BASEURL;
+export const USERPORT = Config.USERPORT;
+export const EVENTPORT = Config.EVENTPORT;
 

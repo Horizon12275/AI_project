@@ -24,6 +24,7 @@ import {
   exerciseOptions,
   sleepOptions,
 } from './src/utils/offline.tsx';
+import {USERPORT, WSURL} from './src/services/requestService.jsx';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -96,7 +97,6 @@ function App() {
   const options = {
     headerShown: false,
   };
-
   return (
     <NavigationContainer>
       <Stack.Navigator>
