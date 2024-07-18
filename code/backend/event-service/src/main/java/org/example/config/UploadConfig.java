@@ -1,4 +1,4 @@
-package org.example.backend.config;
+package org.example.config;
 
 
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +13,6 @@ public class UploadConfig implements WebMvcConfigurer {
         //后面的upload意思是，你图片上传的路径，我的图片上传就在upload文件中(新创建的的文件夹)。
         registry.addResourceHandler("/image/**")
                 .addResourceLocations("file:src/main/resources/static/image/");
-
-
 
         registry.addResourceHandler("/document/**") // 设置映射路径
                 .addResourceLocations("file:src/main/resources/static/document/"); // 设置资源路径

@@ -1,6 +1,7 @@
 package org.example.controller;
 
 
+import org.example.entity.RegisterRequest;
 import org.example.entity.Result;
 import org.example.entity.User;
 import org.example.service.Impl.MyUserDetailsService;
@@ -20,13 +21,13 @@ public class UserController {
         UserDetails user =(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return service.getUserByUsername( user.getUsername());
     }
-    @GetMapping("/get/{uid}")//根据用户名获取用户信息 一般是用于查看别人的信息
-    public Result<User> get(@PathVariable int uid) {
-        return service.getUserById(uid);
+    @PostMapping("/register")//注册
+    public Result<User> register(@RequestBody RegisterRequest request) {
+        return service.register(request);
     }
-    @PostMapping("/test")//测试用
-    public Result<Integer> test(@RequestBody Integer id) {
-        return Result.success(id);
+    @PostMapping("/portrait")//提交个人肖像
+    public Result<User> portrait(@RequestBody User user) {
+        return service.portrait(user);
     }
 
 }

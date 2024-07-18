@@ -4,7 +4,7 @@ ide 打开两个窗口 一个打开 gpt_python folder 一个打开 gptclient fol
 
 然后把 gpt_python folder main.py 文件代码这里替换为自己的免费 api_key
 
-![截屏2024-07-11 14.06.22](/截屏2024-07-11%2014.06.22.png)
+![截屏2024-07-11 14.06.22](/截屏2024-07-11%14.06.22.png)
 
 在 gpt_python folder 终端中
 

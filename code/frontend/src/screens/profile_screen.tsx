@@ -1,133 +1,163 @@
-import React, { useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View, Modal, FlatList } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Modal,
+  FlatList,
+} from 'react-native';
 
 import GoBack from '../utils/go_back';
+import DropdownInput from '../components/dropdown_input';
+import {
+  challengeOptions,
+  identityAvatars,
+  identityOptions,
+  sleepOptions,
+} from '../utils/offline';
+import {getUser, portraitUpload} from '../services/userService';
+import {logout} from '../services/loginService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const images = {
-  student: require('../assets/images/student.png'),
-  freelancer: require('../assets/images/freelancer.png'),
-  officeworker: require('../assets/images/office_worker.png'),
-  others: require('../assets/images/others.png'),
-  homemaker: require('../assets/images/homemaker.png'),
-  entrepreneur: require('../assets/images/entrepreneur.png'),
-};
-
-const CustomDropdown = ({ label, options, onSelect }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(options.find(option => option.selected));
-  const endDate = new Date();
-  const [selectedEndDate, setSelectedEndDate] = useState(endDate);
-  const handleSelect = (option) => {
-    onSelect(option);
-    setSelectedOption(option);
-    setIsOpen(false);
-  };
-
-
-  return (
-    <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>{label}</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setIsOpen(!isOpen)}>
-        <Text>{selectedOption.label}</Text>
-      </TouchableOpacity>
-      {isOpen && (
-        <View style={styles.dropdown}>
-          {options.map(option => (
-            <TouchableOpacity
-              style={styles.dropdownOption}
-              key={option.value}
-              onPress={() => handleSelect(option)}
-            >
-              <Text>{option.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-};
-
-const imageLabels = Object.keys(images);
-
-const ProfileScreen = () => {
-  const [selectedImage, setSelectedImage] = useState<any>(images.student);
+const ProfileScreen = ({navigation}: {navigation: any}) => {
+  const [sleep, setSleep] = useState<null | number>(null);
+  const [challenge, setChallenge] = useState<null | number>(null);
+  const [exercise, setExercise] = useState<null | number>(null);
+  const [identity, setIdentity] = useState<null | number>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const items = [
+    {
+      label: 'sleep schedule',
+      data: sleepOptions,
+      value: sleep,
+      setValue: setSleep,
+    },
+    {
+      label: 'challenges',
+      data: challengeOptions,
+      value: challenge,
+      setValue: setChallenge,
+    },
+    {
+      label: 'exercise',
+      data: challengeOptions,
+      value: exercise,
+      setValue: setExercise,
+    },
+  ];
 
-  const handleImagePick = (label: string) => {
-    setSelectedImage(images[label]);
+  useEffect(() => {
+    getUser()
+      .then(res => {
+        console.log(res);
+        setSleep(res.sleep_schedule);
+        setChallenge(res.challenge);
+        setExercise(res.exercise);
+        setIdentity(res.identity);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, []);
+
+  const handleImagePick = (value: number) => {
+    setIdentity(value);
     setModalVisible(false);
   };
 
-  const sleepOptions = [
-      { label: "Less than 6 hours", value: "1", selected: false },
-      { label: "6-8 hours", value: "2", selected: false },
-      { label: "8-10 hours", value: "3", selected: true },
-      { label: "More than 10 hours", value: "4", selected: false },
-  ];
-
-  const handleSleepSelect = (option) => {
-    // Handle the selected location option
-    console.log('Selected Sleep schedule: ', option.label);
+  const handleSave = () => {
+    const portrait = {
+      sleep_schedule: sleep,
+      challenge: challenge,
+      exercise: exercise,
+      identity: identity,
+    };
+    console.log(portrait);
+    portraitUpload(portrait)
+      .then(res => {
+        Alert.alert('Success', 'Portrait updated successfully');
+      })
+      .catch(err => {
+        Alert.alert('Error', err);
+      });
   };
 
-  const challengeOptions = [
-      { label: "Inability to concentrate", value: "1", selected: false },
-      { label: "Too many tasks", value: "2", selected: false },
-      { label: "Lack of prioritisation", value: "3", selected: true },
-      { label: "Confusing schedule", value: "4", selected: false },
-      { label: "Others", value: "5", selected: false },
-  ];
-
-  const handleChallengeSelect = (option) => {
-    // Handle the selected location option
-    console.log('Selected Challenges: ', option.label);
+  const handleLogout = () => {
+    logout()
+      .then(() => {
+        AsyncStorage.removeItem('auth'); //清除登录信息
+        navigation.navigate('Login');
+      })
+      .catch(err => {
+        Alert.alert('Error', err);
+        navigation.navigate('Login');
+      });
   };
 
   return (
-    <View style={{ backgroundColor: 'white', height: '100%' }}>
+    <View style={{backgroundColor: 'white', height: '100%'}}>
       <GoBack title="Settings" />
       <View style={styles.container}>
         <Text style={styles.titleText}>My Portrait</Text>
         <View style={styles.imageContainer}>
           <View style={styles.imageWrapper}>
-            <Image source={selectedImage} style={styles.portraitImage} />
-            <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.editButton}>
+            {identity && (
+              <Image
+                source={identityAvatars[identity - 1]}
+                style={styles.portraitImage}
+              />
+            )}
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              style={styles.editButton}>
               <Text style={styles.editButtonText}>✏️</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-
-      <View style={styles.dropdownContainer}>
-        <CustomDropdown label="Sleep Schedule" options={sleepOptions} onSelect={handleSleepSelect} />
-      </View>
-
-      <View style={styles.dropdownContainer}>
-        <CustomDropdown label="Main challenge" options={challengeOptions} onSelect={handleChallengeSelect} />
-      </View>
-
-      <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
+      {items.map((item, index) => (
+        <View style={styles.inputContainer} key={index}>
+          <Text style={styles.inputLabel}>{item.label}</Text>
+          <DropdownInput
+            data={item.data}
+            selectedValue={item.value}
+            setSelectedValue={item.setValue}
+            style={styles.input}
+          />
+        </View>
+      ))}
+      <TouchableOpacity
+        style={styles.saveButton}
+        accessibilityRole="button"
+        onPress={handleSave}>
         <Text style={styles.saveButtonText}>Save</Text>
       </TouchableOpacity>
-
+      <TouchableOpacity onPress={handleLogout} style={styles.quitButton}>
+        <Text style={styles.quitButtonText}>Logout</Text>
+      </TouchableOpacity>
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
+        onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <FlatList
-              data={imageLabels}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handleImagePick(item)} style={styles.modalItem}>
-                  <Text style={styles.modalItemText}>{item}</Text>
+              data={identityOptions}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  onPress={() => handleImagePick(item.value)}
+                  style={styles.modalItem}>
+                  <Text style={styles.modalItemText}>{item.label}</Text>
                 </TouchableOpacity>
               )}
             />
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}>
               <Text style={styles.closeButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
@@ -169,6 +199,22 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontSize: 16,
     fontWeight: '700',
+  },
+  quitButton: {
+    position: 'absolute',
+    bottom: 100,
+    right: 25,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    backgroundColor: '#80B3FF',
+    paddingVertical: 11,
+    paddingHorizontal: 15,
+  },
+  quitButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   imageContainer: {
     marginTop: 20,
@@ -230,27 +276,26 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
-inputContainer: {
-      marginBottom: 20,
-      marginLeft: 20,
-    },
-    inputLabel: {
-      fontFamily: 'Nunito, sans-serif',
-      fontSize: 16,
-      color: '#A8A6A7',
-      fontWeight: '700',
-      marginBottom: 8,
-      marginLeft: 10,
-    },
-    input: {
-      width: '90%',
-      marginHorizontal: 10,
-      borderRadius: 10,
-      borderColor: '#D6D6D6',
-      borderWidth: 1,
-      padding: 10,
-      marginTop: 5
-    },
+
+  inputContainer: {
+    marginBottom: 20,
+    paddingHorizontal: 25,
+  },
+  inputLabel: {
+    fontFamily: 'Nunito, sans-serif',
+    fontSize: 16,
+    color: '#A8A6A7',
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  input: {
+    borderRadius: 10,
+    borderColor: '#D6D6D6',
+    borderWidth: 1,
+    padding: 10,
+    marginTop: 5,
+    zIndex: 1,
+  },
   dropdown: {
     zIndex: 1, // 设置下拉菜单层级高于输入框
     position: 'absolute',

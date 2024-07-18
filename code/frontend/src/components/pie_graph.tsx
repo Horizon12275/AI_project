@@ -1,40 +1,25 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {VictoryPie, VictoryLegend} from 'victory-native';
+import { categoryColors } from '../utils/offline';
 
 // 定义 Props 类型
 interface PieGraphProps {
   data: {x: string; y: number}[];
 }
 
-// 定义颜色范围
-const colorScale = [
-  '#6699ff',
-  '#ff9933',
-  '#ff6666',
-  '#6699ff',
-  '#ff9933',
-  '#ff6666',
-  '#6699ff',
-  '#ff9933',
-  '#ff6666',
-  '#6699ff',
-  '#ff9933',
-  '#ff6666',
-];
-
 const PieGraph: React.FC<PieGraphProps> = ({data}) => {
   // 生成 VictoryLegend 的 data
   const legendData = data.map((item, index) => ({
     name: item.x,
-    symbol: {fill: colorScale[index]},
+    symbol: {fill: categoryColors[index]},
   }));
 
   return (
     <View>
       <View style={styles.pieGraph}>
         <VictoryPie
-          colorScale={colorScale}
+          colorScale={categoryColors}
           padding={70} // 设置页面内边距
           data={data}
           innerRadius={25} // 设置内半径

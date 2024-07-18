@@ -4,28 +4,28 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 const DropdownInput = ({
   data,
-  onSelect,
+  selectedValue,
+  setSelectedValue,
   style,
   placeholder,
 }: {
-  data: {label: string; value: string}[];
-  onSelect: (value: string) => void;
+  data: {label: string; value: number}[];
+  selectedValue: number|null;
+  setSelectedValue: (value: number) => void;
   style?: any;
   placeholder?: string;
 }) => {
-  const [selectedValue, setSelectedValue] = useState(null);
   const [open, setOpen] = useState(false);
 
   const handleSelect = item => {
     setSelectedValue(item.value);
-    onSelect(item.value); // Call the onSelect callback with the selected value
     setOpen(false); // Close the dropdown
   };
 
   return (
     <View style={styles.container}>
       <DropDownPicker
-      autoScroll={true}
+        autoScroll={true}
         open={open}
         value={selectedValue}
         items={data}

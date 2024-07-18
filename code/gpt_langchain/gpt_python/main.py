@@ -10,16 +10,17 @@ app = FastAPI()
 
 # Set OpenAI API key and base URL
 
-api_key = "sk-tcegYgeYLJyxYhzWRdPIxEvLqS8aotCcv35rASiIX79Ke368"
-api_base = "https://api.chatanywhere.tech/v1"
-os.environ["OPENAI_API_KEY"] = api_key
-os.environ["OPENAI_API_BASE"] = api_base
+
+os.environ["OPENAI_API_KEY"] = "sk-yvsgNIK7HzFK6EMwRjmHL8vO03B6ghxCCCTI0h1W6jiaCCov"
+os.environ["OPENAI_API_BASE"] = "https://api.chatanywhere.tech/v1"
 logging.basicConfig(level=logging.INFO)
+
 
 class UserDetails(BaseModel):
     identity: str
     sleep_schedule: str
-    time_management_challenges: str
+    challenge: str
+
 
 class EventDetails(BaseModel):
     title: str
@@ -28,8 +29,10 @@ class EventDetails(BaseModel):
     details: str
     ddl: str
 
+
 class PriorityLevelResponse(BaseModel):
     priority_level: str
+
 
 # Initialize LLM and Memory
 llm = OpenAI(model_name="gpt-3.5-turbo")
@@ -37,15 +40,19 @@ memory = ConversationBufferMemory()
 
 user_memory = {}
 
+
 @app.post("/set_user_details")
 def set_user_details(user: UserDetails):
     user_memory["user_details"] = {
         "identity": user.identity,
         "sleep_schedule": user.sleep_schedule,
-        "time_management_challenges": user.time_management_challenges
+        "challenge": user.challenge,
     }
-    memory.save_context({"user_input": "User details set."}, {"assistant_output": "User details saved."})
+    memory.save_context(
+        {"user_input": "User details set."}, {"assistant_output": "User details saved."}
+    )
     return {"message": "User details set successfully"}
+
 
 @app.post("/generate_priority")
 async def generate_priority(event: EventDetails):
@@ -55,7 +62,7 @@ async def generate_priority(event: EventDetails):
 
     prompt_template = (
         "Given that I am a {identity} with the following sleep schedule: {sleep_schedule}, "
-        "and my main challenges with time management are {time_management_challenges}, generate a priority level, please just answer in a word (high, medium or low) "
+        "and my main challenges with time management are {challenge}, generate a priority level, please just answer in a word (high, medium or low) "
         "for the following event:\n"
         "Title: {title}\n"
         "Category: {category}\n"
@@ -68,12 +75,12 @@ async def generate_priority(event: EventDetails):
     combined_input = {
         "identity": user_details["identity"],
         "sleep_schedule": user_details["sleep_schedule"],
-        "time_management_challenges": user_details["time_management_challenges"],
+        "challenge": user_details["challenge"],
         "title": event.title,
         "category": event.category,
         "location": event.location,
         "details": event.details,
-        "ddl": event.ddl
+        "ddl": event.ddl,
     }
 
     formatted_prompt = prompt_template.format(**combined_input)
@@ -91,6 +98,7 @@ async def generate_priority(event: EventDetails):
     priority_level = result.strip()
     return {"priority_level": priority_level}
 
+
 @app.post("/generate_reminders")
 async def generate_reminders(event: EventDetails):
     user_details = user_memory.get("user_details")
@@ -99,7 +107,7 @@ async def generate_reminders(event: EventDetails):
 
     prompt_template = (
         "I'm a {identity}, and my sleep schedule is {sleep_schedule}. "
-        "The main challenges I face with time management are {time_management_challenges}.\n\n"
+        "The main challenges I face with time management are {challenge}.\n\n"
         "Generate three concise reminders for the following event:\n"
         "Title: {title}\n"
         "Category: {category}\n"
@@ -116,12 +124,12 @@ async def generate_reminders(event: EventDetails):
     combined_input = {
         "identity": user_details["identity"],
         "sleep_schedule": user_details["sleep_schedule"],
-        "time_management_challenges": user_details["time_management_challenges"],
+        "challenge": user_details["challenge"],
         "title": event.title,
         "category": event.category,
         "location": event.location,
         "details": event.details,
-        "ddl": event.ddl
+        "ddl": event.ddl,
     }
 
     formatted_prompt = prompt_template.format(**combined_input)
@@ -138,7 +146,8 @@ async def generate_reminders(event: EventDetails):
 
     reminders = result.strip().split("\n")
     formatted_reminders = [reminder.strip() for reminder in reminders if reminder]
-    return {"reminders": formatted_reminders[:3]}
+    return formatted_reminders[:3]
+
 
 @app.post("/generate_subtasks")
 async def generate_subtasks(event: EventDetails):
@@ -148,7 +157,7 @@ async def generate_subtasks(event: EventDetails):
 
     prompt_template = (
         "I am a {identity}, and my sleep schedule is {sleep_schedule}. "
-        "The main challenges I face with time management are {time_management_challenges}.\n\n"
+        "The main challenges I face with time management are {challenge}.\n\n"
         "Generate three specific subtasks for the following event. Each subtask should include a simple description and a deadline:\n"
         "Title: {title}\n"
         "Category: {category}\n"
@@ -162,12 +171,12 @@ async def generate_subtasks(event: EventDetails):
     combined_input = {
         "identity": user_details["identity"],
         "sleep_schedule": user_details["sleep_schedule"],
-        "time_management_challenges": user_details["time_management_challenges"],
+        "challenge": user_details["challenge"],
         "title": event.title,
         "category": event.category,
         "location": event.location,
         "details": event.details,
-        "ddl": event.ddl
+        "ddl": event.ddl,
     }
 
     formatted_prompt = prompt_template.format(**combined_input)
@@ -184,8 +193,10 @@ async def generate_subtasks(event: EventDetails):
 
     subtasks = result.strip().split("\n")
     formatted_subtasks = [subtask.strip() for subtask in subtasks if subtask]
-    return {"subtasks": formatted_subtasks[:3]}
+    return  formatted_subtasks[:3]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

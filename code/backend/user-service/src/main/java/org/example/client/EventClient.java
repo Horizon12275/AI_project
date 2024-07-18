@@ -19,6 +19,8 @@ public interface EventClient {
     public Result<List<Event>> getEvents(@RequestParam("date") LocalDate date, @RequestParam("uid") int uid);
     @PostMapping("/api/event/add")
     public Result<Event> addEvent(@RequestBody Event event, @RequestParam("uid") int uid);
+    @GetMapping("/api/event/summary")
+    public Result<List<Object>> summary(@RequestParam("start") LocalDate start, @RequestParam("end") LocalDate end, @RequestParam("uid") int uid);
     //Subtask
     @PutMapping("/api/subtask/changeDone/{id}")
     public Result<Subtask> changeDone(@PathVariable("id") int id, @RequestParam("uid") int uid);//传入当前登录用户的uid 用于权限验证 下类似

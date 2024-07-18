@@ -24,5 +24,12 @@ export async function addEvent(event) {
   result = await post(url, event);
   return result;
 }
-
+//获取当前登录用户各个类别的事件的时间占比 返回一个数组
+export async function getSummary(startDate, endDate) {
+  const url = `${PREFIX}/summary?start=${startDate}&end=${endDate}`;
+  let result;
+  
+  result = await get(url);
+  return result;
+}
 

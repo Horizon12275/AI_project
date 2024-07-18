@@ -10,7 +10,7 @@ spring:
   jpa:
     show-sql: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
   application:
     name: user-service
   cloud: # 服务注册

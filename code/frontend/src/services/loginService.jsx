@@ -1,10 +1,10 @@
-import { BASEURL, USERPORT, get, post, postUrlencoded } from "./requestService";
+import {BASEURL, USERPORT, get, post, postUrlencoded} from './requestService';
 const PREFIX = `${BASEURL}:${USERPORT}/api/user`;
 
-export async function login({ username, password }) {
+export async function login({username, password}) {
   const url = `${PREFIX}/login`;
   let result;
-  result = await postUrlencoded(url, { username, password });
+  result = await postUrlencoded(url, {username, password});
   return result;
 }
 
@@ -15,22 +15,13 @@ export async function logout() {
   return result;
 }
 
-export async function register({
-  username,
-  password,
-  email,
-  verificationCode,
-}) {
+export async function register({username, password, email}) {
   const url = `${PREFIX}/register`;
-  try {
-    let result;
-    result = await post(url, { username, password, email, verificationCode });
-    alert("Register successfully!");
-    location.href = "/login";
-  } catch (e) {
-    console.log(e);
-    alert(e);
-  }
+
+  let result;
+  result = await post(url, {username, password, email});
+  alert('Register successfully!');
+  return result;
 }
 
 export async function checkAuth() {
@@ -43,7 +34,7 @@ export async function checkAuth() {
 
 export async function sendCode(email) {
   if (!email) {
-    alert("Please input email address first!");
+    alert('Please input email address first!');
     return;
   }
   const url = `${PREFIX}/sendCode/${email}`;
@@ -51,7 +42,7 @@ export async function sendCode(email) {
   let result;
   try {
     result = await get(url);
-    alert("Verification code sent successfully");
+    alert('Verification code sent successfully');
   } catch (e) {
     alert(e);
   }
