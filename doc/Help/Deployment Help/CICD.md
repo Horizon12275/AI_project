@@ -125,6 +125,6 @@ ENTRYPOINT ["java", "-jar","helloworld-0.0.1-SNAPSHOT.jar"]
 docker pull horizon12275/action-test:latest
 # 停止容器，这里是停止容器，TG-test是容器的名字，这个名字是自己设置的，可以自己设置，不过要和同一行里后面的的docker run的--name名字对应，然后是端口映射、最后是指定镜像运行容器
 docker rm -f TG-test||true&&docker run  --name=TG-test -d -p 8082:8082 horizon12275/action-test:latest
-# 查看容器，
+# 查看容器，并强制删除所有未被任何容器使用的 Docker 镜像，而无需用户确认，这里是为了清理一下镜像，因为每次都会拉取新的镜像，这样会占用很多空间
 docker image prune -af
 ```
