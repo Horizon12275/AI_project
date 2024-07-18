@@ -5,6 +5,7 @@
 - [Enzyme is dead. Now what?](https://dev.tohttps://dev.to/wojtekmaj/enzyme-is-dead-now-what-ekl/)
 - [Time to say goodbye - Enzyme.js](https://www.piotrstaniow.pl/goodbye-enzyme)
 
+所以使用react-native-testing-library。
 但是由于是react-native自带的测试方法，导致第三方库的组件的测试非常困难。
 
 ### 安装依赖
@@ -15,8 +16,10 @@ npm install @testing-library/react-native --save-dev
 ```
 
 ### 生成测试
-测试文件名：例如，若需要测试的组件为My_button.tsx，则对应的测试文件名为My_button.test.tsx，放在__test__文件下。
-![alt text](image1.png)
+测试文件名：例如，若需要测试的组件为My_button.tsx，则对应的测试文件名为My_button.test.tsx，放在__test__文件下。  
+
+![alt text](image1.png)  
+
 一些简单功能的说明来自于官网：
 
 - [@testing-library/react-native - npm](https://www.npmjs.com/package/@testing-library/react-native)
@@ -28,8 +31,10 @@ npm install @testing-library/react-native --save-dev
 ```bash
 npm test -- -u
 ```
-快照文件在__test__/snapshots下。
-![alt text](image2.png)
+快照文件在__test__/snapshots下。  
+
+![alt text](image2.png)  
+
 更多快照测试的内容可以参考官方文档：
 - [快照测试·Jest](https://jestjs.io/docs/snapshot-testing)
 
@@ -43,8 +48,8 @@ npx jest --coverage
 ```bash
 npx jest path/to/the/file --coverage
 ```
-可视化的报告在coverage/lcov-report/utils里面查看，其中index.html为全部的测试报告。
-![alt text](image3.png)
+可视化的报告在coverage/lcov-report/utils里面查看，其中index.html为全部的测试报告。  
+![alt text](image3.png)  
 
 更多关于Jest的内容请参考：
 - [Getting Started·Jest](https://jestjs.io/docs/getting-started)
