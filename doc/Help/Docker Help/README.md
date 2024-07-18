@@ -82,6 +82,24 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
 
+## 设置容器日志大小
+
+```bash
+# vim /etc/docker/daemon.json
+
+{
+"log-driver":"json-file",
+"log-opts": {"max-size":"500m", "max-file":"3"}
+}
+
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+
+- max-size=500m，意味着一个容器日志大小上限是 500M，
+
+- max-file=3，意味着一个容器有三个日志，分别是 id+.json、id+1.json、id+2.json。
+
 ## 也可以不设置，操作示例（根据实际需要替换对应的镜像）：
 
 - 就是在每次操作前面都加上 dockerhub.icu/，然后后面的镜像地址就是 dockerhub 的地址，就是从这个地址源拉取镜像
@@ -147,3 +165,5 @@ https://blog.csdn.net/qq_37688023/article/details/106532101
 - （本地）grafana 通过浏览器 localhost:3000 访问，然后默认账号密码是 admin admin
 
 - （本地）prometheus 通过浏览器 localhost:9090 访问
+
+- docker run -d -p 9100:9100 prom/node-exporter

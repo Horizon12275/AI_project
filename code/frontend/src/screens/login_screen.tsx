@@ -1,55 +1,176 @@
-import * as React from 'react';
 import {
   View,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import Calendar from '../components/calendar';
+import {Form, Input} from '@ant-design/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const InputField = ({label, isPassword}) => (
+import {login, logout} from '../services/loginService';
+import {Alert} from 'react-native';
+import {getOtherUser, getUser} from '../services/userService';
+import {BASEURL, post, postUrlencoded} from '../services/requestService';
+import {useEffect, useState} from 'react';
+
+const InputField = ({
+  label,
+  isPassword,
+  props,
+}: {
+  label: string;
+  isPassword?: boolean;
+  props: any;
+}) => (
   <View style={styles.inputContainer}>
     <Text style={styles.inputLabel}>{label}</Text>
-    <TextInput
-      style={styles.input}
-      secureTextEntry={isPassword}
-      accessibilityLabel={label}
-    />
+    <Form.Item {...props}>
+      <Input
+        style={styles.input}
+        secureTextEntry={isPassword}
+        accessibilityLabel={label}
+      />
+    </Form.Item>
   </View>
 );
 
 function LoginScreen() {
   const navigation = useNavigation();
+  const [form] = Form.useForm();
+  const [isLoging, setIsLoging] = useState(false); //是否正在登录 渲染loading
+
+  useEffect(() => {
+    AsyncStorage.getItem('auth')
+      .then(auth => {
+        if (auth) {
+          const {rememberMe, username, password} = JSON.parse(auth);
+          if (rememberMe) {
+            setIsLoging(true);
+            login({username, password})
+              .then(res => {
+                console.log(res);
+                getUser()
+                  .then(user => {
+                    AsyncStorage.setItem('user', JSON.stringify(user));
+                    setIsLoging(false);
+                    navigation.navigate('Tabs');
+                    //Alert.alert('Welcome back, ' + user.username + '!');
+                  })
+                  .catch(err => console.log(err)); //获取用户信息错误
+              })
+              .catch(err => console.log(err)); //登录错误
+          }
+        }
+      })
+      .catch(
+        error => console.error('Error reading auth from AsyncStorage:', error), //读取auth错误
+      );
+  }, []);
+
+  const onSubmit = () => {
+    form.submit();
+  };
+
+  const handleLogin = async (values: {
+    username: string;
+    password: string;
+    rememberMe: boolean;
+  }) => {
+    login(values)
+      .then(res => {
+        
+        getUser()
+          .then(user => {
+            AsyncStorage.setItem('user', JSON.stringify(user));
+            if (1) {
+              //记住我
+              let auth = {
+                username: values.username,
+                password: values.password,
+                rememberMe: true,
+              };
+              AsyncStorage.setItem('auth', JSON.stringify(auth));
+            }
+            navigation.navigate('Tabs');
+          })
+          .catch(err => console.log(err));
+      })
+      .catch(err => {
+        Alert.alert('Error', err);
+      });
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
-      <View style={styles.formContainer}>
-        <Text style={styles.formInstructions}>
-          Enter your email and password
+      <Modal visible={isLoging} transparent={true}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}>
+          <Text style={{color: '#FFF', fontSize: 20}}>Logging in...</Text>
+        </View>
+      </Modal>
+      <Form
+        onFinish={handleLogin}
+        form={form}
+        initialValues={{
+          email: '',
+          password: '',
+        }}>
+        <Text style={styles.title}>Log In</Text>
+        <View style={styles.formContainer}>
+          <Text style={styles.formInstructions}>
+            Enter your email and password
+          </Text>
+          <InputField
+            label="Email"
+            props={{
+              name: 'username',
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your email!',
+                },
+              ],
+            }}
+          />
+          <InputField
+            label="Password"
+            isPassword
+            props={{
+              name: 'password',
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your password!',
+                },
+              ],
+            }}
+          />
+          <TouchableOpacity>
+            <Text style={styles.forgotPassword}>Forgot password?</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.loginButton} onPress={onSubmit}>
+          <Text style={styles.loginButtonText}>LOGIN</Text>
+        </TouchableOpacity>
+        <Text style={styles.signUpText}>
+          Don't have an account?{' '}
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.signUpLink}>Sign up</Text>
+          </TouchableOpacity>
         </Text>
-        <InputField label="Email" />
-        <InputField label="Password" isPassword />
-        <TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>LOGIN</Text>
-      </TouchableOpacity>
-      <Text style={styles.signUpText}>
-        Don't have an account?{' '}
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.signUpLink}>Sign up</Text>
-        </TouchableOpacity>
-      </Text>
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <View style={styles.divider} />
-      </View>
-      
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <View style={styles.divider} />
+        </View>
+      </Form>
     </View>
   );
 }
@@ -61,6 +182,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     maxWidth: 480,
     width: '100%',
+    height: '100%',
     paddingBottom: 57,
     flexDirection: 'column',
     margin: '0 auto',

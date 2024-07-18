@@ -1,121 +1,209 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    TextInput,
-    ScrollView,
-    Modal } from 'react-native';
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  TextInput,
+  ScrollView,
+  Modal,
+  Alert,
+} from 'react-native';
 import MyButton from '../utils/my_button';
 import Calendar from '../components/calendar';
-import DateSelectBox from '../components/date_select';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import DropdownInput from '../components/dropdown_input';
+import {categoryOptions} from '../utils/offline';
+import {Form, Input} from '@ant-design/react-native';
+import MyHeader from '../components/my_header';
+import {toDate, toTime} from '../utils/date';
+import {addEvent} from '../services/eventService';
 
-
-const InputField = ({ label }) => (
-  <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>{label}</Text>
-        <TextInput
-          style={styles.input}
-          accessibilityLabel={label}
-        />
-      </View>
-);
-
-const TextinputField = ({ label }) => (
+const InputField = ({
+  label,
+  placeholder,
+  props,
+  inputStyle,
+}: {
+  label: string;
+  placeholder?: string;
+  props: any;
+  inputStyle?: any;
+}) => (
   <View style={styles.inputContainer}>
     <Text style={styles.inputLabel}>{label}</Text>
-    <TextInput
-      style={styles.textInput}  // 使用独立的样式
-      textAlignVertical='top'
-      accessibilityLabel={label}
-    />
+    <Form.Item {...props}>
+      <Input
+        style={[styles.input, inputStyle]}
+        accessibilityLabel={label}
+        placeholder={placeholder}
+      />
+    </Form.Item>
   </View>
 );
 
-const CustomDropdown = ({ label, options, onSelect }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(options.find(option => option.selected));
-  const endDate = new Date();
-  const [selectedEndDate, setSelectedEndDate] = useState(endDate);
-  const handleSelect = (option) => {
-    onSelect(option);
-    setSelectedOption(option);
-    setIsOpen(false);
-  };
-
-
-  return (
-    <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>{label}</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setIsOpen(!isOpen)}>
-        <Text>{selectedOption.label}</Text>
-      </TouchableOpacity>
-      {isOpen && (
-        <View style={styles.dropdown}>
-          {options.map(option => (
-            <TouchableOpacity
-              style={styles.dropdownOption}
-              key={option.value}
-              onPress={() => handleSelect(option)}
-            >
-              <Text>{option.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-};
-
-const ddlDate = '2021-01-01';
-
 const AddOnScreen = () => {
-  const categoryOptions = [
-      { label: "Work & study", value: "Work & study", selected: false },
-      { label: "Leisure & Recreation", value: "Leisure & Recreation", selected: false },
-      { label: "Sports", value: "Sports", selected: true },
-      { label: "Family & Socializing", value: "Family & Socializing", selected: false },
-      { label: "Personal Development", value: "Personal Development", selected: false },
-      { label: "Daily Living", value: "Daily Living", selected: false }
-  ];
-
-  const handleCategorySelect = (option) => {
-    // Handle the selected location option
-    console.log('Selected Category: ', option.label);
-  };
-
-
-
-  const ddlDate = new Date();
-  const [selectedDdlDate, setSelectedDdlDate] = useState(ddlDate);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
+  const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+  const [category, setCategory] = useState(0);
+  const [startTime, setStartTime] = useState<null | Date>(null);
+  const [endTime, setEndTime] = useState<null | Date>(null);
+  const [ddlDate, setDdlDate] = useState(new Date());
+  const [form] = Form.useForm();
 
+  useEffect(() => {}, [ddlDate, startTime, endTime]);
+
+  const onSubmit = () => {
+    form.submit();
+  };
+  const handleSave = (values: any) => {
+    if (startTime) values.startTime = toTime(startTime);
+    if (endTime) values.endTime = toTime(endTime);
+    values.date = toDate(ddlDate);
+    values.category = category;
+    values.subtasks = [];
+    console.log(values);
+    addEvent(values)
+      .then(() => {
+        Alert.alert('Success', 'Event added successfully');
+      })
+      .catch(err => {
+        Alert.alert('Error', err);
+      });
+  };
   return (
-    <ScrollView style={{ backgroundColor: 'white', height: '100%' }}>
-      <View style={styles.container}>
-        <Text style={styles.titleText}>New Schedule</Text>
-      </View>
-
-      <InputField label="Title" />
-
-      <InputField label="Location" />
-
-      <CustomDropdown label="Category" options={categoryOptions} onSelect={handleCategorySelect} />
-
-      <TextinputField label="Details" />
-
-      <View style={styles.container}>
-            <Text style={styles.text}>DDL:        {selectedDdlDate.toDateString()}</Text>
-      </View>
-
-      <MyButton
-          icon={require('../assets/icons/time-select.png')}
-          onPress={() => setShowCalendar(!showCalendar)}
-          style={styles.timeZoneIcon}
-      />
-
-      {showCalendar && (
+    <Form onFinish={handleSave} form={form}>
+      <MyHeader onSave={onSubmit} />
+      <View
+        style={{
+          backgroundColor: '#fff',
+          height: '100%',
+          padding: 20,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+        }}>
+        <View style={styles.container}>
+          <Text style={styles.titleText}>New Schedule</Text>
+        </View>
+        <InputField
+          label="Title"
+          props={{
+            name: 'title',
+            rules: [
+              {
+                required: true,
+                message: 'Please input the title!',
+              },
+            ],
+          }}
+        />
+        <InputField
+          label="Location"
+          props={{
+            name: 'location',
+            rules: [
+              {
+                required: true,
+                message: 'Please input the location!',
+              },
+            ],
+          }}
+        />
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>Category</Text>
+          <DropdownInput
+            data={categoryOptions}
+            selectedValue={category}
+            setSelectedValue={setCategory}
+            style={styles.input}
+            placeholder="Select a category"
+          />
+        </View>
+        <InputField
+          label="Details"
+          props={{
+            name: 'details',
+            rules: [
+              {
+                required: true,
+                message: 'Please input the details!',
+              },
+            ],
+          }}
+          inputStyle={styles.textInput}
+        />
+        <View style={styles.ddlContainer}>
+          <View style={styles.textContainer}>
+            <Text style={styles.ddlText}>DDL</Text>
+            <Text style={styles.dateText}>
+              {`${toDate(ddlDate)}  `}
+              {startTime &&
+                endTime &&
+                `${toTime(startTime)}~${toTime(endTime)}`}
+            </Text>
+          </View>
+          <MyButton
+            icon={require('../assets/icons/time-select.png')}
+            onPress={() => setShowCalendar(!showCalendar)}
+            style={styles.timeZoneIcon}
+            buttonStyle={styles.timeZoneButton}
+          />
+        </View>
+        <View style={styles.timeSelectContainer}>
+          {showStartTimePicker && (
+            <RNDateTimePicker
+              mode="time"
+              display="clock"
+              value={startTime || new Date()}
+              onChange={(event, selectedDate) => {
+                if (endTime && selectedDate > endTime) {
+                  Alert.alert(
+                    'Error',
+                    'Start time should be earlier than end time',
+                  );
+                  setShowStartTimePicker(false);
+                  return;
+                }
+                setStartTime(selectedDate || startTime);
+                if(!endTime) setEndTime(selectedDate || startTime);
+                setShowStartTimePicker(false);
+              }}
+            />
+          )}
+          {showEndTimePicker && (
+            <RNDateTimePicker
+              mode="time"
+              display="clock"
+              value={endTime || new Date()}
+              onChange={(event, selectedDate) => {
+                if (startTime && selectedDate < startTime) {
+                  Alert.alert(
+                    'Error',
+                    'End time should be later than start time',
+                  );
+                  setShowEndTimePicker(false);
+                  return;
+                }
+                setEndTime(selectedDate || endTime);
+                if(!startTime) setStartTime(selectedDate || endTime);
+                setShowEndTimePicker(false);
+              }}
+            />
+          )}
+          <TouchableOpacity
+            style={styles.startButton}
+            onPress={() => setShowStartTimePicker(true)}>
+            <Text style={styles.startButtonText}>Start Time</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.startButton}
+            onPress={() => setShowEndTimePicker(true)}>
+            <Text style={styles.startButtonText}>End Time</Text>
+          </TouchableOpacity>
+        </View>
+        {showCalendar && (
           <Modal
             animationType="fade" // 动画效果
             transparent={true} // 透明背景
@@ -125,10 +213,7 @@ const AddOnScreen = () => {
             }}>
             <View style={styles.modalView}>
               <Text style={styles.calendarSpanTitle}>DDL Date</Text>
-              <Calendar
-                selectedDate={selectedDdlDate}
-                setSelectedDate={setSelectedDdlDate}
-              />
+              <Calendar selectedDate={ddlDate} setSelectedDate={setDdlDate} />
               <TouchableOpacity
                 onPress={() => setShowCalendar(!showCalendar)}
                 style={styles.doneButton}>
@@ -137,104 +222,80 @@ const AddOnScreen = () => {
             </View>
           </Modal>
         )}
-
-      <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
+        {/* <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
         <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </TouchableOpacity> */}
+      </View>
+    </Form>
   );
 };
 
 const styles = StyleSheet.create({
-   container: {
-      padding: 25,
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    titleText: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: 32,
-      fontWeight: '700',
-      color: '#000',
-    },
-    saveButton: {
-      position: 'absolute',
-      bottom: 15,
-      alignSelf: 'center',
-      width: '90%',
-      marginHorizontal: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 15,
-      backgroundColor: '#80B3FF',
-      paddingVertical: 11,
-      paddingHorizontal: 15,
-    },
-    saveButtonText: {
-      color: '#000',
-      fontFamily: 'Inter',
-      fontSize: 16,
-      fontWeight: '700',
-    },
-    inputContainer: {
-      marginBottom: 20,
-      marginLeft: 20,
-    },
-    inputLabel: {
-      fontFamily: 'Nunito, sans-serif',
-      fontSize: 16,
-      color: '#A8A6A7',
-      fontWeight: '700',
-      marginBottom: 8,
-      marginLeft: 10,
-    },
-    input: {
-      width: '90%',
-      marginHorizontal: 10,
-      borderRadius: 10,
-      borderColor: '#D6D6D6',
-      borderWidth: 1,
-      padding: 10,
-      marginTop: 5
-    },
-  dropdown: {
-    zIndex: 1, // 设置下拉菜单层级高于输入框
+  container: {
+    marginBottom: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  titleText: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#000',
+  },
+  saveButton: {
     position: 'absolute',
-    top: 50,
-    left: 0,
-    right: 0,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  dropdownOption: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  textInput: {
-    width: '90%',
+    bottom: 0,
+    alignSelf: 'center',
     marginHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    backgroundColor: '#80B3FF',
+    paddingVertical: 11,
+  },
+  saveButtonText: {
+    color: '#000',
+    fontFamily: 'Inter',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  inputContainer: {
+    gap: 5,
+  },
+  inputLabel: {
+    fontFamily: 'Nunito, sans-serif',
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '300',
+  },
+  input: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
-    padding: 10,
+    paddingHorizontal: 10,
+  },
+  textInput: {
+    borderRadius: 10,
+    borderColor: '#D6D6D6',
+    borderWidth: 1,
     marginTop: 5,
-    height: 200,  // 自定义文本输入框高度
+    height: 200, // 自定义文本输入框高度
   },
   timeZoneIcon: {
-    height: 29,
-    width: 45,
-    marginLeft:30,
+    height: 40,
+  },
+  timeZoneButton: {
+    backgroundColor: '#80B3FF',
+    height: 65,
+    width: 73,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   doneButton: {
     backgroundColor: '#4A90E2',
-    borderRadius: 20,
-    width: '90%',
-    margin: 10,
   },
   doneButtonText: {
     color: 'white',
@@ -243,19 +304,48 @@ const styles = StyleSheet.create({
     padding: 3,
     textAlign: 'center',
   },
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft:30,
-    marginBottom:20,
-  },
   textContainer: {
     flex: 1,
   },
-  text: {
-    fontSize: 18, // 设置字体大小为 18
-    fontWeight: 'bold', // 设置字体加粗
-    textAlign: 'right',
+  ddlText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  dateText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#80B3FF',
+  },
+  ddlContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 30,
+  },
+  timeSelectContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  startButton: {
+    justifyContent: 'center',
+    alignItems: 'stretch',
+    borderRadius: 8,
+    backgroundColor: 'rgba(10, 132, 255, 0.15)',
+    paddingVertical: 10,
+    paddingHorizontal: 40,
+  },
+  startButtonText: {
+    color: '#0A84FF',
+    textAlign: 'center',
+    fontWeight: '800',
+    fontSize: 17,
+    lineHeight: 22,
+    fontFamily: 'Inter, sans-serif',
   },
 });
 

@@ -2,37 +2,6 @@ import React, {useState} from 'react';
 import {View, StyleSheet, Image, Text} from 'react-native';
 import MyButton from '../utils/my_button';
 
-type ChecklistItemProps = {
-  title: string;
-  dueDate: string;
-  isCompleted?: boolean;
-};
-
-const ChecklistItem: React.FC<ChecklistItemProps> = ({
-  title,
-  dueDate,
-  isCompleted = false,
-}) => (
-  <View style={styles.checklistItemContainer}>
-    <View style={styles.checklistItemContent}>
-      <View style={styles.checkboxContainer}>
-        <View
-          style={[styles.checkbox, isCompleted && styles.checkboxCompleted]}
-        />
-      </View>
-      <Text
-        style={[
-          styles.checklistItemTitle,
-          isCompleted && styles.completedText,
-        ]}>
-        {title}
-      </Text>
-    </View>
-    <Text style={[styles.dueDate, isCompleted && styles.completedText]}>
-      Due: {dueDate}
-    </Text>
-  </View>
-);
 
 type TaskItemProps = {
   title: string;

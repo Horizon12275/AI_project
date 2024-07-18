@@ -20,7 +20,7 @@ const Divider = ({
 }: dividerProps) => {
   const containerStyles = [
     {
-      height: height || 1,
+      height: height || '100%',
       borderColor: color,
       borderWidth: thickness || 1,
     },

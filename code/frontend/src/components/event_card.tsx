@@ -1,162 +1,224 @@
-import * as React from 'react';
-import {View, StyleSheet, Image, Text} from 'react-native';
+import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 import Divider from './divider';
 import MyButton from '../utils/my_button';
+import {categoryColors} from '../utils/offline';
+import {changeSubtaskDone, deleteSubtask} from '../services/subtaskService';
+import {useEffect, useState} from 'react';
 
-type ScheduleItemProps = {
+type eventProps = {
+  id: number;
   startTime: string;
   endTime: string;
   title: string;
   location: string;
-  iconUri: string;
-  color: string;
-  additionalInfo?: {
-    text: string;
-    count?: number;
-  };
+  subtasks: Array<{
+    id: number;
+    content: string;
+    ddl: string;
+    done: boolean;
+  }>;
 };
 
-const ScheduleItem: React.FC<ScheduleItemProps> = ({
-  startTime,
-  endTime,
-  title,
-  location,
-  color,
-  additionalInfo,
+const EventCard = ({
+  isEditing,
+  setIsEditing,
+  event,
+}: {
+  isEditing: number;
+  setIsEditing: (isEditing: number) => void;
+  event: eventProps;
 }) => {
+  const [refresh, setRefresh] = useState(0); //setEvent逻辑太麻烦 偷懒使用refresh手动刷新渲染
+  useEffect(() => {}, [refresh]);
+
+  const handleExpand = () => {
+    if (isEditing === event.id) {
+      setIsEditing(-1);
+    } else {
+      setIsEditing(event.id);
+    }
+  };
+
+  const handleCheck = (sid: number) => {
+    changeSubtaskDone(sid)
+      .then(() => {
+        const eventIndex = event.subtasks.findIndex(
+          subtask => subtask.id === sid,
+        );
+        const newSubtasks = [...event.subtasks];
+        newSubtasks[eventIndex].done = !newSubtasks[eventIndex].done;
+        event.subtasks = newSubtasks;
+        setRefresh(refresh + 1);
+      })
+      .catch(error => console.log(error));
+  };
+
+  const handleDelete = (sid: number) => {
+    deleteSubtask(sid)
+      .then(() => {
+        const newSubtasks = event.subtasks.filter(
+          subtask => subtask.id !== sid,
+        );
+        event.subtasks = newSubtasks;
+        setRefresh(refresh + 1);
+      })
+      .catch(error => console.log(error));
+  };
+
+  const color = categoryColors[event.id % 6];
   return (
     <View style={styles.scheduleItemContainer}>
       <View style={styles.timeContainer}>
         <MyButton
-          icon={require('../assets/icons/right-arrow.png')}
-          onPress={() => {}}
+          icon={
+            isEditing === event.id
+              ? require('../assets/icons/down-arrow.png')
+              : require('../assets/icons/right-arrow.png')
+          }
+          onPress={handleExpand}
           style={styles.icon}
         />
         <View style={styles.iconWrapper}>
           <View style={styles.startTimeWrapper}>
-            <Text>{startTime}</Text>
+            <Text>{event.startTime}</Text>
           </View>
           <View style={styles.endTimeWrapper}>
-            <Text>{endTime}</Text>
+            <Text>{event.endTime}</Text>
           </View>
         </View>
       </View>
-      <Divider
-        height={50}
-        direction="vertical"
-        color={color}
-        marginHorizontal={15}
-      />
+      <Divider direction="vertical" color={color} marginHorizontal={15} />
       <View style={styles.contentContainer}>
         <View style={styles.titleWrapper}>
-          <Text style={[styles.title, {color}]}>{title}</Text>
+          <Text style={[styles.title, {color}]}>{event.title}</Text>
         </View>
         <View style={styles.detailsWrapper}>
           <View style={styles.locationWrapper}>
-            <Text>{location}</Text>
+            <Text>{event.location}</Text>
           </View>
-          {additionalInfo && (
+          {/* {event.subtasks.length && (
             <View style={styles.additionalInfoWrapper}>
-              <Divider
-                height={15}
-                color="black"
-                thickness={0.5}
-                marginHorizontal={6}
-              />
-              {additionalInfo.count && (
+              <Divider color="black" thickness={0.5} marginHorizontal={6} />
+              {event.subtasks.length && (
                 <View style={styles.countBadge}>
-                  <Text style={styles.countText}>{additionalInfo.count}</Text>
+                  <Text style={styles.countText}>{event.subtasks.length}</Text>
                 </View>
               )}
-              <View style={styles.additionalInfoTextWrapper}>
-                <Text>{additionalInfo.text}</Text>
+              {event.subtasks.map((subtask, index) => (
+                <View key={index} style={styles.additionalInfoTextWrapper}>
+                  <Text>{subtask.content}</Text>
+                </View>
+              ))}
+
+            </View>
+          )} */}
+        </View>
+        {isEditing === event.id && event.subtasks.length > 0 && (
+          <View style={styles.checklistWrapper}>
+            <View style={styles.checklistHeader}>
+              <Text style={styles.checklist}>Checklists</Text>
+            </View>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: 8,
+                marginTop: 10,
+              }}>
+              {event.subtasks.map((subtask, index) => (
+                <View key={index}>
+                  <View style={styles.taskItemContainer}>
+                    <MyButton
+                      icon={
+                        subtask.done
+                          ? require('../assets/icons/checked.png')
+                          : require('../assets/icons/checkbox.png')
+                      }
+                      style={styles.taskIcon}
+                      onPress={() => handleCheck(subtask.id)}
+                    />
+                    <Text
+                      style={[
+                        styles.taskTitle,
+                        subtask.done && styles.completedText,
+                      ]}
+                      numberOfLines={2}
+                      ellipsizeMode="tail">
+                      {subtask.content}
+                    </Text>
+                    <MyButton
+                      icon={require('../assets/icons/delete.png')}
+                      onPress={() => handleDelete(subtask.id)}
+                      style={styles.deleteIcon}
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.dueDate,
+                      subtask.done && styles.completedText,
+                    ]}>
+                    {`DUE: ${subtask.ddl}`}
+                  </Text>
+                </View>
+              ))}
+              <View style={styles.buttonWrapper}>
+                <TouchableOpacity
+                  style={[styles.button, styles.secondaryButton]}>
+                  <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.primaryButton]}>
+                  <Text style={[styles.buttonText, styles.primaryButtonText]}>
+                    + Checklist
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
-          )}
-        </View>
+          </View>
+        )}
       </View>
     </View>
-  );
-};
-
-const MyComponent: React.FC = () => {
-  const scheduleItems: ScheduleItemProps[] = [
-    {
-      startTime: '09:10 AM',
-      endTime: '10:00 AM',
-      title: 'Class- Principles Macroeconomics',
-      location: 'Business School Hall',
-      iconUri:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/a833a46bfbd76b3e6f6000c822ddfa0b41cf1a62624c8bfb011714b0576e71c4?apiKey=9e661a5e0ad74c878ca984d592b3752c&',
-      color: '#4AD2C9',
-      additionalInfo: {
-        text: 'Uncompleted checklist',
-        count: 1,
-      },
-    },
-    {
-      startTime: '10:10 AM',
-      endTime: '11:00 AM',
-      title: 'Meeting- Presentation on LLM',
-      location: 'Zoom',
-      iconUri:
-        'https://cdn.builder.io/api/v1/image/assets/TEMP/a833a46bfbd76b3e6f6000c822ddfa0b41cf1a62624c8bfb011714b0576e71c4?apiKey=9e661a5e0ad74c878ca984d592b3752c&',
-      color: '#C44EFB',
-    },
-  ];
-
-  return (
-    <>
-      <ScheduleItem {...scheduleItems[0]} />
-      <ScheduleItem {...scheduleItems[1]} />
-    </>
   );
 };
 
 const styles = StyleSheet.create({
   scheduleItemContainer: {
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 10,
     backgroundColor: 'rgba(235, 235, 245, 0.60)',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 16,
+    padding: 12,
     marginBottom: 24,
+    marginHorizontal: 16,
+    minHeight: 80,
   },
   timeContainer: {
-    alignItems: 'stretch',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    fontSize: 12,
     color: '#010618',
-    fontWeight: '400',
+    height: '100%',
   },
   iconWrapper: {
-    alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',
-    gap: 4,
+    justifyContent: 'space-between',
   },
   icon: {
-    width: 18,
+    height: 18,
     aspectRatio: 1,
   },
   startTimeWrapper: {
     fontFamily: 'Inter, sans-serif',
   },
   endTimeWrapper: {
-    textAlign: 'right',
     fontFamily: 'Inter, sans-serif',
   },
   contentContainer: {
-    alignItems: 'stretch',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
     flex: 1,
-    marginTop: 8,
   },
   titleWrapper: {
     alignItems: 'stretch',
@@ -164,7 +226,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '700',
   },
   detailsWrapper: {
@@ -183,7 +245,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
-
   countBadge: {
     fontFamily: 'Inter, sans-serif',
     backgroundColor: '#3083FD',
@@ -202,6 +263,96 @@ const styles = StyleSheet.create({
     color: '#010618',
     fontFamily: 'Inter, sans-serif',
   },
+  checklist: {
+    color: 'black',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  checklistWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 12,
+  },
+  checklistHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tasksContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  taskItemContainer: {
+    alignItems: 'center',
+    borderRadius: 4,
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 8,
+    flex: 1,
+  },
+
+  taskIcon: {
+    width: 24,
+    height: 24,
+  },
+  deleteIcon: {
+    width: 16,
+    height: 16,
+    marginHorizontal: 4,
+  },
+  taskTitle: {
+    color: '#010618',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: 16,
+    fontWeight: '400',
+    flex: 1,
+  },
+  dueDate: {
+    color: '#21283F',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: 13,
+    fontWeight: '400',
+  },
+  completedText: {
+    textDecorationLine: 'line-through',
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'stretch',
+    borderRadius: 4,
+    display: 'flex',
+    flexDirection: 'column',
+    paddingHorizontal: 16,
+    height: 40,
+  },
+  primaryButton: {
+    backgroundColor: '#80B3FF',
+  },
+  secondaryButton: {
+    borderColor: 'rgba(128, 179, 255, 1)',
+    borderStyle: 'solid',
+    borderWidth: 2,
+  },
+  buttonText: {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: 14,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  primaryButtonText: {
+    color: '#010618',
+  },
+  secondaryButtonText: {
+    color: '#010618',
+  },
+  buttonWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginTop: 8,
+    gap: 8,
+  },
 });
 
-export default MyComponent;
+export default EventCard;

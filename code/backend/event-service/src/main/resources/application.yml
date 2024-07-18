@@ -1,0 +1,21 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:postgresql://aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres?prepareThreshold=0
+    username: postgres.eykpwvioyepjiomiuuey
+    password: timegenie@sjtu
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  application:
+    name: event-service
+  cloud: # 服务注册
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
