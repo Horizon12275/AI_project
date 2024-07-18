@@ -47,3 +47,5 @@
 - 下载了新的包 android 这里要重新启动 npm start --reset-cache 重新 build 不然会报错
 
 - ios 可能在数据页面（用了组件库）会出现"RNSVGRect" was not found in the UIManager.的问题、好像要手动链接：https://github.com/software-mansion/react-native-svg/issues/749
+
+- 重新启动的时候会有一个小问题、因为 nacos 要求我设置 JAVA_HOME 环境变量、所以我设置了 JAVA_HOME 环境变量、但是我发现我设置了 JAVA_HOME 环境变量之后、react-native run-android 就会报错、所以我把 JAVA_HOME 环境变量删掉就好了，这样就能重新编译带有 async-storage 的项目了，然后 npm start --reset-cache

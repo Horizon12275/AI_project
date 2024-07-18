@@ -275,6 +275,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     gap: 5,
+    justifyContent: 'center',
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
@@ -287,13 +288,14 @@ const styles = StyleSheet.create({
     borderColor: '#D6D6D6',
     borderWidth: 1,
     paddingHorizontal: 10,
+    width: '100%',
   },
   textInput: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     marginTop: 5,
-    height: 200, // 自定义文本输入框高度
+    height: 80, // 自定义文本输入框高度
   },
   timeZoneIcon: {
     height: 40,
@@ -308,6 +310,9 @@ const styles = StyleSheet.create({
   },
   doneButton: {
     backgroundColor: '#4A90E2',
+    borderRadius: 20,
+    width: '90%',
+    margin: 10,
   },
   doneButtonText: {
     color: 'white',
@@ -358,6 +363,28 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 22,
     fontFamily: 'Inter, sans-serif',
+  },
+  modalView: {
+    marginTop: 200,
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 50,
+  },
+  calendarSpanTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#010618',
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 

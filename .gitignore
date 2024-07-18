@@ -26,3 +26,4 @@ replay_pid*
 .DS_Store
 /code/backend/nacos
 .env
+/__pycache__
