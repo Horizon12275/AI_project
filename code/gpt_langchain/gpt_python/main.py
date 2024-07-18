@@ -11,8 +11,8 @@ app = FastAPI()
 # Set OpenAI API key and base URL
 
 
-os.environ["OPENAI_API_KEY"] = "sk-yvsgNIK7HzFK6EMwRjmHL8vO03B6ghxCCCTI0h1W6jiaCCov"
-os.environ["OPENAI_API_BASE"] = "https://api.chatanywhere.tech/v1"
+os.environ["OPENAI_API_KEY"] = "sk-XysyZtmVqlQayx6tD75eBc6705B5426fA9F422Ad2a38D44c"
+os.environ["OPENAI_API_BASE"] = "https://api.openai-hub.com/v1"
 logging.basicConfig(level=logging.INFO)
 
 
@@ -51,7 +51,9 @@ def set_user_details(user: UserDetails):
     memory.save_context(
         {"user_input": "User details set."}, {"assistant_output": "User details saved."}
     )
-    return {"message": "User details set successfully"}
+    response = {"message": "User details set successfully"}
+    print(response)  # 打印返回的内容
+    return response
 
 
 @app.post("/generate_priority")
@@ -95,8 +97,19 @@ async def generate_priority(event: EventDetails):
         logging.error(f"Error in llm invoke: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-    priority_level = result.strip()
-    return {"priority_level": priority_level}
+    priority_level = result.strip().lower()
+
+    if "high" in priority_level:
+        priority = "high"
+    elif "medium" in priority_level:
+        priority = "medium"
+    elif "low" in priority_level:
+        priority = "low"
+    else:
+        priority = "unknown"  # 或者你可以抛出一个错误
+
+    print(priority)  # 打印返回的内容
+    return priority
 
 
 @app.post("/generate_reminders")
@@ -108,13 +121,13 @@ async def generate_reminders(event: EventDetails):
     prompt_template = (
         "I'm a {identity}, and my sleep schedule is {sleep_schedule}. "
         "The main challenges I face with time management are {challenge}.\n\n"
-        "Generate three concise reminders for the following event:\n"
+        "Generate three concise reminders for the following event: each one in a line\n"
         "Title: {title}\n"
         "Category: {category}\n"
         "Location: {location}\n"
         "Details: {details}\n"
-        "Deadline: {ddl}\n\n"
-        "Reminders can include:\n"
+        "Deadline: {ddl}\n"
+        "Reminders can consider include:\n"
         "- Things to bring\n"
         "- Appropriate attire\n"
         "- Important things to note\n\n"
@@ -145,8 +158,10 @@ async def generate_reminders(event: EventDetails):
         raise HTTPException(status_code=500, detail=str(e))
 
     reminders = result.strip().split("\n")
-    formatted_reminders = [reminder.strip() for reminder in reminders if reminder]
+    formatted_reminders = [{ reminder.strip()} for reminder in reminders if reminder]
+    print(formatted_reminders[:3])  # 打印返回的内容
     return formatted_reminders[:3]
+
 
 
 @app.post("/generate_subtasks")
@@ -158,7 +173,7 @@ async def generate_subtasks(event: EventDetails):
     prompt_template = (
         "I am a {identity}, and my sleep schedule is {sleep_schedule}. "
         "The main challenges I face with time management are {challenge}.\n\n"
-        "Generate three specific subtasks for the following event. Each subtask should include a simple description and a deadline:\n"
+        "Generate three specific subtasks for the following event. Each subtask should follow the format strictly. Each subtask in a line:\n"
         "Title: {title}\n"
         "Category: {category}\n"
         "Location: {location}\n"
@@ -192,8 +207,16 @@ async def generate_subtasks(event: EventDetails):
         raise HTTPException(status_code=500, detail=str(e))
 
     subtasks = result.strip().split("\n")
-    formatted_subtasks = [subtask.strip() for subtask in subtasks if subtask]
-    return  formatted_subtasks[:3]
+    formatted_subtasks = []
+    for subtask in subtasks:
+        if subtask:
+            parts = subtask.split(" - Deadline: ")
+            if len(parts) == 2:
+                content, ddl = parts
+                formatted_subtasks.append({"content": content.strip(), "ddl": ddl.strip()})
+
+    print(formatted_subtasks[:3])  # 打印返回的内容
+    return formatted_subtasks[:3]
 
 
 if __name__ == "__main__":
