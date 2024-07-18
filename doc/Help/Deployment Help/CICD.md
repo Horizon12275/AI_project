@@ -173,3 +173,7 @@ docker logs -f event-service
     </plugins>
 </build>
 ```
+
+- 注入环境变量到配置文件的方法如下：
+
+- 要开放服务器的 nacos 的 9848 端口，否则无法注册服务
