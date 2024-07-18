@@ -144,3 +144,5 @@ docker image prune -af
       run: |
         ./.github/scripts/set_env.sh
 ```
+
+- 文件夹中的路径名有时可能会错误、要注意是中折线-还是下划线\_

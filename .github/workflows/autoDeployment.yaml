@@ -80,8 +80,8 @@ jobs:
             cd ./scripts
             sh user-service.sh
             sh event-service.sh
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_1 }}
           user: ${{ secrets.USER }}
-          key: ${{ secrets.PRIVATE_KEY}}
+          key: ${{ secrets.PRIVATE_KEY_1}}
           # 添加args参数，可以看到更多的报错信息
           args: "-tt -vvv"
