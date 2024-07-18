@@ -132,3 +132,15 @@ docker image prune -af
 ### 具体操作流程（微服务）
 
 - 大体流程和上面差不多，就是有几个细节要改一下
+
+- 如果要用 github action 运行脚本的话，需要提前给这个 sh 文件权限，如下所示（不过这里没有用到脚本运行）
+
+```shell
+      # 让接下来要运行的脚本文件具有执行权限
+    - name: Make the script files executable
+      run: chmod +x ./.github/scripts/set_env.sh
+    # 运行提前准备好的脚本、设置环境变量
+    - name: Set up environment variables
+      run: |
+        ./.github/scripts/set_env.sh
+```

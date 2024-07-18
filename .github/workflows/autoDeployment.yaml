@@ -27,13 +27,19 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      # 让接下来要运行的脚本文件具有执行权限
-      - name: Make the script files executable
-        run: chmod +x ./.github/scripts/set_env.sh
-      # 运行提前准备好的脚本、设置环境变量
+      # 设置环境变量
       - name: Set up environment variables
         run: |
-          ./.github/scripts/set_env.sh
+          export DB1_URL=${{secrets.DB1_URL}}
+          export DB1_USERNAME=${{secrets.DB1_USERNAME}}
+          export DB1_PASSWORD=${{secrets.DB1_PASSWORD}}
+          export DB2_URL=${{secrets.DB2_URL}}
+          export DB2_USERNAME=${{secrets.DB2_USERNAME}}
+          export DB2_PASSWORD=${{secrets.DB2_PASSWORD}}
+          export NACOS_SERVER_ADDR=${{secrets.NACOS_SERVER_ADDR}}
+          export USER_SERVICE_PORT=${{secrets.USER_SERVICE_PORT}}
+          export EVENT_SERVICE_PORT=${{secrets.EVENT_SERVICE_PORT}}
+          export USER_SERVER_IP=${{secrets.USER_SERVER_IP}}
       # 编译打包
       - name: Build with Maven
         run: |
