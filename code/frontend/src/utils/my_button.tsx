@@ -24,6 +24,9 @@ const MyButton = ({
     <TouchableOpacity onPress={onPress} style={buttonStyle} testID={testID} >
       <Image source={icon} style={style}  testID="image-button"/>
     </TouchableOpacity>
+//     <TouchableOpacity onPress={onPress} style={buttonStyle} testID="my-button">
+//       <Image source={icon} style={style} testID="image-button" />
+//     </TouchableOpacity>
   );
 };
 
