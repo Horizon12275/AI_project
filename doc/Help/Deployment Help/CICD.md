@@ -18,7 +18,7 @@
 
 - 遇到的一个小问题：就是在 github action 用 ssh 登录的时候、环境变量里存的私钥直接 ctrl + a 复制就可以了 因为需要保留最上面的 -----BEGIN OPENSSH PRIVATE KEY----- 和最下面的 -----END OPENSSH PRIVATE KEY----- 两行。。
 
-### 具体流程
+### 示例流程
 
 1. 对应的仓库里面创建一个 .github/workflows 文件夹，里面创建一个 yaml 文件，比如 test.yaml
 
@@ -128,3 +128,5 @@ docker rm -f TG-test||true&&docker run  --name=TG-test -d -p 8082:8082 horizon12
 # 查看容器，并强制删除所有未被任何容器使用的 Docker 镜像，而无需用户确认，这里是为了清理一下镜像，因为每次都会拉取新的镜像，这样会占用很多空间
 docker image prune -af
 ```
+
+### 具体操作流程（微服务）
