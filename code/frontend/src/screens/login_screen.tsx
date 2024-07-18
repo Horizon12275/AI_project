@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Form, Input} from '@ant-design/react-native';
@@ -13,10 +14,17 @@ import {login, logout} from '../services/loginService';
 import {Alert} from 'react-native';
 import {getOtherUser, getUser} from '../services/userService';
 import {BASEURL, post, postUrlencoded} from '../services/requestService';
+import {useEffect, useState} from 'react';
 
-const InputField = ({label, isPassword, props}:
-  {label: string; isPassword?: boolean; props: any}
-) => (
+const InputField = ({
+  label,
+  isPassword,
+  props,
+}: {
+  label: string;
+  isPassword?: boolean;
+  props: any;
+}) => (
   <View style={styles.inputContainer}>
     <Text style={styles.inputLabel}>{label}</Text>
     <Form.Item {...props}>
@@ -32,25 +40,60 @@ const InputField = ({label, isPassword, props}:
 function LoginScreen() {
   const navigation = useNavigation();
   const [form] = Form.useForm();
+  const [isLoging, setIsLoging] = useState(false); //是否正在登录 渲染loading
+
+  useEffect(() => {
+    AsyncStorage.getItem('auth')
+      .then(auth => {
+        if (auth) {
+          const {rememberMe, username, password} = JSON.parse(auth);
+          if (rememberMe) {
+            setIsLoging(true);
+            login({username, password})
+              .then(res => {
+                console.log(res);
+                getUser()
+                  .then(user => {
+                    AsyncStorage.setItem('user', JSON.stringify(user));
+                    setIsLoging(false);
+                    navigation.navigate('Tabs');
+                    //Alert.alert('Welcome back, ' + user.username + '!');
+                  })
+                  .catch(err => console.log(err)); //获取用户信息错误
+              })
+              .catch(err => console.log(err)); //登录错误
+          }
+        }
+      })
+      .catch(
+        error => console.error('Error reading auth from AsyncStorage:', error), //读取auth错误
+      );
+  }, []);
+
   const onSubmit = () => {
     form.submit();
   };
-  const handleLogin = async values => {
-    if (1) {
-      //记住我
-      let auth = {
-        username: values.username,
-        password: values.password,
-        rememberMe: true,
-      };
-      AsyncStorage.setItem('auth', JSON.stringify(auth));
-    }
-    
+
+  const handleLogin = async (values: {
+    username: string;
+    password: string;
+    rememberMe: boolean;
+  }) => {
     login(values)
       .then(res => {
+        
         getUser()
           .then(user => {
             AsyncStorage.setItem('user', JSON.stringify(user));
+            if (1) {
+              //记住我
+              let auth = {
+                username: values.username,
+                password: values.password,
+                rememberMe: true,
+              };
+              AsyncStorage.setItem('auth', JSON.stringify(auth));
+            }
             navigation.navigate('Tabs');
           })
           .catch(err => console.log(err));
@@ -62,6 +105,17 @@ function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      <Modal visible={isLoging} transparent={true}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}>
+          <Text style={{color: '#FFF', fontSize: 20}}>Logging in...</Text>
+        </View>
+      </Modal>
       <Form
         onFinish={handleLogin}
         form={form}

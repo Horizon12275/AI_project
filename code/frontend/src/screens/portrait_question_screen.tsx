@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity, Alert} from 'react-native';
+import {portraitUpload} from '../services/userService';
 
 type OptionProps = {
   text: string;
+  onPress: () => void;
 };
 
-const AnsOption: React.FC<OptionProps> = ({ text, onPress }) => (
+const AnsOption: React.FC<OptionProps> = ({text, onPress}) => (
   <TouchableOpacity style={styles.option} onPress={onPress}>
     <Text style={styles.optionText}>{text}</Text>
   </TouchableOpacity>
@@ -14,17 +16,22 @@ const AnsOption: React.FC<OptionProps> = ({ text, onPress }) => (
 type QuestionScreenProps = {
   route: {
     params: {
+      portrait: any;
       question: string;
-      options: string[];
+      options: {label: string; value: string}[];
       nextScreen?: string;
+      type: string;
     };
   };
   navigation: any;
 };
 
-const PortraitQuestionScreen: React.FC<QuestionScreenProps> = ({ route, navigation }) => {
-  const { question, options, nextScreen } = route.params;
-
+const PortraitQuestionScreen: React.FC<QuestionScreenProps> = ({
+  route,
+  navigation,
+}) => {
+  const {type, question, options, nextScreen} = route.params;
+  console.log(route.params);
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -39,17 +46,31 @@ const PortraitQuestionScreen: React.FC<QuestionScreenProps> = ({ route, navigati
         {options.map((option, index) => (
           <AnsOption
             key={index}
-            text={option}
+            text={option.label}
             onPress={() => {
               if (nextScreen) {
-                navigation.navigate(nextScreen);
+                navigation.navigate(nextScreen, {
+                  portrait: {...route.params.portrait, [type]: option.value},
+                });
               } else {
-                alert('This is the last question.');
+                route.params.portrait[type] = option.value;
+                Alert.alert(
+                  'Your portrait is',
+                  JSON.stringify(route.params.portrait),
+                );
+                portraitUpload(route.params.portrait).then(res => {
+                  Alert.alert('Portrait uploaded successfully!');
+                  navigation.navigate('Tabs');
+                }).catch(err => {
+                  console.error(err);
+                });
               }
             }}
           />
         ))}
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>Back to previous step</Text>
         </TouchableOpacity>
       </View>
@@ -60,7 +81,6 @@ const PortraitQuestionScreen: React.FC<QuestionScreenProps> = ({ route, navigati
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    maxWidth: 381,
     flexDirection: 'column',
     alignItems: 'center',
     padding: 20,
@@ -75,7 +95,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 0, height: 4 },
+    textShadowOffset: {width: 0, height: 4},
     textShadowRadius: 4,
     fontSize: 32,
     fontWeight: 'bold',

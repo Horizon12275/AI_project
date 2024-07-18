@@ -22,7 +22,7 @@ public class SubtaskServiceImpl implements SubtaskService {
     }
     public int getUid() {//从数据库里查询id
         String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        return userRepo.findUserByUsername(username).getId();
+        return userRepo.findUserByEmail(username).getId();
     }
     @Override
     public Result<Subtask> changeDone(int id) {

@@ -1,6 +1,8 @@
 package org.example.controller;
 
+import com.alibaba.fastjson2.JSONObject;
 import org.example.entity.Event;
+import org.example.entity.EventDetails;
 import org.example.entity.Result;
 import org.example.service.EventService;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +28,19 @@ public class EventController {
         return service.getEventsByDate(date);
     }
     //添加一个新的事件
-    @PostMapping("/add")
-    public Result<Event> addEvent(@RequestBody Event event) {
-        return service.addEvent(event);
+    @PostMapping("/add_online")
+    public Result<Event> addEventOnline(@RequestBody JSONObject jsonObject) {
+        Event event = jsonObject.getObject("event", Event.class);
+        EventDetails eventDetails = jsonObject.getObject("eventDetails", EventDetails.class);
+
+        return service.addEventOnline(event,eventDetails);
+    }
+    @PostMapping("/add_offline")
+    public Result<Event> addEventOffline(@RequestBody Event event) {
+        return Result.success(null);
+    }
+    @GetMapping("/summary")
+    public Result<List<Object>> summary(@RequestParam LocalDate start,@RequestParam LocalDate end) {
+        return service.summary(start,end);
     }
 }
