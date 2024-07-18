@@ -57,18 +57,27 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
   const onSubmit = () => {
     form.submit();
   };
-  const handleSave = (values: any) => {
-    if (startTime) values.startTime = toTime(startTime);
-    if (endTime) values.endTime = toTime(endTime);
-    values.date = toDate(ddlDate);
-    values.category = category;
-    values.subtasks = [];
-    console.log(values);
-    addEvent(values)
+  const handleSave = (event: any) => {
+    if (startTime) event.startTime = toTime(startTime);
+    if (endTime) event.endTime = toTime(endTime);
+    event.date = toDate(ddlDate);
+    event.category = category;
+    event.subtasks = [];
+    let eventDetails = {
+      category: categoryOptions[category].label,
+      ddl: event.date,
+      details: event.details,
+      location: event.location,
+      title: event.title,
+    };
+    console.log({event, eventDetails});
+    addEvent({
+      event,
+      eventDetails,
+    })
       .then(event => {
         console.log(event);
-        navigation.navigate('AI', {event});
-        Alert.alert('Success', 'Event added successfully');
+        navigation.navigate('AI', {event}); //传入响应的event给ai界面 来渲染ai的帮助内容
       })
       .catch(err => {
         Alert.alert('Error', err);

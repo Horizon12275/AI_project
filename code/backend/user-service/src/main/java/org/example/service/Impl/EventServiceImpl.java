@@ -52,7 +52,7 @@ public class EventServiceImpl implements EventService {
         aiClient.setUserDetails(userPortrait);
         // generate reminders and subtasks from AI
         String[] reminderContents= aiClient.generateReminders(eventDetails);
-        String[] subtaskContents = aiClient.generateSubtasks(eventDetails);
+        List<Subtask> subtaskContents = aiClient.generateSubtasks(eventDetails);
 
         client.addEvent(event, getUid());//添加事件 下一次请求时才能保存用户选择保留的子任务和提醒
 
@@ -65,12 +65,12 @@ public class EventServiceImpl implements EventService {
             reminder.setEvent(event);
             reminders.add(reminder);
         }
-        for (String subtaskContent : subtaskContents) {
+        for (Subtask subtaskContent : subtaskContents) {
             Subtask subtask = new Subtask();
-            subtask.setContent(subtaskContent);
+            subtask.setContent(subtaskContent.getContent());
             subtask.setDone(false);
             subtask.setEvent(event);
-            subtask.setDdl(LocalDate.now());//
+            subtask.setDdl(subtaskContent.getDdl());
             subtasks.add(subtask);
         }
         event.setReminders(reminders);
