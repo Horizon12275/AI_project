@@ -10,7 +10,8 @@ app = FastAPI()
 
 # Set OpenAI API key and base URL
 
-
+api_key = "sk-tcegYgeYLJyxYhzWRdPIxEvLqS8aotCcv35rASiIX79Ke368"
+api_base = "https://api.chatanywhere.tech/v1"
 os.environ["OPENAI_API_KEY"] = api_key
 os.environ["OPENAI_API_BASE"] = api_base
 logging.basicConfig(level=logging.INFO)
