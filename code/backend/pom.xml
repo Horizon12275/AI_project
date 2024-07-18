@@ -80,21 +80,18 @@
     </dependencyManagement>
 
     <build>
+        <!--maven资源插件 扫描已$开头，已$结尾的所有配置-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                    <encoding>UTF-8</encoding>
+                    <delimiters>
+                        <delimiter>
+                            $
+                        </delimiter>
+                    </delimiters>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
             </plugin>
         </plugins>
     </build>

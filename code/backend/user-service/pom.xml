@@ -8,7 +8,7 @@
         <artifactId>backend</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-
+    <packaging>jar</packaging>
     <artifactId>user-service</artifactId>
 
     <properties>
@@ -60,10 +60,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <!-- 指定主类 -->
-                    <mainClass>org.example.UserApplication</mainClass>
-                </configuration>
             </plugin>
         </plugins>
     </build>
