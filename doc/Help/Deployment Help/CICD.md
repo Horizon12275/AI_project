@@ -158,20 +158,10 @@ docker logs -f event-service
 
 ```xml
 <build>
-	<!-- 打包之后jar包的名字 -->
-    <finalName>itoo-gateway</finalName>
-
     <plugins>
-
         <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
-
-            <!-- 启动类的全类名
-            <configuration>
-                <mainClass>com.test.eric.MainClassName</mainClass>
-            </configuration> -->
-
             <executions>
                 <execution>
                     <goals>

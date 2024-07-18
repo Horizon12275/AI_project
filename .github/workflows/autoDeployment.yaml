@@ -30,17 +30,17 @@ jobs:
       # 设置环境变量
       - name: Set up environment variables
         run: |
-          export DB1_URL=${{secrets.DB1_URL}}
-          export DB1_USERNAME=${{secrets.DB1_USERNAME}}
-          export DB1_PASSWORD=${{secrets.DB1_PASSWORD}}
-          export DB2_URL=${{secrets.DB2_URL}}
-          export DB2_USERNAME=${{secrets.DB2_USERNAME}}
-          export DB2_PASSWORD=${{secrets.DB2_PASSWORD}}
-          export NACOS_SERVER_ADDR=${{secrets.NACOS_SERVER_ADDR}}
-          export USER_SERVICE_PORT=${{secrets.USER_SERVICE_PORT}}
-          export EVENT_SERVICE_PORT=${{secrets.EVENT_SERVICE_PORT}}
-          export USER_SERVER_IP=${{secrets.USER_SERVER_IP}}
-      # 打印环境变量
+          echo "DB1_URL=${{secrets.DB1_URL}}" >> $GITHUB_ENV
+          echo "DB1_USERNAME=${{secrets.DB1_USERNAME}}" >> $GITHUB_ENV
+          echo "DB1_PASSWORD=${{secrets.DB1_PASSWORD}}" >> $GITHUB_ENV
+          echo "DB2_URL=${{secrets.DB2_URL}}" >> $GITHUB_ENV
+          echo "DB2_USERNAME=${{secrets.DB2_USERNAME}}" >> $GITHUB_ENV
+          echo "DB2_PASSWORD=${{secrets.DB2_PASSWORD}}" >> $GITHUB_ENV
+          echo "NACOS_SERVER_ADDR=${{secrets.NACOS_SERVER_ADDR}}" >> $GITHUB_ENV
+          echo "USER_SERVICE_PORT=${{secrets.USER_SERVICE_PORT}}" >> $GITHUB_ENV
+          echo "EVENT_SERVICE_PORT=${{secrets.EVENT_SERVICE_PORT}}" >> $GITHUB_ENV
+          echo "USER_SERVER_IP=${{secrets.USER_SERVER_IP}}" >> $GITHUB_ENV
+      # 打印环境变量，检查是否设置成功
       - name: Debug environment variables
         run: |
           echo "EVENT_SERVICE_PORT: $EVENT_SERVICE_PORT"
