@@ -30,7 +30,7 @@ public class SecurityConfig {
     List<IpAddressMatcher> hasIpAddress = new ArrayList<>();
     public SecurityConfig() {
         hasIpAddress.add(new IpAddressMatcher("0:0:0:0:0:0:0:1"));//本地ip postman测试的ip是ipv6
-        hasIpAddress.add(new IpAddressMatcher("192.168.31.1"));//其他服务注册到nacos的ip
+        hasIpAddress.add(new IpAddressMatcher("10.80.173.84"));//其他服务注册到nacos的ip
     }
 
     @Bean

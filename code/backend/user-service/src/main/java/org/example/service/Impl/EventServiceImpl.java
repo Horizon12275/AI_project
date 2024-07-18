@@ -10,10 +10,11 @@ import org.example.service.EventService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -43,13 +44,17 @@ public class EventServiceImpl implements EventService {
     @Override
     public Result<Event> addEventOnline(Event event, EventDetails eventDetails) {
         User user = userRepo.findById(getUid()).orElse(null);
+        // set user details
         UserPortrait userPortrait = new UserPortrait(
                 constMaps.getIdentityMap().get(user.getIdentity()),
                 constMaps.getSleepScheduleMap().get(user.getSleep_schedule()),
                 constMaps.getChallengeMap().get(user.getChallenge()));
         aiClient.setUserDetails(userPortrait);
+        // generate reminders and subtasks from AI
         String[] reminderContents= aiClient.generateReminders(eventDetails);
-        String[] subtaskContents = aiClient.generateSubtasks(eventDetails);
+        List<Subtask> subtaskContents = aiClient.generateSubtasks(eventDetails);
+
+        int id=client.addEvent(event, getUid()).getData().getId();//添加事件 下一次请求时才能保存用户选择保留的子任务和提醒 另外需要保存id 用于前端后续发起请求更新此事件
 
         List<Reminder> reminders=new ArrayList<>();
         List<Subtask> subtasks=new ArrayList<>();
@@ -60,17 +65,22 @@ public class EventServiceImpl implements EventService {
             reminder.setEvent(event);
             reminders.add(reminder);
         }
-        for (String subtaskContent : subtaskContents) {
+        for (Subtask subtaskContent : subtaskContents) {
             Subtask subtask = new Subtask();
-            subtask.setContent(subtaskContent);
+            subtask.setContent(subtaskContent.getContent());
             subtask.setDone(false);
             subtask.setEvent(event);
-            subtask.setDdl(LocalDate.now());//
+            subtask.setDdl(subtaskContent.getDdl());
             subtasks.add(subtask);
         }
         event.setReminders(reminders);
         event.setSubtasks(subtasks);
-        return client.addEvent(event, getUid());
+        event.setId(id);
+        return Result.success(event);
+    }
+    @Override
+    public Result<Event> updateEvent(@PathVariable("id") int id, @RequestBody Event event) {
+        return client.updateEvent(id, event, getUid());
     }
     @Override
     public Result<List<Object>> summary(LocalDate start, LocalDate end) {

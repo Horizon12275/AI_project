@@ -13,4 +13,6 @@ public interface EventService {
     Result<Event> addEvent(Event event, int uid);
 
     Result<List<Object>> summary(LocalDate start, LocalDate end, int uid);
+
+    Result<Event> updateEvent(int id, Event event, int uid);
 }

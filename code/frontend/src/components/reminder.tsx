@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -8,93 +8,83 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import MyButton from '../utils/my_button';
+import {formatDate} from '../utils/date';
 
 type TaskItemProps = {
-  text: string;
-  checked: boolean;
+  content: string;
+  saved: boolean;
+  handleCheck: () => void;
+  handleDelete: () => void;
 };
 
-const TaskItem: React.FC<TaskItemProps> = ({text, checked}) => (
+const TaskItem: React.FC<TaskItemProps> = ({
+  content,
+  saved,
+  handleCheck,
+  handleDelete,
+}) => (
   <View style={styles.taskItem}>
-    <View style={styles.taskCheckbox}>
-      <View style={[styles.checkbox, checked && styles.checkedBox]} />
-    </View>
+    <MyButton
+      icon={
+        saved
+          ? require('../assets/icons/checked.png')
+          : require('../assets/icons/checkbox.png')
+      }
+      style={styles.taskIcon}
+      onPress={handleCheck}
+    />
     <View style={styles.taskTextContainer}>
-      <Text style={styles.taskText}>{text}</Text>
+      <Text style={styles.taskText}>{content}</Text>
     </View>
 
     <MyButton
       icon={require('../assets/icons/delete.png')}
       style={styles.taskIcon}
-      onPress={() => {}}
+      onPress={handleDelete}
     />
   </View>
 );
 
-type CourseItemProps = {
-  title: string;
-  color: string;
-};
-
-const CourseItem: React.FC<CourseItemProps> = ({title, color}) => (
-  <View style={styles.courseItem}>
-    <View style={styles.courseTitle}>
-      <Text style={[styles.courseTitleText, {color: color}]}>{title}</Text>
-    </View>
-    <MyButton
-      icon={require('../assets/icons/edit.png')}
-      style={[styles.courseIcon, {tintColor: color}]}
-      onPress={() => {}}
-    />
-  </View>
-);
-
-const TaskList: React.FC = () => {
-  const tasks: TaskItemProps[] = [
-    {text: 'Bring notes', checked: false},
-    {text: 'Prepare for Presentation', checked: false},
-    {text: 'Bring PC', checked: false},
-    {text: 'Print notes', checked: false},
-  ];
-
-  return (
-    <View style={styles.taskList}>
-      <View style={styles.taskListContent}>
-        {tasks.map((task, index) => (
-          <TaskItem key={index} {...task} />
-        ))}
-      </View>
-      <MyButton
-        icon={require('../assets/icons/plus.png')}
-        style={styles.plusIcon}
-        onPress={() => {}}
-      />
-    </View>
-  );
-};
-
-const Reminder: React.FC = () => {
+const Reminder = ({
+  reminders,
+}: {
+  reminders: {content: string; saved: boolean}[];
+}) => {
+  const [refresh, setRefresh] = useState(0);
+  useEffect(() => {}, [refresh]);
+  const handleCheck = (index: number) => {
+    reminders[index].saved = !reminders[index].saved;
+    setRefresh(refresh + 1);
+  };
+  const handleDelete = (index: number) => {
+    reminders.splice(index, 1);
+    setRefresh(refresh + 1);
+  };
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.dateText}>Today - October 18th, 2023</Text>
-      </View>
-      <View style={styles.courseList}>
-        <CourseItem title="MGT 101 - Organization Management" color="#FFC374" />
-        <CourseItem
-          title="EC 203 - Principles Macroeconomics"
-          color="#4AD2C9"
+      <View style={styles.taskList}>
+        <View style={styles.taskListContent}>
+          {reminders.map((reminder, index) => (
+            <TaskItem
+              key={index}
+              {...reminder}
+              handleCheck={() => handleCheck(index)}
+              handleDelete={() => handleDelete(index)}
+            />
+          ))}
+        </View>
+        <MyButton
+          icon={require('../assets/icons/plus.png')}
+          style={styles.plusIcon}
+          onPress={() => {}}
         />
       </View>
-      <TaskList />
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 16,
     backgroundColor: '#fff',
   },
   header: {
@@ -115,15 +105,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     marginBottom: 16,
-  },
-  courseTitle: {
-    flex: 1,
-  },
-  courseTitleText: {
-    color: '#010618',
-    fontSize: 16,
-    fontWeight: '700',
-    fontFamily: 'Inter, sans-serif',
   },
   courseIcon: {
     width: 24,
@@ -146,6 +127,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
+    gap: 8,
   },
   taskCheckbox: {
     padding: 4,
@@ -165,13 +147,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   taskText: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#010618',
+    fontWeight: '400',
     fontFamily: 'Inter, sans-serif',
   },
   taskIcon: {
-    width: 16,
-    height: 16,
+    width: 20,
+    height: 20,
   },
   plusIcon: {
     backgroundColor: '#80B3FF',

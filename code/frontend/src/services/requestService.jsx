@@ -101,7 +101,7 @@ export async function put(url, data) {
 
 // On Server Settings Below
 export const WSURL = "wss://localhost:8080/ws";
-export const BASEURL = "http://192.168.31.1";
+export const BASEURL = "http://10.80.173.84";
 export const USERPORT = "8082";
 export const EVENTPORT = "8083";
 export const PEERURL = "localhost";

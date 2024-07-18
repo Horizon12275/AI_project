@@ -42,7 +42,8 @@ const InputField = ({
   </View>
 );
 
-const AddOnScreen = () => {
+const AddOnScreen = ({navigation}: {navigation: any}) => {
+  const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
@@ -57,18 +58,29 @@ const AddOnScreen = () => {
   const onSubmit = () => {
     form.submit();
   };
-  const handleSave = (values: any) => {
-    if (startTime) values.startTime = toTime(startTime);
-    if (endTime) values.endTime = toTime(endTime);
-    values.date = toDate(ddlDate);
-    values.category = category;
-    values.subtasks = [];
-    console.log(values);
-    addEvent(values)
-      .then(() => {
-        Alert.alert('Success', 'Event added successfully');
+  const handleSave = (event: any) => {
+    if (startTime) event.startTime = toTime(startTime);
+    if (endTime) event.endTime = toTime(endTime);
+    event.ddl = toDate(ddlDate);
+    event.category = category;
+    let eventDetails = {
+      category: categoryOptions[category].label,
+      ddl: event.ddl,
+      details: event.details,
+      location: event.location,
+      title: event.title,
+    };
+    setLoading(true);
+    addEvent({
+      event,
+      eventDetails,
+    })
+      .then(event => {
+        setLoading(false);
+        navigation.navigate('AI', {event}); //传入响应的event给ai界面 来渲染ai的帮助内容
       })
       .catch(err => {
+        console.log(err);
         Alert.alert('Error', err);
       });
   };
@@ -167,7 +179,7 @@ const AddOnScreen = () => {
                   return;
                 }
                 setStartTime(selectedDate || startTime);
-                if(!endTime) setEndTime(selectedDate || startTime);
+                if (!endTime) setEndTime(selectedDate || startTime);
                 setShowStartTimePicker(false);
               }}
             />
@@ -187,7 +199,7 @@ const AddOnScreen = () => {
                   return;
                 }
                 setEndTime(selectedDate || endTime);
-                if(!startTime) setStartTime(selectedDate || endTime);
+                if (!startTime) setStartTime(selectedDate || endTime);
                 setShowEndTimePicker(false);
               }}
             />
@@ -263,6 +275,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     gap: 5,
+    justifyContent: 'center',
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
@@ -275,13 +288,14 @@ const styles = StyleSheet.create({
     borderColor: '#D6D6D6',
     borderWidth: 1,
     paddingHorizontal: 10,
+    width: '100%',
   },
   textInput: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     marginTop: 5,
-    height: 200, // 自定义文本输入框高度
+    height: 80, // 自定义文本输入框高度
   },
   timeZoneIcon: {
     height: 40,
@@ -296,6 +310,9 @@ const styles = StyleSheet.create({
   },
   doneButton: {
     backgroundColor: '#4A90E2',
+    borderRadius: 20,
+    width: '90%',
+    margin: 10,
   },
   doneButtonText: {
     color: 'white',
@@ -346,6 +363,28 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 22,
     fontFamily: 'Inter, sans-serif',
+  },
+  modalView: {
+    marginTop: 200,
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 50,
+  },
+  calendarSpanTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#010618',
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 
