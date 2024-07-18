@@ -97,7 +97,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>org.example.backend.BackendApplication</mainClass>
-                    <skip>true</skip>
+                    <layout>JAR</layout>
                 </configuration>
                 <executions>
                     <execution>

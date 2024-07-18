@@ -146,3 +146,12 @@ docker image prune -af
 ```
 
 - 文件夹中的路径名有时可能会错误、要注意是中折线-还是下划线\_
+
+- 查看 docker 容器的日志
+
+```shell
+docker logs -f user-service
+docker logs -f event-service
+```
+
+- 会报一个 no main manifest attribute, in target/user-service-0.0.1-SNAPSHOT.jar 的错误（https://blog.csdn.net/m0_62201229/article/details/134620533）
