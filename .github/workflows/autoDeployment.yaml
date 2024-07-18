@@ -40,6 +40,11 @@ jobs:
           export USER_SERVICE_PORT=${{secrets.USER_SERVICE_PORT}}
           export EVENT_SERVICE_PORT=${{secrets.EVENT_SERVICE_PORT}}
           export USER_SERVER_IP=${{secrets.USER_SERVER_IP}}
+      # 打印环境变量
+      - name: Debug environment variables
+        run: |
+          echo "EVENT_SERVICE_PORT: $EVENT_SERVICE_PORT"
+          echo "USER_SERVICE_PORT: $USER_SERVICE_PORT"
       # 编译打包
       - name: Build with Maven
         run: |

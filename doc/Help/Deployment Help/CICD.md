@@ -167,10 +167,10 @@ docker logs -f event-service
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
 
-            <!-- 启动类的全类名 -->
+            <!-- 启动类的全类名
             <configuration>
                 <mainClass>com.test.eric.MainClassName</mainClass>
-            </configuration>
+            </configuration> -->
 
             <executions>
                 <execution>
