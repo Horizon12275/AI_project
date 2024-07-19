@@ -1,4 +1,4 @@
-## CICD
+## CICD 笔记
 
 - 主要参考文章：
 
@@ -18,7 +18,7 @@
 
 - 遇到的一个小问题：就是在 github action 用 ssh 登录的时候、环境变量里存的私钥直接 ctrl + a 复制就可以了 因为需要保留最上面的 -----BEGIN OPENSSH PRIVATE KEY----- 和最下面的 -----END OPENSSH PRIVATE KEY----- 两行。。
 
-### 具体流程
+### 示例流程
 
 1. 对应的仓库里面创建一个 .github/workflows 文件夹，里面创建一个 yaml 文件，比如 test.yaml
 
@@ -128,3 +128,102 @@ docker rm -f TG-test||true&&docker run  --name=TG-test -d -p 8082:8082 horizon12
 # 查看容器，并强制删除所有未被任何容器使用的 Docker 镜像，而无需用户确认，这里是为了清理一下镜像，因为每次都会拉取新的镜像，这样会占用很多空间
 docker image prune -af
 ```
+
+### 具体操作流程（微服务）
+
+- 大体流程和上面差不多，就是有几个细节要改一下
+
+- 其中在 dockerfile 和 workflow 的 yaml 文件中、有很多关于文件路径的参数、只要时刻记得、当前路径就是在 github repository 的根目录下，就不会搞错，然后目录就跟着文件结构填、具体可以参考其中的 dockerfile 已经 workflow 的 yaml 文件中的编写（因为在自己的 ActionTest 中、springboot 项目是默认在根目录下的，这里的项目分布在交错复杂的文件结构中）
+
+- 如果要用 github action 运行脚本的话，需要提前给这个 sh 文件权限，如下所示（不过这里没有用到脚本运行）
+
+```shell
+      # 让接下来要运行的脚本文件具有执行权限
+    - name: Make the script files executable
+      run: chmod +x ./.github/scripts/set_env.sh
+    # 运行提前准备好的脚本、设置环境变量
+    - name: Set up environment variables
+      run: |
+        ./.github/scripts/set_env.sh
+```
+
+- 文件夹中的路径名有时可能会错误、要注意是中折线-还是下划线\_
+
+- 查看 docker 容器的日志 去/var/lib/docker/containers/ 或者
+
+```shell
+docker logs -f user-service
+docker logs -f event-service
+```
+
+- 会报一个 no main manifest attribute, in target/user-service-0.0.1-SNAPSHOT.jar 的错误，导致打包出来的 jar 包很小（20KB），原因是 springcloud 项目中打包的时候、没有指定主类，需要在各模块的 pom.xml 中添加如下配置，repackage（貌似还需要删掉父模块里 build 中的内容）
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
+    </resources>
+</build>
+```
+
+- 在 github action 中，如果要用到环境变量，也可以这么设置、不过最后没用到。。。
+
+```yaml
+# 设置环境变量
+- name: Set up environment variables
+  run: |
+    echo "DB1_URL=${{secrets.DB1_URL}}" >> $GITHUB_ENV
+    echo "DB1_USERNAME=${{secrets.DB1_USERNAME}}" >> $GITHUB_ENV
+    echo "DB1_PASSWORD=${{secrets.DB1_PASSWORD}}" >> $GITHUB_ENV
+    echo "DB2_URL=${{secrets.DB2_URL}}" >> $GITHUB_ENV
+    echo "DB2_USERNAME=${{secrets.DB2_USERNAME}}" >> $GITHUB_ENV
+    echo "DB2_PASSWORD=${{secrets.DB2_PASSWORD}}" >> $GITHUB_ENV
+    echo "NACOS_SERVER_ADDR=${{secrets.NACOS_SERVER_ADDR}}" >> $GITHUB_ENV
+    echo "USER_SERVICE_PORT=${{secrets.USER_SERVICE_PORT}}" >> $GITHUB_ENV
+    echo "EVENT_SERVICE_PORT=${{secrets.EVENT_SERVICE_PORT}}" >> $GITHUB_ENV
+    echo "USER_SERVER_IP=${{secrets.USER_SERVER_IP}}" >> $GITHUB_ENV
+# 打印环境变量，检查是否设置成功
+- name: Debug environment variables
+  run: |
+    echo "EVENT_SERVICE_PORT: $EVENT_SERVICE_PORT"
+    echo "USER_SERVICE_PORT: $USER_SERVICE_PORT"
+```
+
+- 注入环境变量到配置文件的方法如下，这里是使用 maven 命令行后 -D 的方式
+
+```yaml
+# 编译打包，传入环境变量参数
+- name: Build with Maven
+  run: |
+    cd ./code/backend
+    mvn package \
+        -Dmaven.test.skip=true \
+        -DDB1_URL=${{ secrets.DB1_URL }} \
+        -DDB1_USERNAME=${{ secrets.DB1_USERNAME }} \
+        -DDB1_PASSWORD=${{ secrets.DB1_PASSWORD }} \
+        -DDB2_URL=${{ secrets.DB2_URL }} \
+        -DDB2_USERNAME=${{ secrets.DB2_USERNAME }} \
+        -DDB2_PASSWORD=${{ secrets.DB2_PASSWORD }} \
+        -DNACOS_SERVER_ADDR=${{ secrets.NACOS_SERVER_ADDR }} \
+        -DUSER_SERVICE_PORT=${{ secrets.USER_SERVICE_PORT }} \
+        -DEVENT_SERVICE_PORT=${{ secrets.EVENT_SERVICE_PORT }} \
+        -DUSER_SERVER_IP=${{ secrets.USER_SERVER_IP }}
+```
+
+- 要开放服务器的 nacos 的 9848 端口，否则无法注册服务，这里选择在安全组里配置一下
