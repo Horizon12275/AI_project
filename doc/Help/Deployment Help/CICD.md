@@ -227,3 +227,5 @@ docker logs -f event-service
 ```
 
 - 要开放服务器的 nacos 的 9848 端口，否则无法注册服务，这里选择在安全组里配置一下
+
+- 要设置为内网 ip
