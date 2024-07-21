@@ -74,6 +74,7 @@ public class MyUserDetailsService implements UserDetailsService {
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
         user.setPassword(new BCryptPasswordEncoder().encode(request.getPassword()));
+        System.out.println(user);
         userRepository.save(user);
         return Result.success(user);
     }

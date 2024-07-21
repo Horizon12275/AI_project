@@ -97,15 +97,15 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: {width: 0, height: 4},
     textShadowRadius: 4,
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   questionContainer: {
-    height: 120,
+    height: 90,
     justifyContent: 'center',
   },
   questionText: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 12,
     color: '#000103',
     fontWeight: '400',
     textAlign: 'center',
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Nunito',
     fontWeight: '300',
-    fontSize: 16,
+    fontSize: 12,
   },
 });
 

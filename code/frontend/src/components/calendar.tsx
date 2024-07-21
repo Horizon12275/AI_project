@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   monthText: {
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: '500',
     color: '#121212',
     fontFamily: 'Inter, sans-serif',
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   dayText: {
-    fontSize: 12,
+    fontSize: 9,
     fontWeight: '400',
     color: '#121212',
     fontFamily: 'Inter, sans-serif',
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   dateText: {
-    fontSize: 12,
+    fontSize: 9,
     fontWeight: '400',
     color: '#858585',
     fontFamily: 'Inter, sans-serif',
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   text: {
-    fontSize: 20,
+    fontSize: 15,
     marginRight: 10,
   },
   badgeContainer: {

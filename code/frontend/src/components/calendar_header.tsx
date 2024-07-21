@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   dateText: {
     color: '#010618',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: '700',
   },
   dateList: {
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   dayText: {
     color: '#94A3B8',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 12,
+    fontSize: 9,
     fontWeight: '400',
   },
   selectedDayText: {
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     color: '#21283F',
   },
   circleText: {
-    fontSize: 12,
+    fontSize: 9,
     color: '#21283F',
     fontWeight: '400',
     textAlign: 'center',

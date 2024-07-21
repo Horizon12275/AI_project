@@ -136,12 +136,14 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     backgroundColor: '#FFF',
     width: '100%',
+    height: '100%',
+    display: 'flex',
   },
   title: {
     color: '#4A90E2',
     textAlign: 'center',
     marginTop: 50,
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: '700',
     fontFamily: 'Nunito, sans-serif',
   },
@@ -152,17 +154,17 @@ const styles = StyleSheet.create({
   subtitle: {
     textAlign: 'center',
     fontFamily: 'Nunito, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     color: '#A8A6A7',
     fontWeight: '700',
-    marginBottom: 40, // 调整这个值来减少空隙
+    marginBottom: 30, // 调整这个值来减少空隙
   },
   inputContainer: {
-    marginBottom: 40, // 调整这个值来减少空隙
+    marginBottom: 30, // 调整这个值来减少空隙
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     color: '#A8A6A7',
     fontWeight: '700',
     marginBottom: 8,
@@ -182,14 +184,14 @@ const styles = StyleSheet.create({
   },
   signUpButtonText: {
     color: '#FFF',
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: '400',
     fontFamily: 'Nunito, sans-serif',
   },
   loginText: {
     textAlign: 'center',
     marginTop: 50,
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'Nunito, sans-serif',
   },
   loginLink: {

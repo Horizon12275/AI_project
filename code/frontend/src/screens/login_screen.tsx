@@ -40,33 +40,33 @@ function LoginScreen() {
   const [form] = Form.useForm();
   const [isLoging, setIsLoging] = useState(false); //是否正在登录 渲染loading
 
-  // useEffect(() => {
-  //   AsyncStorage.getItem('auth')
-  //     .then(auth => {
-  //       if (auth) {
-  //         const {rememberMe, username, password} = JSON.parse(auth);
-  //         if (rememberMe) {
-  //           setIsLoging(true);
-  //           login({username, password})
-  //             .then(res => {
-  //               console.log(res);
-  //               getUser()
-  //                 .then(user => {
-  //                   AsyncStorage.setItem('user', JSON.stringify(user));
-  //                   setIsLoging(false);
-  //                   navigation.navigate('Tabs');
-  //                   //Alert.alert('Welcome back, ' + user.username + '!');
-  //                 })
-  //                 .catch(err => Alert.alert(err)); //获取用户信息错误
-  //             })
-  //             .catch(err => Alert.alert(err)); //登录错误
-  //         }
-  //       }
-  //     })
-  //     .catch(
-  //       err => Alert.alert(err), //读取auth错误
-  //     );
-  // }, []);
+  useEffect(() => {
+    AsyncStorage.getItem('auth')
+      .then(auth => {
+        if (auth) {
+          const {rememberMe, username, password} = JSON.parse(auth);
+          if (rememberMe) {
+            setIsLoging(true);
+            login({username, password})
+              .then(res => {
+                console.log(res);
+                getUser()
+                  .then(user => {
+                    AsyncStorage.setItem('user', JSON.stringify(user));
+                    setIsLoging(false);
+                    navigation.navigate('Tabs');
+                    //Alert.alert('Welcome back, ' + user.username + '!');
+                  })
+                  .catch(err => Alert.alert(err)); //获取用户信息错误
+              })
+              .catch(err => Alert.alert(err)); //登录错误
+          }
+        }
+      })
+      .catch(
+        err => Alert.alert(err), //读取auth错误
+      );
+  }, []);
 
   const onSubmit = () => {
     form.submit();
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontFamily: 'Nunito',
     fontWeight: '700',
-    fontSize: 40,
+    fontSize: 30,
   },
   formContainer: {
     display: 'flex',
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column',
     alignItems: 'stretch',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
     padding: 25,
   },
@@ -237,14 +237,14 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#FFF',
     fontFamily: 'Nunito',
-    fontSize: 22,
+    fontSize: 16,
   },
   signUpText: {
     color: '#A8A6A7',
     textAlign: 'center',
     fontFamily: 'Nunito',
     marginTop: 75,
-    fontSize: 16,
+    fontSize: 12,
   },
   signUpLink: {
     color: '#D87234',

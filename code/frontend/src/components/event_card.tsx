@@ -80,10 +80,10 @@ const EventCard = ({
         />
         <View style={styles.iconWrapper}>
           <View style={styles.startTimeWrapper}>
-            <Text>{event.startTime}</Text>
+            <Text style={{color:"black"}}>{event.startTime}</Text>
           </View>
           <View style={styles.endTimeWrapper}>
-            <Text>{event.endTime}</Text>
+            <Text style={{color:"black"}}>{event.endTime}</Text>
           </View>
         </View>
       </View>
@@ -226,14 +226,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
+    color: 'black',
   },
   detailsWrapper: {
     display: 'flex',
     marginTop: 4,
     flexDirection: 'row',
-    fontSize: 12,
+    fontSize: 9,
     fontWeight: '400',
   },
   locationWrapper: {
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
   checklist: {
     color: 'black',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
   },
   checklistWrapper: {
@@ -304,14 +305,14 @@ const styles = StyleSheet.create({
   taskTitle: {
     color: '#010618',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '400',
     flex: 1,
   },
   dueDate: {
     color: '#21283F',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 13,
+    fontSize: 9,
     fontWeight: '400',
   },
   completedText: {
@@ -336,7 +337,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: '700',
     textAlign: 'center',
   },

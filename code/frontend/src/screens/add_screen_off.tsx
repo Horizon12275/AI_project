@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '700',
     color: '#000',
   },
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#000',
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
   },
   inputContainer: {
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     color: 'black',
     fontWeight: '300',
   },
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   doneButtonText: {
     color: 'white',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     padding: 3,
     textAlign: 'center',
     fontWeight: '700',
@@ -270,12 +270,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   ddlText: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
   },
   dateText: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#80B3FF',
   },
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     color: '#0A84FF',
     textAlign: 'center',
     fontWeight: '800',
-    fontSize: 17,
+    fontSize: 12,
     lineHeight: 22,
     fontFamily: 'Inter, sans-serif',
   },
@@ -345,14 +345,14 @@ const styles = StyleSheet.create({
   taskTitle: {
     color: '#000',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '400',
     flex: 1,
   },
   dueDate: {
     color: '#21283F',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 13,
+    fontSize: 8,
     fontWeight: '400',
   },
 });

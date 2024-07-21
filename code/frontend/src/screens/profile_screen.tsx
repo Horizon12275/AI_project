@@ -14,6 +14,7 @@ import GoBack from '../utils/go_back';
 import DropdownInput from '../components/dropdown_input';
 import {
   challengeOptions,
+  exerciseOptions,
   identityAvatars,
   identityOptions,
   sleepOptions,
@@ -43,7 +44,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
     },
     {
       label: 'exercise',
-      data: challengeOptions,
+      data: exerciseOptions,
       value: exercise,
       setValue: setExercise,
     },
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '700',
     color: '#000',
     width: '100%',
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#000',
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
   },
   quitButton: {
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
   },
   quitButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 12,
   },
   imageContainer: {
     marginTop: 20,
@@ -225,9 +226,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   portraitImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 50,
+    width: 120,
+    height: 150,
+    borderRadius: 30,
   },
   editButton: {
     position: 'absolute',
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   editButtonText: {
-    fontSize: 22,
+    fontSize: 18,
     color: '#000',
   },
   modalOverlay: {
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalItemText: {
-    fontSize: 18,
+    fontSize: 12,
     color: '#000',
   },
   closeButton: {
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 12,
   },
 
   inputContainer: {
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     color: '#A8A6A7',
     fontWeight: '700',
     marginBottom: 8,

@@ -55,10 +55,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'rgba(217, 217, 217, 0.2)',
     width: 112,
-    height: 172,
+    height: 160,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: {width: 0, height: 4},
     textShadowRadius: 4,
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   subHeader: {
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   subHeaderText: {
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
