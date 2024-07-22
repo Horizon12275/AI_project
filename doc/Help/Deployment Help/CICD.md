@@ -228,4 +228,9 @@ docker logs -f event-service
 
 - 要开放服务器的 nacos 的 9848 端口，否则无法注册服务，这里选择在安全组里配置一下
 
-- 要设置为内网 ip
+- 要设置为 nacos 中显示的内网 ip,因为这个是服务之间的调用，不需要外网 ip
+
+```yaml
+spring.cloud.nacos.discovery.ip = 192.168.0.118
+spring.cloud.nacos.discovery.port = 9000
+```

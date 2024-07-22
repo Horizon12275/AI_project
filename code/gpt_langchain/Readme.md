@@ -24,6 +24,9 @@ pip install openai==0.28 (这个最后安装)
 
 ```
 uvicorn main:app --reload
+
+# (实际部署时使用)
+nohup uvicorn main:app --host 0.0.0.0 --port 8000 &
 ```
 
 接着打开 gptclient folder
