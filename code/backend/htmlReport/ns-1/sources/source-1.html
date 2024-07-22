@@ -1,0 +1,205 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=GBK"> 
+  <title>Coverage Report > SecurityConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.config</a>
+</div>
+
+<h1>Coverage Summary for Class: SecurityConfig (org.example.config)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SecurityConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (39/39)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$1</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$2</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (39/39)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.config;
+&nbsp;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import jakarta.servlet.http.HttpServletResponse;
+&nbsp;import org.example.entity.Result;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.security.access.AccessDeniedException;
+&nbsp;import org.springframework.security.authentication.BadCredentialsException;
+&nbsp;import org.springframework.security.authorization.AuthorizationDecision;
+&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.AuthenticationException;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.security.web.SecurityFilterChain;
+&nbsp;import org.springframework.security.web.util.matcher.IpAddressMatcher;
+&nbsp;import org.springframework.web.cors.CorsConfiguration;
+&nbsp;import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.PrintWriter;
+<b class="fc">&nbsp;import java.util.ArrayList;</b>
+&nbsp;import java.util.List;
+&nbsp;
+<b class="fc">&nbsp;@Configuration</b>
+<b class="fc">&nbsp;public class SecurityConfig {</b>
+&nbsp;    List&lt;IpAddressMatcher&gt; hasIpAddress = new ArrayList&lt;&gt;();
+&nbsp;    public SecurityConfig() {
+&nbsp;        hasIpAddress.add(new IpAddressMatcher(&quot;0:0:0:0:0:0:0:1&quot;));//本地ip postman测试的ip是ipv6
+<b class="fc">&nbsp;        hasIpAddress.add(new IpAddressMatcher(&quot;192.168.31.1&quot;));//其他服务注册到nacos的ip</b>
+<b class="fc">&nbsp;    }</b>
+&nbsp;
+<b class="fc">&nbsp;    @Bean</b>
+&nbsp;    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+<b class="fc">&nbsp;         http.authorizeHttpRequests((requests) -&gt;{requests</b>
+<b class="fc">&nbsp;                                .requestMatchers(&quot;**&quot;).access((authentication, context) -&gt; //对所有请求进行ip地址拦截</b>
+<b class="fc">&nbsp;                                 new AuthorizationDecision(hasIpAddress.stream().map(ipAddressMatcher -&gt;</b>
+<b class="fc">&nbsp;                                         ipAddressMatcher.matches(context.getRequest())).reduce(false, Boolean::logicalOr)))</b>
+&nbsp;                                .anyRequest()
+<b class="fc">&nbsp;                                .permitAll();</b>
+<b class="fc">&nbsp;                        }</b>
+&nbsp;                )
+<b class="fc">&nbsp;               .exceptionHandling(</b>
+&nbsp;                        conf-&gt;{
+&nbsp;                            conf.accessDeniedHandler(this::handleProcess);
+<b class="fc">&nbsp;                            conf.authenticationEntryPoint(this::handleProcess);</b>
+<b class="fc">&nbsp;                        }</b>
+<b class="fc">&nbsp;                ).csrf(AbstractHttpConfigurer::disable);</b>
+<b class="fc">&nbsp;        return http.build();</b>
+<b class="fc">&nbsp;    }</b>
+<b class="fc">&nbsp;    private void handleProcess(</b>
+<b class="fc">&nbsp;            HttpServletRequest request,</b>
+&nbsp;            HttpServletResponse response,
+<b class="fc">&nbsp;            Object exceptionOrAuthentication) throws IOException {</b>
+&nbsp;        response.setContentType(&quot;application/json;charset=utf-8&quot;);
+<b class="fc">&nbsp;        PrintWriter writer = response.getWriter();</b>
+<b class="fc">&nbsp;</b>
+&nbsp;        if (exceptionOrAuthentication instanceof AuthenticationException authException) {
+<b class="fc">&nbsp;            // 如果是认证异常，则判断具体是用户名密码错误还是未登录</b>
+&nbsp;            if (authException instanceof BadCredentialsException) {
+<b class="fc">&nbsp;                // 用户名密码错误</b>
+<b class="fc">&nbsp;                System.out.println(authException.getMessage());</b>
+&nbsp;                writer.write(Result.error(401, &quot;Username or password error&quot;).asJsonString());
+&nbsp;            } else {
+<b class="fc">&nbsp;                // 未登录</b>
+&nbsp;                writer.write(Result.error(401, &quot;不允许从服务器外访问此服务！&quot;).asJsonString());
+&nbsp;            }
+&nbsp;        } else if (exceptionOrAuthentication instanceof AccessDeniedException) {
+&nbsp;            // 权限不足
+<b class="fc">&nbsp;            System.out.println(exceptionOrAuthentication);</b>
+&nbsp;            writer.write(Result.error(403, &quot;You do not have permission&quot;).asJsonString());
+&nbsp;        } else if (exceptionOrAuthentication instanceof Authentication) {
+&nbsp;            // 身份验证成功
+&nbsp;            writer.write(Result.success((Authentication) exceptionOrAuthentication).asJsonString());
+&nbsp;        } else {
+<b class="fc">&nbsp;            // 其他情况，返回通用错误信息</b>
+<b class="fc">&nbsp;            writer.write(Result.error(500, &quot;Unknown error&quot;).asJsonString());</b>
+&nbsp;        }
+<b class="fc">&nbsp;    }</b>
+&nbsp;    
+<b class="fc">&nbsp;}</b>
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-07-19 15:43</div>
+</div>
+</body>
+</html>

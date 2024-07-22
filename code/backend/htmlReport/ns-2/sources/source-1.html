@@ -1,0 +1,142 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=GBK"> 
+  <title>Coverage Report > EventController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: EventController (org.example.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EventController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.controller;
+&nbsp;
+&nbsp;import org.example.entity.Event;
+&nbsp;import org.example.entity.Result;
+&nbsp;import org.example.service.EventService;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/event&quot;)
+&nbsp;public class EventController {
+&nbsp;    private final EventService service;
+&nbsp;    public EventController(EventService service) {
+&nbsp;        this.service = service;
+<b class="fc">&nbsp;    }</b>
+<b class="fc">&nbsp;    //获取某一个月的每一天的事件数量 返回一个数组</b>
+&nbsp;    @GetMapping(&quot;/getNums&quot;)
+&nbsp;    public Result&lt;int[]&gt; getNums(@RequestParam int year, @RequestParam int month, @RequestParam int uid) {
+&nbsp;        return Result.success(service.getNumsByMonth(year, month, uid));
+&nbsp;    }
+<b class="fc">&nbsp;    //获取某一天的所有事件 返回一个事件数组</b>
+&nbsp;    @GetMapping(&quot;/getEvents&quot;)
+&nbsp;    public Result&lt;List&lt;Event&gt;&gt; getEvents(@RequestParam LocalDate date, @RequestParam int uid) {
+&nbsp;        return Result.success(service.getEventsByDate(date, uid));
+&nbsp;    }
+<b class="fc">&nbsp;    //添加一个新的事件</b>
+&nbsp;    @PostMapping(&quot;/add&quot;)
+&nbsp;    public Result&lt;Event&gt; addEvent(@RequestBody Event event,@RequestParam int uid) {
+&nbsp;        return service.addEvent(event, uid);
+&nbsp;    }
+<b class="fc">&nbsp;    //获取用户各个类别的日程时间占比</b>
+<b class="fc">&nbsp;    @GetMapping(&quot;/summary&quot;)</b>
+&nbsp;    public Result&lt;List&lt;Object&gt;&gt; summary(@RequestParam LocalDate start,@RequestParam LocalDate end,@RequestParam int uid) {
+<b class="fc">&nbsp;        return service.summary(start,end,uid);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-07-19 15:43</div>
+</div>
+</body>
+</html>
