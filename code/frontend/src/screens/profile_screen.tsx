@@ -9,6 +9,7 @@ import {
   Modal,
   FlatList,
   ScrollView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import GoBack from '../utils/go_back';
@@ -30,6 +31,7 @@ import {
   removeObject,
   storeObject,
 } from '../services/offlineService';
+import SelectModal from '../components/select_modal';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [sleep, setSleep] = useState<null | number>(null);
@@ -183,11 +185,12 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
       {items.map((item, index) => (
         <View style={styles.inputContainer} key={index}>
           <Text style={styles.inputLabel}>{item.label}</Text>
-          <DropdownInput
+
+          <SelectModal
+            style={styles.input}
             data={item.data}
             selectedValue={item.value}
             setSelectedValue={item.setValue}
-            style={styles.input}
           />
         </View>
       ))}
@@ -203,29 +206,31 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
       </TouchableOpacity>
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <FlatList
-              data={identityOptions}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  onPress={() => handleImagePick(item.value)}
-                  style={styles.modalItem}>
-                  <Text style={styles.modalItemText}>{item.label}</Text>
-                </TouchableOpacity>
-              )}
-            />
-            <TouchableOpacity
-              onPress={() => setModalVisible(false)}
-              style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Cancel</Text>
-            </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <FlatList
+                data={identityOptions}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    onPress={() => handleImagePick(item.value)}
+                    style={styles.modalItem}>
+                    <Text style={styles.modalItemText}>{item.label}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </ScrollView>
   );
@@ -307,7 +312,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-    width: '80%',
+    width: 200,
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,

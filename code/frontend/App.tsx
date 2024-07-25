@@ -20,7 +20,7 @@ import {
   sleepOptions,
 } from './src/utils/offline.tsx';
 import {useNetInfo} from '@react-native-community/netinfo';
-import {getObject} from './src/services/offlineService.tsx';
+import {getObject, storeObject} from './src/services/offlineService.tsx';
 import NetworkListener from './src/components/network_listener.tsx';
 
 const Stack = createNativeStackNavigator();
@@ -104,6 +104,8 @@ function App() {
         setMode(mode);
       },
     );
+    storeObject('events', []);
+    storeObject('events_unpushed', []);//初始化events
   }, []);
 
   const options = {
@@ -111,10 +113,10 @@ function App() {
   };
   return (
     <NavigationContainer>
-      <Text>{user?.email}</Text>
+      {/* <Text>{user?.email}</Text>
       <Text>{auth?.username}</Text>
       <Text>{`mode:${mode}`}</Text>
-      <Text>{`isConnected:${isConnected}`}</Text>
+      <Text>{`isConnected:${isConnected}`}</Text> */}
       <NetworkListener />
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={options} />

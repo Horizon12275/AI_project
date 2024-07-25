@@ -30,4 +30,6 @@ public interface EventClient {
     public Result<Subtask> addSubtask(@PathVariable("eid") int eid, @RequestParam("content") String content, @RequestParam("deadline") LocalDate deadline, @RequestParam("uid") int uid);
     @PostMapping("/api/event/update/{id}")
     Result<Event> updateEvent(@PathVariable("id")int id, @RequestBody Event event, @RequestParam("uid") int uid);
+    @PostMapping("/api/event/pushAll")
+    Result<List<Event>> pushAll(@RequestBody List<Event> events, @RequestParam("uid") int uid);
 }
