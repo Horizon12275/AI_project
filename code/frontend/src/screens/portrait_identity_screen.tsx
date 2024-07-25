@@ -5,17 +5,26 @@ import {identityOptions} from '../utils/offline';
 
 const IdentityRow = ({
   cards,
+  user,
 }: {
   cards: {src: any; label: string; value: string}[];
+  user: any;
 }) => (
   <View style={styles.row}>
     {cards.map((card, index) => (
-      <IdentityCard key={index} ImageStyle={styles.card} {...card} />
+      <IdentityCard
+        key={index}
+        ImageStyle={styles.card}
+        user={user}
+        {...card}
+      />
     ))}
   </View>
 );
 
-const PortraitIdentityScreen = () => {
+const PortraitIdentityScreen = ({route}:
+  {route: {params: {user: any}}}
+) => {
   return (
     <ScrollView contentContainerStyle={{alignItems: 'center', padding: 20}}>
       <View style={styles.header}>
@@ -31,7 +40,7 @@ const PortraitIdentityScreen = () => {
         (option, index) =>
           index % 3 === 0 && (
             <View key={index} style={styles.identityRowContainer}>
-              <IdentityRow cards={identityOptions.slice(index, index + 3)} />
+              <IdentityRow cards={identityOptions.slice(index, index + 3)} user={route.params.user}/>
             </View>
           ),
       )}

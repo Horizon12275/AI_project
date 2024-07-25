@@ -8,6 +8,7 @@ import {
   View,
   Modal,
   FlatList,
+  ScrollView,
 } from 'react-native';
 
 import GoBack from '../utils/go_back';
@@ -22,6 +23,13 @@ import {
 import {getUser, portraitUpload} from '../services/userService';
 import {logout} from '../services/loginService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNetInfo} from '@react-native-community/netinfo';
+import {
+  clearAllUnpushed,
+  getObject,
+  removeObject,
+  storeObject,
+} from '../services/offlineService';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [sleep, setSleep] = useState<null | number>(null);
@@ -29,6 +37,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [exercise, setExercise] = useState<null | number>(null);
   const [identity, setIdentity] = useState<null | number>(null);
   const [modalVisible, setModalVisible] = useState(false);
+
   const items = [
     {
       label: 'sleep schedule',
@@ -51,17 +60,28 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
   ];
 
   useEffect(() => {
-    getUser()
-      .then(res => {
-        console.log(res);
-        setSleep(res.sleep_schedule);
-        setChallenge(res.challenge);
-        setExercise(res.exercise);
-        setIdentity(res.identity);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    getObject('mode').then(mode => {
+      if (mode == 'online') {
+        //用户已登录 且为在线模式 从云端获取数据
+        getUser().then(user => {
+          storeObject('user', user);
+          setSleep(user.sleep_schedule);
+          setChallenge(user.challenge);
+          setExercise(user.exercise);
+          setIdentity(user.identity);
+        });
+      } else {
+        //用户已登录 但为离线模式 从本地获取数据
+        getObject('user').then(user => {
+          if (user) {
+            setSleep(user.sleep_schedule);
+            setChallenge(user.challenge);
+            setExercise(user.exercise);
+            setIdentity(user.identity);
+          }
+        });
+      }
+    });
   }, []);
 
   const handleImagePick = (value: number) => {
@@ -76,31 +96,72 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
       exercise: exercise,
       identity: identity,
     };
-    console.log(portrait);
-    portraitUpload(portrait)
-      .then(res => {
-        Alert.alert('Success', 'Portrait updated successfully');
-      })
-      .catch(err => {
-        Alert.alert('Error', err);
-      });
+    getObject('mode').then(mode => {
+      if (mode == 'online') {
+        //用户已登录 且为在线模式 上传数据到云端 然后更新本地数据
+        portraitUpload(portrait).then(newUser => {
+          Alert.alert('Success', 'Portrait updated successfully');
+          storeObject('user', newUser);
+        });
+      } else {
+        //用户已登录 但为离线模式 保存数据到unpushed 然后更新本地数据
+        Alert.alert(
+          'Offline',
+          'You are in offline mode now, your data will be uploaded when you are online again',
+        );
+        storeObject('user_unpushed', portrait); //保存未上传的数据
+        //更新本地数据
+        getObject('user').then(user => {
+          user.sleep_schedule = sleep;
+          user.challenge = challenge;
+          user.exercise = exercise;
+          user.identity = identity;
+          storeObject('user', user);
+        });
+      }
+    });
+    //更新界面渲染
+    setSleep(sleep);
+    setChallenge(challenge);
+    setExercise(exercise);
+    setIdentity(identity);
   };
 
   const handleLogout = () => {
-    logout()
-      .then(() => {
-        AsyncStorage.removeItem('auth'); //清除登录信息
-        navigation.navigate('Login');
-      })
-      .catch(err => {
-        Alert.alert('Error', err);
-        navigation.navigate('Login');
-      });
+    getObject('mode').then(mode => {
+      if (mode == 'online')
+        logout()
+          .then(() => {
+            removeObject('auth'); //清除登录信息
+            removeObject('user'); //清除用户信息
+            navigation.replace('Login');
+          })
+          .catch(err => {
+            Alert.alert('Error', err);
+          });
+      else {
+        Alert.alert(
+          'Warning',
+          "You are in offline mode now, if you logout, you'll lose all unsynced data, are you sure to logout?",
+          [
+            {text: 'Cancel', onPress: () => {}},
+            {
+              text: 'OK',
+              onPress: () => {
+                clearAllUnpushed(); //清除未上传的数据
+                removeObject('auth'); //清除登录信息
+                removeObject('user'); //清除用户信息
+                navigation.replace('Login');
+              },
+            },
+          ],
+        );
+      }
+    });
   };
 
   return (
-    <View style={{backgroundColor: 'white', height: '100%'}}>
-      <GoBack title="Settings" />
+    <ScrollView style={{backgroundColor: 'white', height: '100%'}}>
       <View style={styles.container}>
         <Text style={styles.titleText}>My Portrait</Text>
         <View style={styles.imageContainer}>
@@ -136,9 +197,11 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
         onPress={handleSave}>
         <Text style={styles.saveButtonText}>Save</Text>
       </TouchableOpacity>
+
       <TouchableOpacity onPress={handleLogout} style={styles.quitButton}>
         <Text style={styles.quitButtonText}>Logout</Text>
       </TouchableOpacity>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -164,7 +227,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
           </View>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -183,17 +246,13 @@ const styles = StyleSheet.create({
     textAlign: 'left', // 使标题左对齐
   },
   saveButton: {
-    position: 'absolute',
-    bottom: 15,
     alignSelf: 'center',
-    width: '90%',
-    marginHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,
     backgroundColor: '#80B3FF',
     paddingVertical: 11,
-    paddingHorizontal: 15,
+    paddingHorizontal: 150,
   },
   saveButtonText: {
     color: '#000',
@@ -202,10 +261,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   quitButton: {
-    position: 'absolute',
-    bottom: 100,
-    right: 25,
-    alignSelf: 'center',
+    marginRight: 25,
+    marginTop: 20,
+    alignSelf: 'flex-end',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,

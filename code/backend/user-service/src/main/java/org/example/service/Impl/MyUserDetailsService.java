@@ -66,15 +66,10 @@ public class MyUserDetailsService implements UserDetailsService {
         return Result.success(user);
     }
 
-    public Result<User> register(RegisterRequest request) {
-        if (userRepository.findUserByEmail(request.getEmail()) != null) {
+    public Result<User> addUser(User user) {
+        if (userRepository.findUserByEmail(user.getEmail()) != null) {
             return Result.error(400, "用户已存在！");
         }
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setUsername(request.getUsername());
-        user.setPassword(new BCryptPasswordEncoder().encode(request.getPassword()));
-        System.out.println(user);
         userRepository.save(user);
         return Result.success(user);
     }

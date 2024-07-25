@@ -1,16 +1,7 @@
 import * as React from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Form, Input} from '@ant-design/react-native';
-import {login, register} from '../services/loginService';
+
 
 const InputField = ({
   label,
@@ -33,33 +24,19 @@ const InputField = ({
   </View>
 );
 
-function SignUpScreen() {
-  const navigation = useNavigation();
+function SignUpScreen({navigation}: {navigation: any}) {
   const [form] = Form.useForm();
 
   const onSubmit = () => {
     form.submit();
   };
-
+  //注册+登录+获取用户信息存储到本地
   const handleSignUp = async (values: {
     username: string;
     password: string;
     email: string;
   }) => {
-    console.log(values);
-    register(values)
-      .then(res => {
-        login({
-          username: values.email,
-          password: values.password,
-        }).then(res => {
-          Alert.alert('Sign up and Log in successfully!');
-          navigation.navigate('Portrait');
-        });
-      })
-      .catch(err => {
-        Alert.alert('Sign up failed', err);
-      });
+    navigation.navigate('Portrait', {user:{username:values.username,email:values.email,password:values.password}});
   };
 
   return (

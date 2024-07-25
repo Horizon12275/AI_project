@@ -87,10 +87,9 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
   return (
     <Form onFinish={handleSave} form={form}>
       <MyHeader onSave={onSubmit} />
-      <View
+      <ScrollView
         style={{
           backgroundColor: '#fff',
-          height: '100%',
           padding: 20,
           display: 'flex',
           flexDirection: 'column',
@@ -237,7 +236,7 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
         {/* <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
         <Text style={styles.saveButtonText}>Save</Text>
       </TouchableOpacity> */}
-      </View>
+      </ScrollView>
     </Form>
   );
 };

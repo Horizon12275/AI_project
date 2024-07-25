@@ -96,17 +96,11 @@ const Calendar = ({
   }, [selectedDate]);
 
   const goToPreviousMonth = () => {
-    setCurrentMonth((currentMonth - 1 + 12) % 12);
-    if (currentMonth === 0) {
-      setCurrentYear(currentYear - 1);
-    }
+    setSelectedDate(new Date(currentYear, currentMonth - 1, 1));
   };
 
   const goToNextMonth = () => {
-    setCurrentMonth((currentMonth + 1) % 12);
-    if (currentMonth === 11) {
-      setCurrentYear(currentYear + 1);
-    }
+   setSelectedDate(new Date(currentYear, currentMonth + 1, 1));
   };
 
   const dates = getDates(currentYear, currentMonth);

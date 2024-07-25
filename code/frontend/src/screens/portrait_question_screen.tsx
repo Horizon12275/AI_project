@@ -1,6 +1,8 @@
 import React from 'react';
 import {View, StyleSheet, Text, TouchableOpacity, Alert} from 'react-native';
 import {portraitUpload} from '../services/userService';
+import {login, register} from '../services/loginService';
+import {storeObject} from '../services/offlineService';
 
 type OptionProps = {
   text: string;
@@ -16,7 +18,7 @@ const AnsOption: React.FC<OptionProps> = ({text, onPress}) => (
 type QuestionScreenProps = {
   route: {
     params: {
-      portrait: any;
+      user: any;
       question: string;
       options: {label: string; value: string}[];
       nextScreen?: string;
@@ -49,21 +51,46 @@ const PortraitQuestionScreen: React.FC<QuestionScreenProps> = ({
             text={option.label}
             onPress={() => {
               if (nextScreen) {
+                //不是最后一个问题
                 navigation.navigate(nextScreen, {
-                  portrait: {...route.params.portrait, [type]: option.value},
+                  user: {...route.params.user, [type]: option.value},
                 });
               } else {
-                route.params.portrait[type] = option.value;
-                Alert.alert(
-                  'Your portrait is',
-                  JSON.stringify(route.params.portrait),
-                );
-                portraitUpload(route.params.portrait).then(res => {
-                  Alert.alert('Portrait uploaded successfully!');
-                  navigation.navigate('Tabs');
-                }).catch(err => {
-                  console.error(err);
-                });
+                //是最后一个问题
+                let user = route.params.user;
+                user[type] = option.value;
+                //注册并登录
+                register(user)
+                  .then(() => {
+                    login({
+                      username: user.email,
+                      password: user.password,
+                    })
+                      .then(() => {
+                        Alert.alert(
+                          'Sign up and Log in successfully!',
+                          'Welcome to the app!',
+                          [
+                            {
+                              text: 'OK',
+                              onPress: () => {
+                                storeObject('mode', 'online');
+                                storeObject('user', user);
+                                navigation.navigate('Tabs');
+                              },
+                            },
+                          ],
+                        );
+                      })
+                      //登录失败
+                      .catch(err => {
+                        Alert.alert('Login failed', err);
+                      });
+                  })
+                  //注册失败
+                  .catch(err => {
+                    Alert.alert('Sign up failed', err);
+                  });
               }
             }}
           />
