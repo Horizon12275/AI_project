@@ -26,6 +26,10 @@ pip install openai==0.28 (这个最后安装)
 uvicorn main:app --reload
 ```
 
+对于带文档的generate：
+
+`uvicorn rag:app --reload`
+
 接着打开 gptclient folder
 
 运行 GPTSubtask main 函数 与 GPTReminder main 函数 即可得到结果
