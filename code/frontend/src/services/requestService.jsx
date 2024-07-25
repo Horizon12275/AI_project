@@ -96,12 +96,6 @@ export async function put(url, data) {
   return await res.json().then(handleResponse);
 }
 
-// On Server Settings Below
-// export const WSURL = "ws://localhost:8080/ws";
-// export const BASEURL = "http://localhost:8080";
-// export const PEERURL = "localhost";
-
-// On Local Settings Below
 export const WSURL = Config.WSURL;
 export const BASEURL = Config.BASEURL;
 export const USERPORT = Config.USERPORT;

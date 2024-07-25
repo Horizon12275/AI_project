@@ -7,18 +7,24 @@ const IdentityCard = ({
   label,
   value,
   ImageStyle,
+  user,
 }: {
   src: any;
   label: string;
   value: string;
   ImageStyle?: any;
+  user: any;
 }) => {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
-      onPress={() =>
-        navigation.navigate('Question1', {portrait:{identity: value}})//传参给下一个页面
+      onPress={
+        () => {
+          navigation.navigate('Question1', {
+            user: {...user, identity: value},
+          });
+        } //传参给下一个页面
       }>
       <View style={styles.cardContainer}>
         <Text style={styles.cardTitle}>{label}</Text>

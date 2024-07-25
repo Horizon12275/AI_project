@@ -1,9 +1,8 @@
 import Calendar from '../components/calendar';
 import React, {useEffect, useState} from 'react';
-import {FlatList, RefreshControl, ScrollView, View} from 'react-native';
+import {Alert, FlatList, RefreshControl, ScrollView, View} from 'react-native';
 import CalendarHeader from '../components/calendar_header';
 import EventCard from '../components/event_card';
-import {getUser} from '../services/userService';
 import {getAllEvents, getEventNums} from '../services/eventService';
 import {toDate} from '../utils/date';
 
@@ -32,7 +31,7 @@ const TodayScreen = () => {
         setEventNums(eventNums);
         setRefreshing(false);
       })
-      .catch(error => console.log(error));
+      .catch(error => Alert.alert('Error', error.message));
   };
 
   return (

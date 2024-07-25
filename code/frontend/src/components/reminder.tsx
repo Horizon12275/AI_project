@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   dateText: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: '700',
     color: '#010618',
     fontFamily: 'Inter, sans-serif',
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   taskText: {
-    fontSize: 18,
+    fontSize: 12,
     color: '#010618',
     fontWeight: '400',
     fontFamily: 'Inter, sans-serif',

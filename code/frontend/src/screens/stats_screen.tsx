@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: '700',
     color: '#010618',
     textAlign: 'center',
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   timeZoneText: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 19,
+    fontSize: 16,
     fontWeight: '700',
     color: '#010618',
   },
@@ -144,10 +144,12 @@ const styles = StyleSheet.create({
   summaryButtonText: {
     color: '#FFF',
     fontFamily: 'Nunito, sans-serif',
-    fontSize: 22,
+    fontSize: 16,
   },
   modalView: {
-    margin: 20,
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
     elevation: 50,
   },
   calendarSpanTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '700',
     color: '#010618',
     marginTop: 10,
@@ -176,7 +178,7 @@ const styles = StyleSheet.create({
   doneButtonText: {
     color: 'white',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     padding: 3,
     textAlign: 'center',
   },

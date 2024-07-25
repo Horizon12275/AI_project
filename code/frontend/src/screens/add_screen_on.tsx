@@ -87,10 +87,9 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
   return (
     <Form onFinish={handleSave} form={form}>
       <MyHeader onSave={onSubmit} />
-      <View
+      <ScrollView
         style={{
           backgroundColor: '#fff',
-          height: '100%',
           padding: 20,
           display: 'flex',
           flexDirection: 'column',
@@ -237,7 +236,7 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
         {/* <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
         <Text style={styles.saveButtonText}>Save</Text>
       </TouchableOpacity> */}
-      </View>
+      </ScrollView>
     </Form>
   );
 };
@@ -252,7 +251,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '700',
     color: '#000',
   },
@@ -270,7 +269,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#000',
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
   },
   inputContainer: {
@@ -279,7 +278,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     color: 'black',
     fontWeight: '300',
   },
@@ -311,13 +310,13 @@ const styles = StyleSheet.create({
   doneButton: {
     backgroundColor: '#4A90E2',
     borderRadius: 20,
-    width: '90%',
-    margin: 10,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
   },
   doneButtonText: {
     color: 'white',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     padding: 3,
     textAlign: 'center',
   },
@@ -325,12 +324,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   ddlText: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
   },
   dateText: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#80B3FF',
   },
@@ -360,15 +359,15 @@ const styles = StyleSheet.create({
     color: '#0A84FF',
     textAlign: 'center',
     fontWeight: '800',
-    fontSize: 17,
-    lineHeight: 22,
+    fontSize: 12,
+    lineHeight: 15,
     fontFamily: 'Inter, sans-serif',
   },
   modalView: {
-    marginTop: 200,
-    margin: 20,
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
     backgroundColor: 'white',
-    borderRadius: 20,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -380,7 +379,7 @@ const styles = StyleSheet.create({
     elevation: 50,
   },
   calendarSpanTitle: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: '700',
     color: '#010618',
     marginTop: 10,

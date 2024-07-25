@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BASEURL, USERPORT, get, post, postUrlencoded} from './requestService';
 const PREFIX = `${BASEURL}:${USERPORT}/api/user`;
 
@@ -47,3 +48,4 @@ export async function sendCode(email) {
     alert(e);
   }
 }
+

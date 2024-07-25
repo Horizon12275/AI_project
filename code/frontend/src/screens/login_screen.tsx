@@ -2,17 +2,23 @@ import {
   View,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   Modal,
+  ScrollView,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import {Form, Input} from '@ant-design/react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {login, logout} from '../services/loginService';
+import {login} from '../services/loginService';
 import {Alert} from 'react-native';
 import {getUser} from '../services/userService';
 import {useEffect, useState} from 'react';
+import {
+  clearAllUnpushed,
+  getObject,
+  pushAll,
+  storeObject,
+} from '../services/offlineService';
+import {useNetInfo} from '@react-native-community/netinfo';
+import Loading from '../components/loading';
 
 const InputField = ({
   label,
@@ -35,146 +41,174 @@ const InputField = ({
   </View>
 );
 
-function LoginScreen() {
-  const navigation = useNavigation();
+function LoginScreen({navigation}: {navigation: any}) {
   const [form] = Form.useForm();
-  const [isLoging, setIsLoging] = useState(false); //是否正在登录 渲染loading
+  const [loading, setLoading] = useState(true); //是否正在加载
+  const [logging, setLogging] = useState(false); //是否正在登录
+  const [auth, setAuth] = useState<null | any>(null);
+  const {isConnected} = useNetInfo(); //是否联网
 
-  // useEffect(() => {
-  //   AsyncStorage.getItem('auth')
-  //     .then(auth => {
-  //       if (auth) {
-  //         const {rememberMe, username, password} = JSON.parse(auth);
-  //         if (rememberMe) {
-  //           setIsLoging(true);
-  //           login({username, password})
-  //             .then(res => {
-  //               console.log(res);
-  //               getUser()
-  //                 .then(user => {
-  //                   AsyncStorage.setItem('user', JSON.stringify(user));
-  //                   setIsLoging(false);
-  //                   navigation.navigate('Tabs');
-  //                   //Alert.alert('Welcome back, ' + user.username + '!');
-  //                 })
-  //                 .catch(err => Alert.alert(err)); //获取用户信息错误
-  //             })
-  //             .catch(err => Alert.alert(err)); //登录错误
-  //         }
-  //       }
-  //     })
-  //     .catch(
-  //       err => Alert.alert(err), //读取auth错误
-  //     );
-  // }, []);
+  //初次进入页面时根据user判断用户是否登录过
+  useEffect(() => {
+    if (isConnected === null) return;
+    setTimeout(() => {
+      Promise.all([getObject('auth'), getObject('user')]).then(
+        ([auth, user]) => {
+          setAuth(auth);
+          //替用户隐式的登录
+          if (user) {
+            form.setFieldsValue(auth);
+            if (isConnected) {
+              handleLogin(auth);
+            } else {
+              Alert.alert(
+                'Network Error',
+                'No network connection. You are logging in offline mode.',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      storeObject('mode', 'offline');
+                      navigation.replace('Tabs');
+                      setLoading(false);
+                    },
+                  },
+                ],
+                {
+                  cancelable: false,
+                },
+              );
+            }
+          } else setLoading(false); //加载完成
+        },
+      );
+    }, 1000);
+    return () => setLoading(true);
+  }, [isConnected]);
+
+  const loginInit = async (user: any, values: any) => {
+    storeObject('user', user);
+    storeObject('auth', {
+      username: values.username,
+      password: values.password,
+    });
+    setLogging(false);
+    navigation.replace('Tabs');
+    setLoading(false);
+  };
+
+  //登录+获取用户信息存储到本地+存储auth
+  const handleLogin = async (values: {username: string; password: string}) => {
+    if (!isConnected) {
+      Alert.alert('Network Error', 'Please check your network connection');
+      return;
+    }
+    setLogging(true);
+    login(values)
+      .then(() => {
+        storeObject('mode', 'online'); //在线模式
+        // 登录成功 获取用户信息
+        getUser()
+          .then(user => {
+            pushAll(); //上传未上传的数据 保证数据同步
+            loginInit(user, values);
+          })
+          //getUser失败 正常情况下不会发生
+          .catch(err => {
+            Alert.alert('Error', err);
+            setLogging(false);
+          });
+      })
+      // 登录失败
+      .catch(err => {
+        Alert.alert('Login failed', err);
+        setLogging(false);
+      });
+  };
 
   const onSubmit = () => {
     form.submit();
   };
 
-  const handleLogin = async (values: {
-    username: string;
-    password: string;
-    rememberMe: boolean;
-  }) => {
-    login(values)
-      .then(res => {
-        getUser()
-          .then(user => {
-            AsyncStorage.setItem('user', JSON.stringify(user));
-            if (1) {
-              //记住我
-              let auth = {
-                username: values.username,
-                password: values.password,
-                rememberMe: true,
-              };
-              AsyncStorage.setItem('auth', JSON.stringify(auth));
-            }
-            navigation.navigate('Tabs');
-          })
-          .catch(err => Alert.alert('Error', err));
-      })
-      .catch(err => {
-        Alert.alert('Error', err);
-      });
-  };
-
   return (
-    <Form
-      onFinish={handleLogin}
-      form={form}
-      initialValues={{
-        email: '',
-        password: '',
-      }}
-      style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
-      <View style={styles.formContainer}>
-        <Text style={styles.formInstructions}>
-          Enter your email and password
+    <ScrollView>
+      <Form
+        onFinish={handleLogin}
+        form={form}
+        initialValues={{
+          username: auth?.username,
+          password: auth?.password,
+          rememberMe: auth?.rememberMe,
+        }}
+        style={{display: loading ? 'none' : 'flex', ...styles.container}}>
+        <Text style={styles.title}>Log In</Text>
+        <View style={styles.formContainer}>
+          <Text style={styles.formInstructions}>
+            Enter your email and password
+          </Text>
+          <InputField
+            label="Email"
+            props={{
+              name: 'username',
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your email!',
+                },
+              ],
+            }}
+          />
+          <InputField
+            label="Password"
+            isPassword
+            props={{
+              name: 'password',
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your password!',
+                },
+              ],
+            }}
+          />
+          <TouchableOpacity>
+            <Text style={styles.forgotPassword}>Forgot password?</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.loginButton} onPress={onSubmit}>
+          <Text style={styles.loginButtonText}>LOGIN</Text>
+        </TouchableOpacity>
+        <Text style={styles.signUpText}>
+          Don't have an account?{' '}
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.signUpLink}>Sign up</Text>
+          </TouchableOpacity>
         </Text>
-        <InputField
-          label="Email"
-          props={{
-            name: 'username',
-            rules: [
-              {
-                required: true,
-                message: 'Please input your email!',
-              },
-            ],
-          }}
-        />
-        <InputField
-          label="Password"
-          isPassword
-          props={{
-            name: 'password',
-            rules: [
-              {
-                required: true,
-                message: 'Please input your password!',
-              },
-            ],
-          }}
-        />
-        <TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.loginButton} onPress={onSubmit}>
-        <Text style={styles.loginButtonText}>LOGIN</Text>
-      </TouchableOpacity>
-      <Text style={styles.signUpText}>
-        Don't have an account?{' '}
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.signUpLink}>Sign up</Text>
-        </TouchableOpacity>
-      </Text>
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <View style={styles.divider} />
-      </View>
-      <Modal visible={isLoging} transparent={true}>
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <View style={styles.divider} />
+        </View>
+      </Form>
+      <Modal visible={loading} animationType="fade" transparent={true}>
         <View
           style={{
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            backgroundColor: 'pink',
           }}>
-          <Text style={{color: '#FFF', fontSize: 20}}>Logging in...</Text>
+          <Text style={{color: '#FFF', fontSize: 20}}>loading...</Text>
         </View>
       </Modal>
-    </Form>
+      <Loading visible={logging && !loading} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     color: 'blue',
-    display: 'flex',
+
     width: '100%',
     height: '100%',
     flexDirection: 'column',
@@ -186,7 +220,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontFamily: 'Nunito',
     fontWeight: '700',
-    fontSize: 40,
+    fontSize: 30,
   },
   formContainer: {
     display: 'flex',
@@ -194,7 +228,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column',
     alignItems: 'stretch',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
     padding: 25,
   },
@@ -237,14 +271,14 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#FFF',
     fontFamily: 'Nunito',
-    fontSize: 22,
+    fontSize: 16,
   },
   signUpText: {
     color: '#A8A6A7',
     textAlign: 'center',
     fontFamily: 'Nunito',
     marginTop: 75,
-    fontSize: 16,
+    fontSize: 12,
   },
   signUpLink: {
     color: '#D87234',
