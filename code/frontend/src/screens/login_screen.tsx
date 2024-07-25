@@ -86,17 +86,6 @@ function LoginScreen({navigation}: {navigation: any}) {
     return () => setLoading(true);
   }, [isConnected]);
 
-  const loginInit = async (user: any, values: any) => {
-    storeObject('user', user);
-    storeObject('auth', {
-      username: values.username,
-      password: values.password,
-    });
-    setLogging(false);
-    navigation.replace('Tabs');
-    setLoading(false);
-  };
-
   //登录+获取用户信息存储到本地+存储auth
   const handleLogin = async (values: {username: string; password: string}) => {
     if (!isConnected) {
@@ -108,16 +97,14 @@ function LoginScreen({navigation}: {navigation: any}) {
       .then(() => {
         storeObject('mode', 'online'); //在线模式
         // 登录成功 获取用户信息
-        getUser()
-          .then(user => {
-            pushAll(); //上传未上传的数据 保证数据同步
-            loginInit(user, values);
-          })
-          //getUser失败 正常情况下不会发生
-          .catch(err => {
-            Alert.alert('Error', err);
-            setLogging(false);
-          });
+        pushAll(); //上传未上传的数据 保证数据同步
+        storeObject('auth', {
+          username: values.username,
+          password: values.password,
+        });
+        setLogging(false);
+        navigation.replace('Tabs');
+        setLoading(false);
       })
       // 登录失败
       .catch(err => {

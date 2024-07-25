@@ -12,6 +12,5 @@ import java.util.List;
 public interface EventRepo extends JpaRepository<Event, Integer> {
     public List<Event> getEventsByDdlBetweenAndUid(LocalDate start, LocalDate end, int uid);
     public List<Event> getEventsByDdlAndUid(LocalDate date, int uid);
-
-
+    public List<Event> getEventsByUid(int uid);
 }

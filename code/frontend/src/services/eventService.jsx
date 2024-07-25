@@ -38,3 +38,11 @@ export async function updateEvent(event) {
   result = await post(url, event);
   return result;
 }
+//
+export async function pushUnpushedEvents(events) {
+  const url = `${PREFIX}/pushAll`;
+  let result;
+  result = await get(url,events);
+  console.log(result);
+  return result;
+}

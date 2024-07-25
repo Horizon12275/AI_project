@@ -47,4 +47,8 @@ public class EventController {
     public Result<List<Object>> summary(@RequestParam LocalDate start,@RequestParam LocalDate end) {
         return service.summary(start,end);
     }
+    @PostMapping("/pushAll")
+    public Result<List<Event>> pushAll(@RequestBody List<Event> events) {
+        return service.pushAll(events);
+    }
 }

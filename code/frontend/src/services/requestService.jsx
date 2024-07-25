@@ -1,6 +1,7 @@
-import Config from "react-native-config";
+import Config from 'react-native-config';
 
 export async function handleResponse(res) {
+  if (res.code === undefined) throw JSON.stringify(res); //如果没有code字段说明是非标准格式的返回 服务器内部错误
   if (res.code === 200) {
     return res.data;
   } else {
@@ -100,4 +101,3 @@ export const WSURL = Config.WSURL;
 export const BASEURL = Config.BASEURL;
 export const USERPORT = Config.USERPORT;
 export const EVENTPORT = Config.EVENTPORT;
-

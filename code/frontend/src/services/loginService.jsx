@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BASEURL, USERPORT, get, post, postUrlencoded} from './requestService';
 const PREFIX = `${BASEURL}:${USERPORT}/api/user`;
 
@@ -16,11 +15,11 @@ export async function logout() {
   return result;
 }
 
-export async function register({username, password, email}) {
+export async function register(user) {
   const url = `${PREFIX}/register`;
 
   let result;
-  result = await post(url, {username, password, email});
+  result = await post(url, user);
   alert('Register successfully!');
   return result;
 }
