@@ -15,11 +15,11 @@ export async function logout() {
   return result;
 }
 
-export async function register({username, password, email}) {
+export async function register(user) {
   const url = `${PREFIX}/register`;
 
   let result;
-  result = await post(url, {username, password, email});
+  result = await post(url, user);
   alert('Register successfully!');
   return result;
 }
@@ -47,3 +47,4 @@ export async function sendCode(email) {
     alert(e);
   }
 }
+

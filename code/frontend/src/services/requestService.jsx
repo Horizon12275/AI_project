@@ -1,6 +1,7 @@
-import Config from "react-native-config";
+import Config from 'react-native-config';
 
 export async function handleResponse(res) {
+  if (res.code === undefined) throw JSON.stringify(res); //如果没有code字段说明是非标准格式的返回 服务器内部错误
   if (res.code === 200) {
     return res.data;
   } else {
@@ -96,14 +97,7 @@ export async function put(url, data) {
   return await res.json().then(handleResponse);
 }
 
-// On Server Settings Below
-// export const WSURL = "ws://localhost:8080/ws";
-// export const BASEURL = "http://localhost:8080";
-// export const PEERURL = "localhost";
-
-// On Local Settings Below
 export const WSURL = Config.WSURL;
 export const BASEURL = Config.BASEURL;
 export const USERPORT = Config.USERPORT;
 export const EVENTPORT = Config.EVENTPORT;
-

@@ -1761,6 +1761,11 @@
   dependencies:
     invariant "^2.2.4"
 
+"@react-native-community/netinfo@^11.3.2":
+  version "11.3.2"
+  resolved "https://registry.npmjs.org/@react-native-community/netinfo/-/netinfo-11.3.2.tgz"
+  integrity sha512-YsaS3Dutnzqd1BEoeC+DEcuNJedYRkN6Ef3kftT5Sm8ExnCF94C/nl4laNxuvFli3+Jz8Df3jO25Jn8A9S0h4w==
+
 "@react-native/assets-registry@0.74.85":
   version "0.74.85"
   resolved "https://registry.npmmirror.com/@react-native/assets-registry/-/assets-registry-0.74.85.tgz"
@@ -6842,7 +6847,7 @@ react-native-vector-icons@>7.0.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.64.1, react-native@>0.50.0, react-native@0.74.3:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.59, react-native@>=0.64.1, react-native@>0.50.0, react-native@0.74.3:
   version "0.74.3"
   resolved "https://registry.npmmirror.com/react-native/-/react-native-0.74.3.tgz"
   integrity sha512-UFutCC6WEw6HkxlcpQ2BemKqi0JkwrgDchYB5Svi8Sp4Xwt4HA6LGEjNQgZ+3KM44bjyFRpofQym0uh0jACGng==

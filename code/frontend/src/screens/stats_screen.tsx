@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -16,31 +16,43 @@ import Calendar from '../components/calendar';
 import {getSummary} from '../services/eventService';
 import {toDate} from '../utils/date';
 import {categoryOptions} from '../utils/offline';
+import {getObject} from '../services/offlineService';
 
 const summaryData = 'You have been spending most of your time eating!';
 
-const StatsScreen: React.FC = () => {
+const StatsScreen = () => {
   const [data, setData] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
 
   const handleSummary = () => {
-    getSummary(toDate(startDate), toDate(endDate))
-      .then(res => {
-        if (res.length === 0)
-          Alert.alert('No data found for the selected date range');
-        let data = res.map(item => {
-          return {
-            x: categoryOptions.find(cat => cat.value === item.category)?.label,
-            y: item.percentage.toFixed(2),
-          };
-        });
-        setData(data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    getObject('mode').then(mode => {
+      if (mode === 'offline') {
+        Alert.alert('You are offline, please connect to the internet');
+      } else {
+        if (startDate > endDate) {
+          Alert.alert('Start date should be before end date');
+          return;
+        }
+        getSummary(toDate(startDate), toDate(endDate))
+          .then(res => {
+            if (res.length === 0)
+              Alert.alert('No data found for the selected date range');
+            let data = res.map(item => {
+              return {
+                x: categoryOptions.find(cat => cat.value === item.category)
+                  ?.label,
+                y: item.percentage.toFixed(2),
+              };
+            });
+            setData(data);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   return (
@@ -103,7 +115,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: '700',
     color: '#010618',
     textAlign: 'center',
@@ -119,7 +131,7 @@ const styles = StyleSheet.create({
   },
   timeZoneText: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 19,
+    fontSize: 16,
     fontWeight: '700',
     color: '#010618',
   },
@@ -144,10 +156,12 @@ const styles = StyleSheet.create({
   summaryButtonText: {
     color: '#FFF',
     fontFamily: 'Nunito, sans-serif',
-    fontSize: 22,
+    fontSize: 16,
   },
   modalView: {
-    margin: 20,
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
@@ -161,7 +175,7 @@ const styles = StyleSheet.create({
     elevation: 50,
   },
   calendarSpanTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '700',
     color: '#010618',
     marginTop: 10,
@@ -176,7 +190,7 @@ const styles = StyleSheet.create({
   doneButtonText: {
     color: 'white',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     padding: 3,
     textAlign: 'center',
   },

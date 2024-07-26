@@ -22,8 +22,8 @@ public class UserController {
         return service.getUserByUsername( user.getUsername());
     }
     @PostMapping("/register")//注册
-    public Result<User> register(@RequestBody RegisterRequest request) {
-        return service.register(request);
+    public Result<User> register(@RequestBody User user) {
+        return service.addUser(user);
     }
     @PostMapping("/portrait")//提交个人肖像
     public Result<User> portrait(@RequestBody User user) {

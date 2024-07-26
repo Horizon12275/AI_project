@@ -5,17 +5,26 @@ import {identityOptions} from '../utils/offline';
 
 const IdentityRow = ({
   cards,
+  user,
 }: {
   cards: {src: any; label: string; value: string}[];
+  user: any;
 }) => (
   <View style={styles.row}>
     {cards.map((card, index) => (
-      <IdentityCard key={index} ImageStyle={styles.card} {...card} />
+      <IdentityCard
+        key={index}
+        ImageStyle={styles.card}
+        user={user}
+        {...card}
+      />
     ))}
   </View>
 );
 
-const PortraitIdentityScreen = () => {
+const PortraitIdentityScreen = ({route}:
+  {route: {params: {user: any}}}
+) => {
   return (
     <ScrollView contentContainerStyle={{alignItems: 'center', padding: 20}}>
       <View style={styles.header}>
@@ -31,7 +40,7 @@ const PortraitIdentityScreen = () => {
         (option, index) =>
           index % 3 === 0 && (
             <View key={index} style={styles.identityRowContainer}>
-              <IdentityRow cards={identityOptions.slice(index, index + 3)} />
+              <IdentityRow cards={identityOptions.slice(index, index + 3)} user={route.params.user}/>
             </View>
           ),
       )}
@@ -55,10 +64,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'rgba(217, 217, 217, 0.2)',
     width: 112,
-    height: 172,
+    height: 160,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -82,7 +91,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: {width: 0, height: 4},
     textShadowRadius: 4,
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   subHeader: {
@@ -91,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   subHeaderText: {
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
@@ -105,7 +114,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
