@@ -5,6 +5,12 @@ import CalendarHeader from '../components/calendar_header';
 import EventCard from '../components/event_card';
 import {getAllEvents, getEventNums} from '../services/eventService';
 import {toDate} from '../utils/date';
+import {
+  getAllEventsOffline,
+  getEventNumsOffline,
+  getObject,
+} from '../services/offlineService';
+
 
 const TodayScreen = () => {
   const currentDate = new Date();
@@ -15,23 +21,36 @@ const TodayScreen = () => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(true);
   const [isEditing, setIsEditing] = useState(-1); //正在编辑的事件id -1表示没有
 
+
   useEffect(() => {
     onRefresh(); //重新渲染时刷新 会有loading图标
   }, [selectedDate]);
 
   const onRefresh = () => {
-    setRefreshing(true);
-    setIsEditing(-1); //刷新时取消编辑状态
-    Promise.all([
-      getAllEvents(toDate(selectedDate)),
-      getEventNums(selectedDate.getFullYear(), selectedDate.getMonth() + 1),
-    ])
-      .then(([events, eventNums]) => {
-        setEvents(events);
-        setEventNums(eventNums);
-        setRefreshing(false);
-      })
-      .catch(error => Alert.alert('Error', error.message));
+    getObject('mode').then(mode => {
+      setRefreshing(true);
+      setIsEditing(-1); //刷新时取消编辑状态
+      Promise.all([
+        mode === 'online'
+          ? getAllEvents(toDate(selectedDate))
+          : getAllEventsOffline(toDate(selectedDate)),
+        mode === 'online'
+          ? getEventNums(
+              selectedDate.getFullYear(),
+              selectedDate.getMonth() + 1,
+            )
+          : getEventNumsOffline(
+              selectedDate.getFullYear(),
+              selectedDate.getMonth() + 1,
+            ),
+      ])
+        .then(([events, eventNums]) => {
+          setEvents(events);
+          setEventNums(eventNums);
+          setRefreshing(false);
+        })
+        .catch(error => Alert.alert('Error', error.message));
+    });
   };
 
   return (
