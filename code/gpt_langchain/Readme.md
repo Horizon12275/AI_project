@@ -30,6 +30,36 @@ uvicorn main:app --reload
 
 `uvicorn rag:app --reload`
 
-接着打开 gptclient folder
+如果我自己用curl 测试 输入是类似这样的
 
-运行 GPTSubtask main 函数 与 GPTReminder main 函数 即可得到结果
+```
+curl -X POST "http://localhost:8000/generate_subtasks" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "event": {
+             "title": "Team Meeting",
+             "category": "Work",
+             "location": "Conference Room",
+             "details": "Discuss project progress and next steps.",
+             "ddl": "2024-07-30T10:00:00Z"
+           },
+           "path": "/path/to/your/documents"//会读取一个目录下的所有文件
+         }'
+
+```
+
+```
+curl -X POST "http://localhost:8000/generate_reminders" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "event": {
+             "title": "Team Meeting",
+             "category": "Work",
+             "location": "Conference Room",
+             "details": "Discuss project progress and next steps.",
+             "ddl": "2024-07-30T10:00:00Z"
+           },
+           "path": "/path/to/your/documents"//会读取一个目录下的所有文件
+         }'
+```
+
