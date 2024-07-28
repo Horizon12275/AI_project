@@ -71,6 +71,7 @@ public class MyUserDetailsService implements UserDetailsService {
             return Result.error(400, "用户已存在！");
         }
         User user = request.toUser();
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userRepository.save(user);
         return Result.success(user);
     }
