@@ -66,10 +66,11 @@ public class MyUserDetailsService implements UserDetailsService {
         return Result.success(user);
     }
 
-    public Result<User> addUser(User user) {
-        if (userRepository.findUserByEmail(user.getEmail()) != null) {
+    public Result<User> addUser(RegisterRequest request) {
+        if (userRepository.findUserByEmail(request.getEmail()) != null) {
             return Result.error(400, "用户已存在！");
         }
+        User user = request.toUser();
         userRepository.save(user);
         return Result.success(user);
     }

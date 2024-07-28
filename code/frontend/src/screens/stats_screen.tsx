@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Modal,
   Alert,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import PieGraph from '../components/pie_graph';
 import SummaryBox from '../components/summary_box';
@@ -77,20 +78,23 @@ const StatsScreen = () => {
             onRequestClose={() => {
               setShowCalendar(!showCalendar);
             }}>
-            <View style={styles.modalView}>
-              <Text style={styles.calendarSpanTitle}>Start Date</Text>
-              <Calendar
-                selectedDate={startDate}
-                setSelectedDate={setStartDate}
-              />
-              <Text style={styles.calendarSpanTitle}>End Date</Text>
-              <Calendar selectedDate={endDate} setSelectedDate={setEndDate} />
-              <TouchableOpacity
-                onPress={() => setShowCalendar(!showCalendar)}
-                style={styles.doneButton}>
-                <Text style={styles.doneButtonText}>Done</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableWithoutFeedback
+              onPress={() => setShowCalendar(!showCalendar)}>
+              <View style={styles.modalView}>
+                <Text style={styles.calendarSpanTitle}>Start Date</Text>
+                <Calendar
+                  selectedDate={startDate}
+                  setSelectedDate={setStartDate}
+                />
+                <Text style={styles.calendarSpanTitle}>End Date</Text>
+                <Calendar selectedDate={endDate} setSelectedDate={setEndDate} />
+                <TouchableOpacity
+                  onPress={() => setShowCalendar(!showCalendar)}
+                  style={styles.doneButton}>
+                  <Text style={styles.doneButtonText}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
           </Modal>
         )}
       </View>
@@ -162,20 +166,12 @@ const styles = StyleSheet.create({
     height: '100%',
     display: 'flex',
     justifyContent: 'center',
-    backgroundColor: 'white',
-    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 50,
+    padding: 20,
   },
   calendarSpanTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
     color: '#010618',
     marginTop: 10,
