@@ -8,13 +8,16 @@ ide 打开两个窗口 一个打开 gpt_python folder 一个打开 gptclient fol
 
 在 gpt_python folder 终端中
 
+注：pip 下载太慢 切换一下国内镜像源 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
 运行
 
 ```
 pip install uvicorn
-pip instal fastapi
+pip install fastapi
 pip install langchain==0.2.6
 pip install langchain-openai==0.1.15
+pip install langchain_community
 pip install openai==0.28 (这个最后安装)
 ```
 
@@ -29,7 +32,7 @@ uvicorn main:app --reload
 nohup uvicorn main:app --host 0.0.0.0 --port 8000 &
 ```
 
-对于带文档的generate：
+对于带文档的 generate：
 
 `uvicorn rag:app --reload`
 
