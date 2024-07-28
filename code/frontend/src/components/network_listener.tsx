@@ -4,10 +4,11 @@ import {Alert} from 'react-native';
 import {getObject, pushAll, storeObject} from '../services/offlineService';
 import {useNavigation} from '@react-navigation/native';
 import {login} from '../services/loginService';
+import Loading from './loading';
 
 const NetworkListener = () => {
   const [isConnected, setIsConnected] = useState<null | boolean>(null); // 初始状态假设连接是正常的
-  const navigation = useNavigation();
+  const [loading, setLoading] = useState(false); // 是否正在加载
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       // 初始化时 更新连接状态
@@ -24,7 +25,7 @@ const NetworkListener = () => {
             if (user && mode === 'online') {
               Alert.alert(
                 '网络连接',
-                '网络已断开, 是否要切换为离线模式？',
+                '网络已断开, 已切换为离线模式',
                 [{text: 'OK', onPress: () => storeObject('mode', 'offline')}],
                 {
                   cancelable: false,
@@ -48,12 +49,14 @@ const NetworkListener = () => {
                   {
                     text: 'OK',
                     onPress: () => {
+                      setLoading(true);
                       getObject('auth').then(auth => {
                         login(auth)
-                          .then(user => {
+                          .then(() => {
                             storeObject('mode', 'online');
-                            storeObject('user', user);
-                            pushAll();
+                            pushAll().then(() => {
+                              setLoading(false);
+                            });
                           })
                           .catch(err => {
                             Alert.alert('登录失败', err);
@@ -75,7 +78,7 @@ const NetworkListener = () => {
     return () => unsubscribe();
   }, [isConnected]); // 监听 isConnected 变化
 
-  return null;
+  return <Loading visible={loading} />;
 };
 
 export default NetworkListener;

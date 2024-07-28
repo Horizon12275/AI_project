@@ -54,6 +54,7 @@ function LoginScreen({navigation}: {navigation: any}) {
     setTimeout(() => {
       Promise.all([getObject('auth'), getObject('user')]).then(
         ([auth, user]) => {
+          if (!auth) return setLoading(false); //加载完成
           setAuth(auth);
           //替用户隐式的登录
           if (user) {
@@ -97,14 +98,15 @@ function LoginScreen({navigation}: {navigation: any}) {
       .then(() => {
         storeObject('mode', 'online'); //在线模式
         // 登录成功 获取用户信息
-        pushAll(); //上传未上传的数据 保证数据同步
-        storeObject('auth', {
-          username: values.username,
-          password: values.password,
-        });
-        setLogging(false);
-        navigation.replace('Tabs');
-        setLoading(false);
+        pushAll().then(() => {
+          storeObject('auth', {
+            username: values.username,
+            password: values.password,
+          });
+          setLogging(false);
+          navigation.replace('Tabs');
+          setLoading(false);
+        }); //上传未上传的数据 保证数据同步
       })
       // 登录失败
       .catch(err => {

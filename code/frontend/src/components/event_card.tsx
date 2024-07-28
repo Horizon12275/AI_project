@@ -1,9 +1,17 @@
-import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import Divider from './divider';
 import MyButton from '../utils/my_button';
 import {categoryColors} from '../utils/offline';
 import {changeSubtaskDone, deleteSubtask} from '../services/subtaskService';
 import {useEffect, useState} from 'react';
+import {getObject, storeObject} from '../services/offlineService';
 
 type eventProps = {
   id: number;
@@ -11,6 +19,7 @@ type eventProps = {
   endTime: string;
   title: string;
   location: string;
+  category: number;
   subtasks: Array<{
     id: number;
     content: string;
@@ -40,32 +49,100 @@ const EventCard = ({
   };
 
   const handleCheck = (sid: number) => {
-    changeSubtaskDone(sid)
-      .then(() => {
-        const eventIndex = event.subtasks.findIndex(
-          subtask => subtask.id === sid,
+    getObject('mode').then(mode => {
+      if (mode === 'online') {
+        changeSubtaskDone(sid)
+          .then(() => {
+            const eventIndex = event.subtasks.findIndex(
+              subtask => subtask.id === sid,
+            );
+            const newSubtasks = [...event.subtasks];
+            newSubtasks[eventIndex].done = !newSubtasks[eventIndex].done;
+            event.subtasks = newSubtasks;
+            getObject('events').then(events => {
+              const eventIndex = events.findIndex(
+                (e: any) => e.id === event.id,
+              );
+              events[eventIndex] = event;
+              storeObject('events', events);
+            });
+            setRefresh(refresh + 1);
+          })
+          .catch(error => Alert.alert('Error', error));
+      } else {
+        Promise.all([getObject('events'), getObject('events_unpushed')]).then(
+          ([events, events_unpushed]) => {
+            const eventIndex = event.subtasks.findIndex(
+              subtask => subtask.id === sid,
+            );
+            const newSubtasks = [...event.subtasks];
+            newSubtasks[eventIndex].done = !newSubtasks[eventIndex].done;
+            event.subtasks = newSubtasks;
+            //
+            events_unpushed.push(event);
+            storeObject('events_unpushed', events_unpushed);
+
+            events.map((e: any) => {
+              if (e.id === event.id) {
+                e.subtasks = newSubtasks;
+              }
+            });
+            storeObject('events', events);
+            setRefresh(refresh + 1);
+          },
         );
-        const newSubtasks = [...event.subtasks];
-        newSubtasks[eventIndex].done = !newSubtasks[eventIndex].done;
-        event.subtasks = newSubtasks;
-        setRefresh(refresh + 1);
-      })
-      .catch(error => console.log(error));
+      }
+    });
   };
 
   const handleDelete = (sid: number) => {
-    deleteSubtask(sid)
-      .then(() => {
-        const newSubtasks = event.subtasks.filter(
-          subtask => subtask.id !== sid,
+    getObject('mode').then(mode => {
+      if (mode === 'online') {
+        deleteSubtask(sid)
+          .then(() => {
+            const eventIndex = event.subtasks.findIndex(
+              subtask => subtask.id === sid,
+            );
+            const newSubtasks = [...event.subtasks];
+            newSubtasks.splice(eventIndex, 1);
+            event.subtasks = newSubtasks;
+            getObject('events').then(events => {
+              const eventIndex = events.findIndex(
+                (e: any) => e.id === event.id,
+              );
+              events[eventIndex] = event;
+              storeObject('events', events);
+            });
+            setRefresh(refresh + 1);
+          })
+          .catch(error => Alert.alert('Error', error));
+      } else {
+        Promise.all([getObject('events'), getObject('events_unpushed')]).then(
+          ([events, events_unpushed]) => {
+            const eventIndex = event.subtasks.findIndex(
+              subtask => subtask.id === sid,
+            );
+            const newSubtasks = [...event.subtasks];
+            newSubtasks.splice(eventIndex, 1);
+            event.subtasks = newSubtasks;
+            //
+            events_unpushed.push(event);
+            storeObject('events_unpushed', events_unpushed);
+
+            events.map((e: any) => {
+              if (e.id === event.id) {
+                e.subtasks = newSubtasks;
+              }
+            });
+            storeObject('events', events);
+            setRefresh(refresh + 1);
+          },
         );
-        event.subtasks = newSubtasks;
-        setRefresh(refresh + 1);
-      })
-      .catch(error => console.log(error));
+      }
+    });
   };
 
-  const color = categoryColors[event.id % 6];
+  const color = categoryColors[event.category];
   return (
     <View style={styles.scheduleItemContainer}>
       <View style={styles.timeContainer}>
@@ -80,10 +157,10 @@ const EventCard = ({
         />
         <View style={styles.iconWrapper}>
           <View style={styles.startTimeWrapper}>
-            <Text style={{color:"black"}}>{event.startTime}</Text>
+            <Text style={{color: 'black'}}>{event.startTime}</Text>
           </View>
           <View style={styles.endTimeWrapper}>
-            <Text style={{color:"black"}}>{event.endTime}</Text>
+            <Text style={{color: 'black'}}>{event.endTime}</Text>
           </View>
         </View>
       </View>

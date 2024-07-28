@@ -29,6 +29,10 @@ uvicorn main:app --reload
 nohup uvicorn main:app --host 0.0.0.0 --port 8000 &
 ```
 
+对于带文档的generate：
+
+`uvicorn rag:app --reload`
+
 接着打开 gptclient folder
 
 运行 GPTSubtask main 函数 与 GPTReminder main 函数 即可得到结果

@@ -27,7 +27,7 @@ export async function addEvent(event) {
 export async function getSummary(startDate, endDate) {
   const url = `${PREFIX}/summary?start=${startDate}&end=${endDate}`;
   let result;
-  
+
   result = await get(url);
   return result;
 }
@@ -42,7 +42,6 @@ export async function updateEvent(event) {
 export async function pushUnpushedEvents(events) {
   const url = `${PREFIX}/pushAll`;
   let result;
-  result = await get(url,events);
-  console.log(result);
+  result = await post(url, events);
   return result;
 }

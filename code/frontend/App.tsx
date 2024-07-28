@@ -22,11 +22,13 @@ import {
 import {useNetInfo} from '@react-native-community/netinfo';
 import {getObject, storeObject} from './src/services/offlineService.tsx';
 import NetworkListener from './src/components/network_listener.tsx';
+import AddOffScreen from './src/screens/add_screen_off.tsx';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const {isConnected} = useNetInfo();
   const options = {
     headerShown: false,
   };
@@ -62,7 +64,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Add"
-        component={AddOnScreen}
+        component={isConnected ? AddOnScreen : AddOffScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
@@ -104,8 +106,7 @@ function App() {
         setMode(mode);
       },
     );
-    storeObject('events', []);
-    storeObject('events_unpushed', []);//初始化events
+    
   }, []);
 
   const options = {

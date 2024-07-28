@@ -2,7 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getUser, portraitUpload} from './userService';
 import {pushUnpushedEvents} from './eventService';
-import { Alert } from 'react-native';
+import {Alert} from 'react-native';
 
 export async function storeObject(key: string, value: any) {
   await AsyncStorage.setItem(key, JSON.stringify(value));
@@ -23,29 +23,31 @@ export async function pushAll() {
       // 用户修改的画像数据
       if (user_unpushed) {
         portraitUpload(user_unpushed).then(user => {
-          console.log('user:', user);
+          console.log(user_unpushed);
           storeObject('user', user);
           removeObject('user_unpushed');
         });
       } else {
         getUser().then(user => {
-          console.log('user:', user);
           storeObject('user', user);
         });
       }
+
       // 用户修改的日程数据
       events_unpushed.map((event: any) => {
         if (isNaN(parseInt(event.id))) {
           event.id = null; //id为null代表新增 为数字代表修改
         }
       });
-      pushUnpushedEvents(events_unpushed).then(events => {
-        console.log('events:', events);
-        storeObject('events', events);
-        storeObject('events_unpushed', []);
-      }).catch(e => {
-        Alert.alert('Error', e);
-      });
+      console.log(events_unpushed);
+      pushUnpushedEvents(events_unpushed)
+        .then(events => {
+          storeObject('events', events);
+          storeObject('events_unpushed', []);
+        })
+        .catch(e => {
+          Alert.alert('Error', e);
+        });
     },
   );
 }
@@ -62,4 +64,26 @@ export function generateId() {
     id += chars[Math.floor(Math.random() * chars.length)];
   }
   return id;
+}
+//获取所有日程 对应了服务器的getAllEvents接口
+export async function getAllEventsOffline(date: string) {
+  let events = await getObject('events');
+
+  if (events == null) return [];
+  return events.filter((event: any) => event.ddl == date);
+}
+//获取某一天的日程数量 对应了服务器的getEventNums接口
+export async function getEventNumsOffline(year: number, month: number) {
+
+  let events = await getObject('events');
+  let eventNums = Array(31).fill(0);
+  if (events == null) return eventNums;
+  events.forEach((event: any) => {
+    if (event.ddl == undefined) return;
+    const [y, m, d] = event.ddl.split('-');
+    if (parseInt(y) === year && parseInt(m) === month) {
+      eventNums[parseInt(d) - 1]++;
+    }
+  });
+  return eventNums;
 }

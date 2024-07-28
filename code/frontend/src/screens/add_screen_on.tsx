@@ -20,6 +20,8 @@ import MyHeader from '../components/my_header';
 import {toDate, toTime} from '../utils/date';
 import {addEvent} from '../services/eventService';
 import SelectModal from '../components/select_modal';
+import Loading from '../components/loading';
+import {getObject, storeObject} from '../services/offlineService';
 
 const InputField = ({
   label,
@@ -78,6 +80,11 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
       eventDetails,
     })
       .then(event => {
+        //本地存储 保持数据一致性
+        getObject('events').then(events => {
+          events.push(event);
+          storeObject('events', events);
+        });
         setLoading(false);
         navigation.navigate('AI', {event}); //传入响应的event给ai界面 来渲染ai的帮助内容
       })
@@ -88,6 +95,7 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
   };
   return (
     <Form onFinish={handleSave} form={form}>
+      <Loading visible={loading} />
       <MyHeader onSave={onSubmit} />
       <ScrollView
         style={{
