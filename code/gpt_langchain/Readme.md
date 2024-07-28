@@ -8,8 +8,7 @@ ide 打开两个窗口 一个打开 gpt_python folder 一个打开 gptclient fol
 
 在 gpt_python folder 终端中
 
-注：pip 下载太慢 切换一下国内镜像源 
-pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+注：pip 下载太慢 切换一下国内镜像源 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 运行
 
