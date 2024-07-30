@@ -7,14 +7,11 @@ RUN rm -f /etc/localtime \
 # 设置工作目录
 WORKDIR /app
 # 将当前目录下的jar包复制到docker容器的/目录下
-ADD ./code/backend/user-service/target/user-service-0.0.1-SNAPSHOT.jar /app/
+ADD ./code/backend/user-service/target/load-balance-0.0.1-SNAPSHOT.jar /app/
 # 设置环境变量
-ENV DB1_URL=${DB1_URL}
-ENV DB1_USERNAME=${DB1_USERNAME}
-ENV DB1_PASSWORD=${DB1_PASSWORD}
 ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
-ENV USER_SERVICE_PORT=${USER_SERVICE_PORT}
+ENV LOAD_BALANCE_PORT=${LOAD_BALANCE_PORT} 
 # 指定docker容器启动时运行jar包
-ENTRYPOINT ["java", "-jar","user-service-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar","load-balance-0.0.1-SNAPSHOT.jar"]
 # 指定维护者的名字
 MAINTAINER horizon22
