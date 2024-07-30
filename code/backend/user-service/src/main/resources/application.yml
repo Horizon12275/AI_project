@@ -1,5 +1,7 @@
 server:
   port: ${USER_SERVICE_PORT}
+  tomcat:
+    accept-count: 1000 # 服务端等待队列长度
 
 spring:
   datasource:
@@ -10,7 +12,6 @@ spring:
     hikari:
       maximum-pool-size: 1000
       minimum-idle: 100
-
   jpa:
     show-sql: false
     hibernate:
