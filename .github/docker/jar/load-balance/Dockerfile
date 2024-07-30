@@ -7,7 +7,7 @@ RUN rm -f /etc/localtime \
 # 设置工作目录
 WORKDIR /app
 # 将当前目录下的jar包复制到docker容器的/目录下
-ADD ./code/backend/user-service/target/load-balance-0.0.1-SNAPSHOT.jar /app/
+ADD ./code/backend/load-balance/target/load-balance-0.0.1-SNAPSHOT.jar /app/
 # 设置环境变量
 ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV LOAD_BALANCE_PORT=${LOAD_BALANCE_PORT} 
