@@ -30,7 +30,7 @@
 
 1. 对应的仓库里面创建一个 .github/workflows 文件夹，里面创建一个 yaml 文件，比如 test.yaml
 
-2. 为了持续部署后端 springboot 程序到服务器 我们需要写一个如下的 yaml 文件，其中逐行有解释
+2. 为了持续部署后端 springboot 程序到服务器 我们需要写一个如下的 yaml 文件，其中逐行有 解释
 
 ```yaml
 # 名称，可以随便取
