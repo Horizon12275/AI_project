@@ -29,5 +29,13 @@ public class UserController {
     public Result<User> portrait(@RequestBody User user) {
         return service.portrait(user);
     }
+    @GetMapping("/testGET")//测试GET请求
+    public String testGET() {
+        return "GET请求成功";
+    }
+    @PostMapping("/testPOST")//测试POST请求
+    public String testPOST() {
+        return "POST请求成功";
+    }
 
 }
