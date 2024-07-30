@@ -1,11 +1,12 @@
 package org.example.constant;
 
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+
 import java.util.HashMap;
 import java.util.Map;
 

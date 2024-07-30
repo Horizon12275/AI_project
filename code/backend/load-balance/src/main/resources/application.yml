@@ -1,0 +1,12 @@
+server:
+  port: ${LOAD_BALANCE_PORT}
+  tomcat:
+    accept-count: 1000 # 服务端等待队列长度
+
+spring:
+  application:
+    name: load-balance
+  cloud: # 服务注册
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR}
