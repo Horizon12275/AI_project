@@ -9,7 +9,7 @@ WORKDIR /app
 # 将当前目录下的jar包复制到docker容器的/目录下
 ADD ./code/backend/user-service/target/user-service-0.0.1-SNAPSHOT.jar /app/
 # 设置环境变量
-ENV DB1_URL=${DB1_URL}
+ENV DB1_URL=jdbc:mysql://123.60.63.215:3306/timegenie?createDatabaseIfNotExist=true
 ENV DB1_USERNAME=${DB1_USERNAME}
 ENV DB1_PASSWORD=${DB1_PASSWORD}
 ENV DB2_URL=${DB2_URL}
