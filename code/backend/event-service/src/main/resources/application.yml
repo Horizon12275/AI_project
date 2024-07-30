@@ -2,6 +2,8 @@ server:
   port: ${EVENT_SERVICE_PORT}
   tomcat:
     accept-count: 1000
+    threads:
+      max: 1000
 
 spring:
   datasource:

@@ -8,6 +8,17 @@ RUN rm -f /etc/localtime \
 WORKDIR /app
 # 将当前目录下的jar包复制到docker容器的/目录下
 ADD ./code/backend/user-service/target/user-service-0.0.1-SNAPSHOT.jar /app/
+# 设置环境变量
+ENV DB1_URL=${DB1_URL}
+ENV DB1_USERNAME=${DB1_USERNAME}
+ENV DB1_PASSWORD=${DB1_PASSWORD}
+ENV DB2_URL=${DB2_URL}
+ENV DB2_USERNAME=${DB2_USERNAME}
+ENV DB2_PASSWORD=${DB2_PASSWORD}
+ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
+ENV USER_SERVICE_PORT=${USER_SERVICE_PORT}
+ENV EVENT_SERVICE_PORT=${EVENT_SERVICE_PORT}
+ENV USER_SERVER_IP=${USER_SERVER_IP}
 # 指定docker容器启动时运行jar包
 ENTRYPOINT ["java", "-jar","user-service-0.0.1-SNAPSHOT.jar"]
 # 指定维护者的名字
