@@ -75,7 +75,7 @@ jobs:
         with:
           command: |
             cd ./scripts
-            sh load-balance-with-skywalking.sh
+            sh load-balance-with-secrets.sh
             sh user-service-with-secrets.sh
             sh event-service-with-secrets.sh
           host: ${{ secrets.HOST_2 }}
