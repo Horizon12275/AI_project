@@ -171,3 +171,40 @@ docker rm <container_id/container_name>
 - （本地）prometheus 通过浏览器 localhost:9090 访问
 
 - docker run -d -p 9100:9100 prom/node-exporter
+
+## 服务器设置代理
+
+https://glados.rocks/console/terminal
+
+```bash
+user@localhost:~$ curl https://glados.rocks/tools/clash-linux.zip -o clash.zip #下载Clash
+
+user@localhost:~$ unzip clash.zip
+
+user@localhost:~$ cd clash
+
+user@localhost:~$ curl xxx > glados.yaml #下载您的终端配置文件
+
+user@localhost:~$ chmod +x ./clash-linux-amd64-v1.10.0
+
+user@localhost:~$ ./clash-linux-amd64-v1.10.0 -f glados.yaml -d .
+```
+
+- docker 设置使用代理
+
+```bash
+sudo mkdir -p /etc/systemd/system/docker.service.d
+sudo touch /etc/systemd/system/docker.service.d/proxy.conf
+```
+
+```bash
+[Service]
+Environment="HTTP_PROXY=http://127.0.0.1:7890/"
+Environment="HTTPS_PROXY=http://127.0.0.1:7890/"
+Environment="NO_PROXY=localhost,127.0.0.1,.example.com"
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
