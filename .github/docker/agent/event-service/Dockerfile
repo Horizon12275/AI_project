@@ -3,8 +3,8 @@ FROM apache/skywalking-java-agent:8.13.0-java17
 # 设置环境变量
 ENV TZ=Asia/Shanghai JAVA_OPTS="-Dfile.encoding=utf-8"
 # 设置 agent 配置信息
-ENV SW_AGENT_COLLECTOR_BACKEND_SERVICES="121.36.200.70:11800" \
-    SW_AGENT_NAME="TimeGenie::event-service"
+ENV SW_AGENT_COLLECTOR_BACKEND_SERVICES="-Dskywalking.collector.backend_service=121.36.200.70:11800" \
+    SW_AGENT_NAME="-Dskywalking.agent.service_name=TimeGenie::event-service"
 # 调整时区 确保容器内的时间与主机系统或预期的时区一致，方便日志记录和调试
 RUN rm -f /etc/localtime \
 && ln -sv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
@@ -21,6 +21,6 @@ ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV EVENT_SERVICE_PORT=${EVENT_SERVICE_PORT}
 ENV USER_SERVER_IP=${USER_SERVER_IP}
 # 指定docker容器启动时运行jar包
-ENTRYPOINT exec java ${JAVA_OPTS} -javaagent:/skywalking/agent/skywalking-agent.jar -jar event-service-0.0.1-SNAPSHOT.jar
+ENTRYPOINT exec java ${JAVA_OPTS} -javaagent:/skywalking/agent/skywalking-agent.jar ${SW_AGENT_COLLECTOR_BACKEND_SERVICES} ${SW_AGENT_NAME} -jar event-service-0.0.1-SNAPSHOT.jar
 # 指定维护者的名字
 MAINTAINER horizon22
