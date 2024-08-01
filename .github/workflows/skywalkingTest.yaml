@@ -42,6 +42,15 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
+      # build and push load-balance image
+      - name: Build and push load-balance image
+        id: docker_build_lb
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./.github/docker/jar/load-balance/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/load-balance-with-skywalking:latest
       # build and push user-service image
       - name: Build and push user-service image
         id: docker_build_user
@@ -66,6 +75,7 @@ jobs:
         with:
           command: |
             cd ./scripts
+            sh load-balance-with-secrets.sh
             sh user-service-with-secrets.sh
             sh event-service-with-secrets.sh
           host: ${{ secrets.HOST_2 }}
