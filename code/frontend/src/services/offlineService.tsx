@@ -74,7 +74,6 @@ export async function getAllEventsOffline(date: string) {
 }
 //获取某一天的日程数量 对应了服务器的getEventNums接口
 export async function getEventNumsOffline(year: number, month: number) {
-
   let events = await getObject('events');
   let eventNums = Array(31).fill(0);
   if (events == null) return eventNums;

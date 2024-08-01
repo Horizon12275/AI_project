@@ -1,5 +1,5 @@
-import {BASEURL, Delete, USERPORT, get, post, put} from './requestService';
-const PREFIX = `${BASEURL}:${USERPORT}/api/event`;
+import {BASEURL, get, post} from './requestService';
+const PREFIX = `${BASEURL}/api/event`;
 //获取登录用户某一天的所有事件
 export const getAllEvents = async date => {
   const url = `${PREFIX}/getEvents?date=${date}`;

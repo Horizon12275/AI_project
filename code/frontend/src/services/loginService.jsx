@@ -1,5 +1,5 @@
-import {BASEURL, USERPORT, get, post, postUrlencoded} from './requestService';
-const PREFIX = `${BASEURL}:${USERPORT}/api/user`;
+import {BASEURL, get, post, postUrlencoded} from './requestService';
+const PREFIX = `${BASEURL}/api/user`;
 
 export async function login({username, password}) {
   const url = `${PREFIX}/login`;
@@ -47,4 +47,3 @@ export async function sendCode(email) {
     alert(e);
   }
 }
-

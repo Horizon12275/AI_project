@@ -38,15 +38,13 @@ const AIScreen = ({
       subtasks: event.subtasks.filter(subtask => subtask.saved),
       reminders: event.reminders.filter(reminder => reminder.saved),
     };
-    console.log(newEvent);
     updateEvent(newEvent)
-      .then(res => {
-        console.log(res);
+      .then(() => {
         Alert.alert('Success', 'Event saved successfully');
         navigation.navigate('Tabs');
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Error', err);
       });
   };
   return (
