@@ -1,7 +1,7 @@
 # 该镜像需要依赖的基础镜像
 FROM apache/skywalking-java-agent:8.13.0-java17
 # 设置环境变量
-ENV TZ=Asia/Shanghai JAVA_OPTS="-Xms512m -Xmx512m -Dfile.encoding=utf-8"
+ENV TZ=Asia/Shanghai JAVA_OPTS="-Dfile.encoding=utf-8"
 # 设置 agent 配置信息
 ENV SW_AGENT_COLLECTOR_BACKEND_SERVICES="-Dskywalking.collector.backend_service=192.168.0.226:11800" \
     SW_AGENT_NAME="-Dskywalking.agent.service_name=TimeGenie::load-balance"
