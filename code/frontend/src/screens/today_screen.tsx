@@ -11,7 +11,6 @@ import {
   getObject,
 } from '../services/offlineService';
 
-
 const TodayScreen = () => {
   const currentDate = new Date();
   const [refreshing, setRefreshing] = useState(false);
@@ -20,7 +19,6 @@ const TodayScreen = () => {
   const [eventNums, setEventNums] = useState([]); //这个月每天的事件数量
   const [isCalendarVisible, setIsCalendarVisible] = useState(true);
   const [isEditing, setIsEditing] = useState(-1); //正在编辑的事件id -1表示没有
-
 
   useEffect(() => {
     onRefresh(); //重新渲染时刷新 会有loading图标
@@ -49,7 +47,7 @@ const TodayScreen = () => {
           setEventNums(eventNums);
           setRefreshing(false);
         })
-        .catch(error => Alert.alert('Error', error.message));
+        .catch(e => Alert.alert('Error', e));
     });
   };
 

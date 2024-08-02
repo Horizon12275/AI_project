@@ -45,7 +45,7 @@ const InputField = ({
   </View>
 );
 
-const AddOffScreen = () => {
+const EditScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
@@ -549,4 +549,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddOffScreen;
+export default EditScreen;

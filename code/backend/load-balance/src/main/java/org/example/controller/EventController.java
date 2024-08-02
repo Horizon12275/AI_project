@@ -32,6 +32,10 @@ public class EventController {
     public Result<Event> addEventOnline(@RequestBody JSONObject jsonObject) {
         return client.addEventOnline(jsonObject);
     }
+    @DeleteMapping("/delete/{id}")
+    public Result<String> deleteEvent(@PathVariable int id) {
+        return client.deleteEvent(id);
+    }
     @PostMapping("/update/{id}")
     public Result<Event> updateEvent(@PathVariable int id, @RequestBody Event event) {
         return client.updateEvent(id, event);

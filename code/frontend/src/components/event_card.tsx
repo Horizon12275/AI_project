@@ -95,7 +95,56 @@ const EventCard = ({
     });
   };
 
-  const handleDelete = (sid: number) => {
+  const handleDeleteSubtask = (sid: number) => {
+    getObject('mode').then(mode => {
+      if (mode === 'online') {
+        deleteSubtask(sid)
+          .then(() => {
+            const eventIndex = event.subtasks.findIndex(
+              subtask => subtask.id === sid,
+            );
+            const newSubtasks = [...event.subtasks];
+            newSubtasks.splice(eventIndex, 1);
+            event.subtasks = newSubtasks;
+            getObject('events').then(events => {
+              const eventIndex = events.findIndex(
+                (e: any) => e.id === event.id,
+              );
+              events[eventIndex] = event;
+              storeObject('events', events);
+            });
+            setRefresh(refresh + 1);
+          })
+          .catch(error => Alert.alert('Error', error));
+      } else {
+        Promise.all([getObject('events'), getObject('events_unpushed')]).then(
+          ([events, events_unpushed]) => {
+            const eventIndex = event.subtasks.findIndex(
+              subtask => subtask.id === sid,
+            );
+            const newSubtasks = [...event.subtasks];
+            newSubtasks.splice(eventIndex, 1);
+            event.subtasks = newSubtasks;
+            //
+            events_unpushed.push(event);
+            storeObject('events_unpushed', events_unpushed);
+
+            events.map((e: any) => {
+              if (e.id === event.id) {
+                e.subtasks = newSubtasks;
+              }
+            });
+            storeObject('events', events);
+            setRefresh(refresh + 1);
+          },
+        );
+      }
+    });
+  };
+  const handleEdit = () => {
+    console.log('edit');
+  };
+  const handleDeleteEvent = (eid:number) => {
     getObject('mode').then(mode => {
       if (mode === 'online') {
         deleteSubtask(sid)
@@ -145,6 +194,19 @@ const EventCard = ({
   const color = categoryColors[event.category];
   return (
     <View style={styles.scheduleItemContainer}>
+      <View style={styles.absoluteIcons}>
+        <MyButton
+          icon={require('../assets/icons/edit.png')}
+          style={styles.icon}
+          onPress={handleEdit}
+        />
+        <MyButton
+          icon={require('../assets/icons/delete.png')}
+          style={styles.deleteIcon}
+          tintColor="#F08080"
+          onPress={handleDeleteEvent}
+        />
+      </View>
       <View style={styles.timeContainer}>
         <MyButton
           icon={
@@ -171,7 +233,7 @@ const EventCard = ({
         </View>
         <View style={styles.detailsWrapper}>
           <View style={styles.locationWrapper}>
-            <Text>{event.location}</Text>
+            <Text style={{fontSize: 12}}>{event.location}</Text>
           </View>
           {/* {event.subtasks.length && (
             <View style={styles.additionalInfoWrapper}>
@@ -220,13 +282,13 @@ const EventCard = ({
                         styles.taskTitle,
                         subtask.done && styles.completedText,
                       ]}
-                      numberOfLines={2}
+                      //numberOfLines={2}
                       ellipsizeMode="tail">
                       {subtask.content}
                     </Text>
                     <MyButton
                       icon={require('../assets/icons/delete.png')}
-                      onPress={() => handleDelete(subtask.id)}
+                      onPress={() => handleDeleteSubtask(subtask.id)}
                       style={styles.deleteIcon}
                     />
                   </View>
@@ -235,11 +297,11 @@ const EventCard = ({
                       styles.dueDate,
                       subtask.done && styles.completedText,
                     ]}>
-                    {`DUE: ${subtask.ddl}`}
+                    {`Due: ${subtask.ddl}`}
                   </Text>
                 </View>
               ))}
-              <View style={styles.buttonWrapper}>
+              {/* <View style={styles.buttonWrapper}>
                 <TouchableOpacity
                   style={[styles.button, styles.secondaryButton]}>
                   <Text style={[styles.buttonText, styles.secondaryButtonText]}>
@@ -251,7 +313,7 @@ const EventCard = ({
                     + Checklist
                   </Text>
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </View>
         )}
@@ -303,7 +365,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: '700',
     color: 'black',
   },
@@ -369,14 +431,21 @@ const styles = StyleSheet.create({
     gap: 8,
     flex: 1,
   },
-
+  absoluteIcons: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'absolute',
+    right: 10,
+    top: 15,
+  },
   taskIcon: {
     width: 24,
     height: 24,
   },
   deleteIcon: {
-    width: 16,
-    height: 16,
+    width: 20,
+    height: 20,
     marginHorizontal: 4,
   },
   taskTitle: {

@@ -32,4 +32,6 @@ public interface EventClient {
     Result<Event> updateEvent(@PathVariable("id")int id, @RequestBody Event event, @RequestParam("uid") int uid);
     @PostMapping("/api/event/pushAll")
     Result<List<Event>> pushAll(@RequestBody List<Event> events, @RequestParam("uid") int uid);
+    @DeleteMapping("/api/event/delete/{id}")
+    Result<String> deleteEvent(@PathVariable int id, @RequestParam int uid);
 }

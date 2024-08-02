@@ -30,6 +30,10 @@ public class EventController {
     public Result<Event> addEvent(@RequestBody Event event,@RequestParam int uid) {
         return service.addEvent(event, uid);
     }
+    @DeleteMapping("/delete/{id}")
+    public Result<String> deleteEvent(@PathVariable int id,@RequestParam int uid) {
+        return service.deleteEvent(id,uid);
+    }
     @PostMapping("/update/{id}")
     public Result<Event> updateEvent(@PathVariable int id, @RequestBody Event event,@RequestParam int uid) {
         return service.updateEvent(id, event,uid);

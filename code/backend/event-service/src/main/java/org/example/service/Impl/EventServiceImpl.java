@@ -46,6 +46,18 @@ public class EventServiceImpl implements EventService {
         return Result.success(event);
     }
     @Override
+    public Result<String> deleteEvent(int id, int uid) {
+        Event event = repo.findById(id).orElse(null);
+        if (event == null) {
+            return Result.error(404, "Event not found");
+        }
+        if (event.getUid() != uid) {
+            return Result.error(403, "Permission denied");
+        }
+        repo.deleteById(id);
+        return Result.success("Successfully deleted");
+    }
+    @Override
     public Result<Event> updateEvent(int id, Event event, int uid) {
         Event oldEvent = repo.findById(id).orElse(null);
         if (oldEvent == null) {
@@ -134,7 +146,7 @@ public class EventServiceImpl implements EventService {
     public Result<List<Event>> pushAll(List<Event> events, int uid) {
         for (Event event : events) {//遍历所有事件 逐个添加或更新
            if(event.getId()==null) addEvent(event,uid);//如果id为空则添加
-           else if(event.getDdl()==null) repo.deleteById(event.getId());//如果ddl为空则删除 约定好的
+           else if(event.getTitle()==null) repo.deleteById(event.getId());//如果title为空则删除 约定
            else updateEvent(event.getId(),event,uid);//否则更新
         }
         List<Event> allEvents = repo.getEventsByUid(uid);//返回所有事件
