@@ -1,5 +1,5 @@
 # 该镜像需要依赖的基础镜像
-FROM apache/skywalking-java-agent:8.12.0-java17
+FROM apache/skywalking-java-agent:8.13.0-java17
 # 设置环境变量
 ENV TZ=Asia/Shanghai JAVA_OPTS="-Dfile.encoding=utf-8"
 # 设置 agent 配置信息
@@ -9,6 +9,7 @@ ENV SW_AGENT_COLLECTOR_BACKEND_SERVICES="-Dskywalking.collector.backend_service=
 RUN rm -f /etc/localtime \
 && ln -sv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 && echo "Asia/Shanghai" > /etc/timezone
+RUN cp /skywalking/agent/optional-plugins/apm-fastjson-1.x-plugin-8.13.0.jar /skywalking/agent/plugins/apm-fastjson-1.x-plugin-8.13.0.jar
 # 设置工作目录
 WORKDIR /app
 # 将当前目录下的jar包复制到docker容器的/目录下
