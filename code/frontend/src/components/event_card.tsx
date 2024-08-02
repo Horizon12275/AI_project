@@ -12,6 +12,7 @@ import {categoryColors} from '../utils/offline';
 import {changeSubtaskDone, deleteSubtask} from '../services/subtaskService';
 import {useEffect, useState} from 'react';
 import {getObject, storeObject} from '../services/offlineService';
+import {deleteEvent} from '../services/eventService';
 
 type eventProps = {
   id: number;
@@ -144,46 +145,30 @@ const EventCard = ({
   const handleEdit = () => {
     console.log('edit');
   };
-  const handleDeleteEvent = (eid:number) => {
+  const handleDeleteEvent = () => {
     getObject('mode').then(mode => {
       if (mode === 'online') {
-        deleteSubtask(sid)
+        deleteEvent(event.id)
           .then(() => {
-            const eventIndex = event.subtasks.findIndex(
-              subtask => subtask.id === sid,
-            );
-            const newSubtasks = [...event.subtasks];
-            newSubtasks.splice(eventIndex, 1);
-            event.subtasks = newSubtasks;
             getObject('events').then(events => {
               const eventIndex = events.findIndex(
                 (e: any) => e.id === event.id,
               );
-              events[eventIndex] = event;
+              events.splice(eventIndex, 1); //删除event
               storeObject('events', events);
             });
             setRefresh(refresh + 1);
           })
-          .catch(error => Alert.alert('Error', error));
+          .catch(e => Alert.alert('Error', e));
       } else {
         Promise.all([getObject('events'), getObject('events_unpushed')]).then(
           ([events, events_unpushed]) => {
-            const eventIndex = event.subtasks.findIndex(
-              subtask => subtask.id === sid,
-            );
-            const newSubtasks = [...event.subtasks];
-            newSubtasks.splice(eventIndex, 1);
-            event.subtasks = newSubtasks;
-            //
-            events_unpushed.push(event);
-            storeObject('events_unpushed', events_unpushed);
-
-            events.map((e: any) => {
-              if (e.id === event.id) {
-                e.subtasks = newSubtasks;
-              }
-            });
+            const eventIndex = events.findIndex((e: any) => e.id === event.id);
+            events.splice(eventIndex, 1); //删除event
             storeObject('events', events);
+
+            events_unpushed.push({id: event.id}); //title为null 代表删除
+            storeObject('events_unpushed', events_unpushed);
             setRefresh(refresh + 1);
           },
         );

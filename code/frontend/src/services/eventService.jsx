@@ -38,6 +38,13 @@ export async function updateEvent(event) {
   result = await post(url, event);
   return result;
 }
+//删除某个id的事件
+export async function deleteEvent(id) {
+  const url = `${PREFIX}/delete/${id}`;
+  let result;
+  result = await get(url);
+  return result;
+}
 //
 export async function pushUnpushedEvents(events) {
   const url = `${PREFIX}/pushAll`;
