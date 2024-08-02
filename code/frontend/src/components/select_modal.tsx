@@ -54,7 +54,7 @@ const SelectModal = ({
             : 'Select an option'}
         </Text>
         <Image
-          source={require('../assets/icons/down-arrow.png')}
+          source={require('../assets/icons/double-arrow.png')}
           style={{width: 20, height: 20}}
         />
       </TouchableOpacity>

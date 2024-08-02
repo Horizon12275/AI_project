@@ -35,6 +35,10 @@ public class EventController {
 
         return service.addEventOnline(event,eventDetails);
     }
+    @DeleteMapping("/delete/{id}")
+    public Result<String> deleteEvent(@PathVariable int id) {
+        return service.deleteEvent(id);
+    }
     @PostMapping("/update/{id}")
     public Result<Event> updateEvent(@PathVariable int id, @RequestBody Event event) {
         return service.updateEvent(id, event);

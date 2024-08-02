@@ -7,7 +7,7 @@ import PortraitIdentityScreen from './src/screens/portrait_identity_screen';
 import IdentityDetailsScreen from './src/screens/identity_details_screen';
 import PortraitQuestionScreen from './src/screens/portrait_question_screen';
 import TodayScreen from './src/screens/today_screen';
-import {Image, Text} from 'react-native';
+import {Appearance, Image, Text} from 'react-native';
 import AIScreen from './src/screens/AI_screen.tsx';
 import AddOnScreen from './src/screens/add_screen_on';
 import StatsScreen from './src/screens/stats_screen';
@@ -99,6 +99,7 @@ function App() {
   const {isConnected} = useNetInfo();
 
   useEffect(() => {
+    Appearance.setColorScheme('light');//强制设置为light模式 默认字体颜色为灰色 否则为白色会看不清
     Promise.all([getObject('user'), getObject('auth'), getObject('mode')]).then(
       ([user, auth, mode]) => {
         setUser(user);

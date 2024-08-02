@@ -18,6 +18,7 @@ import {getSummary} from '../services/eventService';
 import {toDate} from '../utils/date';
 import {categoryOptions} from '../utils/offline';
 import {getObject} from '../services/offlineService';
+import Loading from '../components/loading';
 
 const summaryData = 'You have been spending most of your time eating!';
 
@@ -26,6 +27,7 @@ const StatsScreen = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSummary = () => {
     getObject('mode').then(mode => {
@@ -36,8 +38,10 @@ const StatsScreen = () => {
           Alert.alert('Start date should be before end date');
           return;
         }
+        setLoading(true);
         getSummary(toDate(startDate), toDate(endDate))
           .then(res => {
+            setLoading(false);
             if (res.length === 0)
               Alert.alert('No data found for the selected date range');
             let data = res.map(item => {
@@ -58,6 +62,7 @@ const StatsScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <Loading visible={loading} />
       <View>
         <Text style={styles.header}>Visualize Time</Text>
         {data.length > 0 && <PieGraph data={data} />}

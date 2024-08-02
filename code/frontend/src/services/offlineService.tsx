@@ -33,12 +33,24 @@ export async function pushAll() {
         });
       }
 
-      // 用户修改的日程数据
+      // 用户修改的日程数据 先用map维护每一个event的最新状态
+      let map = new Map<string, any>();
       events_unpushed.map((event: any) => {
-        if (isNaN(parseInt(event.id))) {
-          event.id = null; //id为null代表新增 为数字代表修改
+        console.log(event);
+        if (isNaN(event.id) && event.title == null) {
+          map.delete(event.id);
+          return;
+        } //特判 新增了一个event后又删除了
+        map.set(event.id, event); //维护最新状态
+      });
+      events_unpushed = Array.from(map.values()); //转换为数组
+      //再把非数字的id转换为null 方便后端判断是新建还是修改
+      events_unpushed.map((event: any) => {
+        if (isNaN(event.id)) {
+          event.id = null;
         }
       });
+
       console.log(events_unpushed);
       pushUnpushedEvents(events_unpushed)
         .then(events => {
@@ -74,7 +86,6 @@ export async function getAllEventsOffline(date: string) {
 }
 //获取某一天的日程数量 对应了服务器的getEventNums接口
 export async function getEventNumsOffline(year: number, month: number) {
-
   let events = await getObject('events');
   let eventNums = Array(31).fill(0);
   if (events == null) return eventNums;

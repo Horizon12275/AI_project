@@ -32,6 +32,7 @@ import {
   storeObject,
 } from '../services/offlineService';
 import SelectModal from '../components/select_modal';
+import Loading from '../components/loading';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [sleep, setSleep] = useState<null | number>(null);
@@ -39,6 +40,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [exercise, setExercise] = useState<null | number>(null);
   const [identity, setIdentity] = useState<null | number>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const items = [
     {
@@ -62,6 +64,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
   ];
 
   useEffect(() => {
+    setLoading(true);
     getObject('mode').then(mode => {
       if (mode == 'online') {
         //用户已登录 且为在线模式 从云端获取数据
@@ -71,6 +74,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
           setChallenge(user.challenge);
           setExercise(user.exercise);
           setIdentity(user.identity);
+          setLoading(false);
         });
       } else {
         //用户已登录 但为离线模式 从本地获取数据
@@ -81,6 +85,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
             setExercise(user.exercise);
             setIdentity(user.identity);
           }
+          setLoading(false);
         });
       }
     });
@@ -92,6 +97,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
   };
 
   const handleSave = () => {
+    setLoading(true);
     const portrait = {
       sleep_schedule: sleep,
       challenge: challenge,
@@ -104,6 +110,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
         portraitUpload(portrait).then(newUser => {
           Alert.alert('Success', 'Portrait updated successfully');
           storeObject('user', newUser);
+          setLoading(false);
         });
       } else {
         //用户已登录 但为离线模式 保存数据到unpushed 然后更新本地数据
@@ -119,6 +126,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
           user.exercise = exercise;
           user.identity = identity;
           storeObject('user', user);
+          setLoading(false);
         });
       }
     });
@@ -130,18 +138,22 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
   };
 
   const handleLogout = () => {
+    setLoading(true);
     getObject('mode').then(mode => {
       if (mode == 'online')
         logout()
           .then(() => {
             removeObject('auth'); //清除登录信息
             removeObject('user'); //清除用户信息
+            setLoading(false);
             navigation.replace('Login');
           })
           .catch(err => {
+            setLoading(false);
             Alert.alert('Error', err);
           });
       else {
+        setLoading(false);
         Alert.alert(
           'Warning',
           "You are in offline mode now, if you logout, you'll lose all unsynced data, are you sure to logout?",
@@ -164,6 +176,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
 
   return (
     <ScrollView style={{backgroundColor: 'white', height: '100%'}}>
+      <Loading visible={loading} />
       <View style={styles.container}>
         <Text style={styles.titleText}>My Portrait</Text>
         <View style={styles.imageContainer}>
@@ -185,7 +198,6 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
       {items.map((item, index) => (
         <View style={styles.inputContainer} key={index}>
           <Text style={styles.inputLabel}>{item.label}</Text>
-
           <SelectModal
             style={styles.input}
             data={item.data}
