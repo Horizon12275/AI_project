@@ -29,7 +29,7 @@ public interface Client {
     @PostMapping("/api/event/add_online")
     Result<Event> addEventOnline(@RequestBody JSONObject jsonObject);
     @DeleteMapping("/api/event/delete/{id}")
-    public Result<String> deleteEvent(@PathVariable int id);
+    public Result<String> deleteEvent(@PathVariable("id") int id);
     @PostMapping("/api/event/update/{id}")
     Result<Event> updateEvent(@PathVariable("id")int id, @RequestBody Event event);
     @GetMapping("/api/event/summary")
