@@ -37,9 +37,23 @@ export function toDate(date: Date) {
     .toString()
     .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 }
-// 日期转换为23：59:00格式
+// 日期从2024-07-10格式转换为Date
+export function fromDate(date: string) {
+  const dateParts = date.split('-');
+  return new Date(
+    parseInt(dateParts[0]),
+    parseInt(dateParts[1]) - 1,
+    parseInt(dateParts[2]),
+  );
+}
+// 日期转换为23:59:00格式
 export function toTime(date: Date) {
   return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:00`;
+}
+// 时间从23:59:00格式转换为Date
+export function fromTime(time: string) {
+  const timeParts = time.split(':');
+  return new Date(0, 0, 0, parseInt(timeParts[0]), parseInt(timeParts[1]), parseInt(timeParts[2]));
 }
 // 把标准日期格式转换为好看的格式
 export function formatDate(inputDate: string): string {

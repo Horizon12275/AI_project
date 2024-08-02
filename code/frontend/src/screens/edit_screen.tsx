@@ -19,7 +19,7 @@ import SelectModal from '../components/select_modal';
 import {Form, Input} from '@ant-design/react-native';
 import Loading from '../components/loading';
 import MyHeader from '../components/my_header';
-import {toDate, toTime} from '../utils/date';
+import {fromDate, fromTime, toDate, toTime} from '../utils/date';
 import {generateId, getObject, storeObject} from '../services/offlineService';
 
 const InputField = ({
@@ -45,22 +45,27 @@ const InputField = ({
   </View>
 );
 
-const EditScreen = () => {
+const EditScreen = ({route}: {route: {params: {event: any}}}) => {
+  const event = route.params.event;
   const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
-  const [category, setCategory] = useState(1);
-  const [priority, setPriority] = useState(1);
+  const [category, setCategory] = useState(event.category);
+  const [priority, setPriority] = useState(event.priority);
   const [startTime, setStartTime] = useState<null | Date>(null);
   const [endTime, setEndTime] = useState<null | Date>(null);
-  const [ddlDate, setDdlDate] = useState(new Date());
-  const [subtasks, setSubtasks] = useState([] as any[]);
+  const [ddlDate, setDdlDate] = useState(fromDate(event.ddl));
+  const [subtasks, setSubtasks] = useState(event.subtasks || []);
   const [subtask, setSubtask] = useState({content: '', ddl: new Date()});
   const [subtaskCalendar, setSubtaskCalendar] = useState(false);
   const [form] = Form.useForm();
 
-  useEffect(() => {}, [ddlDate, startTime, endTime]);
+  useEffect(() => {
+    if (event.startTime) setStartTime(fromTime(event.startTime));
+    if (event.endTime) setEndTime(fromTime(event.endTime));
+    form.setFieldsValue(event);
+  }, [ddlDate, startTime, endTime]);
 
   const onSubmit = () => {
     form.submit();
@@ -120,7 +125,7 @@ const EditScreen = () => {
             gap: 10,
           }}>
           <View style={styles.container}>
-            <Text style={styles.titleText}>New Schedule</Text>
+            <Text style={styles.titleText}>Edit Schedule</Text>
           </View>
           <InputField
             label="Title"

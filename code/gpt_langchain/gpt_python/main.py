@@ -66,7 +66,7 @@ async def generate_priority(event: EventDetails):
 
     prompt_template = (
         "Given that I am a {identity} with the following sleep schedule: {sleep_schedule}, "
-        "and my main challenges with time management are {challenge}, generate a priority level, please just answer in a word (high, medium or low) "
+        "and my main challenges with time management are {challenge}, generate a priority level, please just answer a number range from 1 to 3,the bigger number,the greater priority."
         "for the following event:\n"
         "Title: {title}\n"
         "Category: {category}\n"
@@ -99,19 +99,7 @@ async def generate_priority(event: EventDetails):
         logging.error(f"Error in llm invoke: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-    priority_level = result.strip().lower()
-
-    if "high" in priority_level:
-        priority = "high"
-    elif "medium" in priority_level:
-        priority = "medium"
-    elif "low" in priority_level:
-        priority = "low"
-    else:
-        priority = "unknown"  # 或者你可以抛出一个错误
-
-    print(priority)  # 打印返回的内容
-    return priority
+    return result.strip()
 
 
 @app.post("/generate_reminders")

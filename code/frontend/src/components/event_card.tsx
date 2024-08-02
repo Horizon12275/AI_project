@@ -13,6 +13,7 @@ import {changeSubtaskDone, deleteSubtask} from '../services/subtaskService';
 import {useEffect, useState} from 'react';
 import {getObject, storeObject} from '../services/offlineService';
 import {deleteEvent} from '../services/eventService';
+import { useNavigation } from '@react-navigation/native';
 
 type eventProps = {
   id: number;
@@ -33,11 +34,14 @@ const EventCard = ({
   isEditing,
   setIsEditing,
   event,
+  handleDeleteEvent,
 }: {
   isEditing: number;
   setIsEditing: (isEditing: number) => void;
   event: eventProps;
+  handleDeleteEvent: (eid:number) => void;
 }) => {
+  const navigation = useNavigation();
   const [refresh, setRefresh] = useState(0); //setEvent逻辑太麻烦 偷懒使用refresh手动刷新渲染
   useEffect(() => {}, [refresh]);
 
@@ -143,38 +147,9 @@ const EventCard = ({
     });
   };
   const handleEdit = () => {
-    console.log('edit');
+    navigation.navigate('Edit', {event: event});
   };
-  const handleDeleteEvent = () => {
-    getObject('mode').then(mode => {
-      if (mode === 'online') {
-        deleteEvent(event.id)
-          .then(() => {
-            getObject('events').then(events => {
-              const eventIndex = events.findIndex(
-                (e: any) => e.id === event.id,
-              );
-              events.splice(eventIndex, 1); //删除event
-              storeObject('events', events);
-            });
-            setRefresh(refresh + 1);
-          })
-          .catch(e => Alert.alert('Error', e));
-      } else {
-        Promise.all([getObject('events'), getObject('events_unpushed')]).then(
-          ([events, events_unpushed]) => {
-            const eventIndex = events.findIndex((e: any) => e.id === event.id);
-            events.splice(eventIndex, 1); //删除event
-            storeObject('events', events);
-
-            events_unpushed.push({id: event.id}); //title为null 代表删除
-            storeObject('events_unpushed', events_unpushed);
-            setRefresh(refresh + 1);
-          },
-        );
-      }
-    });
-  };
+  
 
   const color = categoryColors[event.category];
   return (
@@ -189,7 +164,7 @@ const EventCard = ({
           icon={require('../assets/icons/delete.png')}
           style={styles.deleteIcon}
           tintColor="#F08080"
-          onPress={handleDeleteEvent}
+          onPress={() => handleDeleteEvent(event.id)}
         />
       </View>
       <View style={styles.timeContainer}>
@@ -423,6 +398,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     top: 15,
+    zIndex: 1,
   },
   taskIcon: {
     width: 24,
