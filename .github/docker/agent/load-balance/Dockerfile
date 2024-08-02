@@ -1,5 +1,5 @@
 # 该镜像需要依赖的基础镜像
-FROM apache/skywalking-java-agent:8.9.0-java17
+FROM apache/skywalking-java-agent:9.3.0-java17
 # 设置环境变量
 ENV TZ=Asia/Shanghai JAVA_OPTS="-Dfile.encoding=utf-8"
 # 设置 agent 配置信息
