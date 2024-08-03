@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, Text, TouchableOpacity, Alert} from 'react-native';
-import {portraitUpload} from '../services/userService';
+import {updateUser} from '../services/userService';
 import {login, register} from '../services/loginService';
 import {storeObject} from '../services/offlineService';
 

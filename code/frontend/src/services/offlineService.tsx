@@ -1,6 +1,6 @@
 //离线调用asyncStorage存储的接口
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {getUser, portraitUpload} from './userService';
+import {getUser, updateUser} from './userService';
 import {pushUnpushedEvents} from './eventService';
 import {Alert} from 'react-native';
 
@@ -22,7 +22,7 @@ export async function pushAll() {
     ([user_unpushed, events_unpushed]) => {
       // 用户修改的画像数据
       if (user_unpushed) {
-        portraitUpload(user_unpushed).then(user => {
+        updateUser(user_unpushed).then(user => {
           console.log(user_unpushed);
           storeObject('user', user);
           removeObject('user_unpushed');

@@ -8,9 +8,9 @@ export async function getUser() {
   return result;
 }
 
-export async function portraitUpload(portrait) {
-  const url = `${PREFIX}/portrait`;
+export async function updateUser(user) {
+  const url = `${PREFIX}/update`;
   let result;
-  result = await post(url, portrait);
+  result = await post(url, user);
   return result;
 }

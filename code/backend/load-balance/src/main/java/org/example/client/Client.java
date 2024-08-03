@@ -19,8 +19,8 @@ public interface Client {
     public Result<User> get();
     @PostMapping("/api/user/register")
     public Result<User> register(@RequestBody RegisterRequest request);
-    @PostMapping("/api/user/portrait")
-    public Result<User> portrait(@RequestBody User user);
+    @PostMapping("/api/user/update")
+    public Result<User> updateUser(@RequestBody User user);
     //Event
     @GetMapping("/api/event/getNums")
     public Result<int[]> getNums(@RequestParam("year") int year, @RequestParam("month") int month);
