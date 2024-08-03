@@ -70,3 +70,18 @@ curl -X POST "http://localhost:8000/generate_reminders" \
          }'
 ```
 
+```
+对于总结的部分
+uvicorn summary:app --reload
+```
+
+然后我的测试数据格式是这样的
+
+```
+curl -X POST "http://127.0.0.1:8000/generate_summary" -H "Content-Type: application/json" -d '{
+  "titles": ["Project Meeting", "Code Review", "Client Presentation"],
+  "categories": ["Work", "Work", "Work"],
+  "details": ["Discuss the project status and next steps", "Review the new code changes and provide feedback", "Present the project progress to the client"]
+}'
+```
+
