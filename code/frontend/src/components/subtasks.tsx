@@ -39,13 +39,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
           style={styles.taskIcon}
           onPress={handleCheck}
         />
-        <Text style={[styles.taskTitle, saved && styles.completedText]}>
-          {content}
-        </Text>
+        <Text style={styles.taskTitle}>{content}</Text>
       </View>
-      <Text style={[styles.dueDate, saved && styles.completedText]}>
-        Due: {ddl}
-      </Text>
+      <Text style={styles.dueDate}>Due: {ddl}</Text>
     </View>
     <MyButton
       icon={require('../assets/icons/delete.png')}

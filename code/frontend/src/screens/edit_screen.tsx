@@ -53,39 +53,50 @@ const EditScreen = ({
   route: {params: {event: any}};
   navigation: any;
 }) => {
-  const event = route.params.event;
   const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
-  const [category, setCategory] = useState(event.category);
-  const [priority, setPriority] = useState(event.priority);
-  const [startTime, setStartTime] = useState<null | Date>(null);
-  const [endTime, setEndTime] = useState<null | Date>(null);
-  const [ddlDate, setDdlDate] = useState(fromDate(event.ddl));
-  const [subtasks, setSubtasks] = useState(event.subtasks || []);
+  // const [category, setCategory] = useState(event.category);
+  // const [priority, setPriority] = useState(event.priority);
+  // const [startTime, setStartTime] = useState<null | Date>(null);
+  // const [endTime, setEndTime] = useState<null | Date>(null);
+  // const [ddlDate, setDdlDate] = useState(fromDate(event.ddl));
+  // const [subtasks, setSubtasks] = useState(event.subtasks || []);
+  const [event, setEvent] = useState<any>({
+    details: route.params.event.details,
+    title: route.params.event.title,
+    location: route.params.event.location,
+    subtasks: route.params.event.subtasks,
+    ddlDate: fromDate(route.params.event.ddl),
+    category: route.params.event.category,
+    priority: route.params.event.priority,
+    startTime: fromTime(route.params.event.startTime) || null,
+    endTime: fromTime(route.params.event.endTime) || null,
+  });
   const [subtask, setSubtask] = useState({content: '', ddl: new Date()});
   const [subtaskCalendar, setSubtaskCalendar] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (event.startTime) setStartTime(fromTime(event.startTime));
-    if (event.endTime) setEndTime(fromTime(event.endTime));
+    console.log('route', route.params.event);
+    console.log('event', event);
     form.setFieldsValue(event);
-  }, [ddlDate, startTime, endTime]);
+    console.log('form', form.getFieldsValue());
+  }, [event]);
 
   const onSubmit = () => {
     form.submit();
   };
 
-  const handleSave = (newEvent:any) => {
+  const handleSave = (newEvent: any) => {
     newEvent.id = event.id;
-    if (startTime) newEvent.startTime = toTime(startTime);
-    if (endTime) newEvent.endTime = toTime(endTime);
-    newEvent.ddl = toDate(ddlDate);
-    newEvent.category = category;
-    newEvent.priority = priority;
-    newEvent.subtasks = subtasks;
+    if (event.startTime) newEvent.startTime = toTime(event.startTime);
+    if (event.endTime) newEvent.endTime = toTime(event.endTime);
+    newEvent.ddl = toDate(event.ddlDate);
+    newEvent.category = event.category;
+    newEvent.priority = event.priority;
+    newEvent.subtasks = event.subtasks;
     getObject('mode').then(mode => {
       if (mode === 'online') {
         updateEvent(newEvent)
@@ -105,7 +116,9 @@ const EditScreen = ({
             events_unpushed.push(newEvent);
             storeObject('events_unpushed', events_unpushed);
 
-            const eventIndex = events.findIndex((e: any) => e.id === newEvent.id);
+            const eventIndex = events.findIndex(
+              (e: any) => e.id === newEvent.id,
+            );
             events[eventIndex] = newEvent;
             storeObject('events', events);
           },
@@ -124,262 +137,288 @@ const EditScreen = ({
       Alert.alert('Error', 'Subtask content cannot be empty');
       return;
     }
-    setSubtasks([
-      ...subtasks,
-      {content: subtask.content, ddl: toDate(subtask.ddl)},
-    ]);
+    setEvent({...event, subtasks: [...event.subtasks, subtask]});
     setSubtask({content: '', ddl: new Date()});
+  };
+  const handleDeleteSubtask = (index: number) => {
+    const newSubtasks = event.subtasks.filter(
+      (_: string, i: number) => i !== index,
+    );
+    setEvent({...event, subtasks: newSubtasks});
   };
 
   return (
-    <Form onFinish={handleSave} form={form}>
-      <Loading visible={loading} />
-      <KeyboardAvoidingView behavior="position">
-        <ScrollView
-          style={{
-            backgroundColor: '#fff',
-            height: '100%',
-            padding: 20,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 10,
-          }}>
-          <View style={styles.container}>
-            <Text style={styles.titleText}>Edit Schedule</Text>
-          </View>
-          <InputField
-            label="Title"
-            props={{
-              name: 'title',
-              rules: [
-                {
-                  required: true,
-                  message: 'Please input the title!',
-                },
-              ],
-            }}
-          />
-          <InputField
-            label="Location"
-            props={{
-              name: 'location',
-              rules: [
-                {
-                  required: true,
-                  message: 'Please input the location!',
-                },
-              ],
-            }}
-          />
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Category</Text>
-            <SelectModal
-              style={styles.input}
-              data={categoryOptions}
-              selectedValue={category}
-              setSelectedValue={setCategory}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Priority</Text>
-            <SelectModal
-              style={styles.input}
-              data={priorityOptions}
-              selectedValue={priority}
-              setSelectedValue={setPriority}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Subtasks</Text>
-            <Input
-              style={[styles.input]}
-              value={subtask.content}
-              onChangeText={text => setSubtask({...subtask, content: text})}
-            />
-          </View>
-          <View
+    event && (
+      <Form onFinish={handleSave} form={form}>
+        <Loading visible={loading} />
+        <KeyboardAvoidingView behavior="position">
+          <ScrollView
             style={{
+              backgroundColor: '#fff',
+              height: '100%',
+              padding: 20,
               display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
+              flexDirection: 'column',
               gap: 10,
             }}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setSubtaskCalendar(true)}>
-              <Text style={styles.doneButtonText}>{`DUE: ${toDate(
-                subtask.ddl,
-              )}`}</Text>
-            </TouchableOpacity>
-            {subtaskCalendar && (
-              <Modal
-                animationType="fade" // 动画效果
-                transparent={true} // 透明背景
-                visible={subtaskCalendar}
-                onRequestClose={() => {
-                  setSubtaskCalendar(!subtaskCalendar);
-                }}>
-                <TouchableWithoutFeedback
-                  onPress={() => setSubtaskCalendar(false)}>
-                  <View style={styles.modalView}>
-                    <Text style={styles.calendarSpanTitle}>DDL Date</Text>
-                    <Calendar
-                      selectedDate={subtask.ddl}
-                      setSelectedDate={(date: Date) =>
-                        setSubtask({...subtask, ddl: date})
-                      }
-                    />
-                    <TouchableOpacity
-                      onPress={() => setSubtaskCalendar(false)}
-                      style={styles.doneButton}>
-                      <Text style={styles.doneButtonText}>Done</Text>
-                    </TouchableOpacity>
-                  </View>
-                </TouchableWithoutFeedback>
-              </Modal>
-            )}
-            <TouchableOpacity style={styles.button} onPress={handleAddSubtask}>
-              <Text style={styles.doneButtonText}>Add New Subtask</Text>
-            </TouchableOpacity>
-          </View>
-          {subtasks.length > 0 && (
-            <View style={styles.checklistWrapper}>
-              {subtasks.map((item, index) => (
-                <View
-                  key={index}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 4,
-                  }}>
-                  <View style={styles.taskItemContainer}>
-                    <Text
-                      style={[styles.taskTitle]}
-                      numberOfLines={2}
-                      ellipsizeMode="tail">
-                      {item.content}
-                    </Text>
-                    <MyButton
-                      icon={require('../assets/icons/delete.png')}
-                      onPress={() => {}}
-                      style={styles.deleteIcon}
-                    />
-                  </View>
-                  <Text style={[styles.dueDate]}>{`Due: ${item.ddl}`}</Text>
-                </View>
-              ))}
+            <View style={styles.container}>
+              <Text style={styles.titleText}>Edit Schedule</Text>
             </View>
-          )}
-          <InputField
-            label="Details"
-            props={{
-              name: 'details',
-              rules: [
-                {
-                  required: true,
-                  message: 'Please input the details!',
-                },
-              ],
-            }}
-            inputStyle={styles.textInput}
-          />
-          <View style={styles.ddlContainer}>
-            <View style={styles.textContainer}>
-              <Text style={styles.ddlText}>DDL</Text>
-              <Text style={styles.dateText}>
-                {`${toDate(ddlDate)}  `}
-                {startTime &&
-                  endTime &&
-                  `${toTime(startTime)}~${toTime(endTime)}`}
-              </Text>
-            </View>
-            <MyButton
-              icon={require('../assets/icons/time-select.png')}
-              onPress={() => setShowCalendar(!showCalendar)}
-              style={styles.timeZoneIcon}
-              buttonStyle={styles.timeZoneButton}
+            <InputField
+              label="Title"
+              props={{
+                name: 'title',
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please input the title!',
+                  },
+                ],
+              }}
             />
-          </View>
-          <View style={styles.timeSelectContainer}>
-            {showStartTimePicker && (
-              <RNDateTimePicker
-                mode="time"
-                display="clock"
-                value={startTime || new Date()}
-                onChange={(event, selectedDate) => {
-                  if (endTime && selectedDate > endTime) {
-                    Alert.alert(
-                      'Error',
-                      'Start time should be earlier than end time',
-                    );
+            <InputField
+              label="Location"
+              props={{
+                name: 'location',
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please input the location!',
+                  },
+                ],
+              }}
+            />
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Category</Text>
+              <SelectModal
+                style={styles.input}
+                data={categoryOptions}
+                selectedValue={event.category}
+                setSelectedValue={category => setEvent({...event, category})}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Priority</Text>
+              <SelectModal
+                style={styles.input}
+                data={priorityOptions}
+                selectedValue={event.priority}
+                setSelectedValue={priority => setEvent({...event, priority})}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Subtasks</Text>
+              <Input
+                style={[styles.input]}
+                value={subtask.content}
+                onChangeText={text => setSubtask({...subtask, content: text})}
+              />
+            </View>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                gap: 10,
+              }}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setSubtaskCalendar(true)}>
+                <Text style={styles.doneButtonText}>{`DUE: ${toDate(
+                  subtask.ddl,
+                )}`}</Text>
+              </TouchableOpacity>
+              {subtaskCalendar && (
+                <Modal
+                  animationType="fade" // 动画效果
+                  transparent={true} // 透明背景
+                  visible={subtaskCalendar}
+                  onRequestClose={() => {
+                    setSubtaskCalendar(!subtaskCalendar);
+                  }}>
+                  <TouchableWithoutFeedback
+                    onPress={() => setSubtaskCalendar(false)}>
+                    <View style={styles.modalView}>
+                      <Text style={styles.calendarSpanTitle}>DDL Date</Text>
+                      <Calendar
+                        selectedDate={subtask.ddl}
+                        setSelectedDate={(date: Date) =>
+                          setSubtask({...subtask, ddl: date})
+                        }
+                      />
+                      <TouchableOpacity
+                        onPress={() => setSubtaskCalendar(false)}
+                        style={styles.doneButton}>
+                        <Text style={styles.doneButtonText}>Done</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </Modal>
+              )}
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleAddSubtask}>
+                <Text style={styles.doneButtonText}>Add New Subtask</Text>
+              </TouchableOpacity>
+            </View>
+            {event.subtasks.length > 0 && (
+              <View style={styles.checklistWrapper}>
+                {event.subtasks.map((item, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4,
+                    }}>
+                    <View style={styles.taskItemContainer}>
+                      <Text
+                        style={[styles.taskTitle]}
+                        numberOfLines={2}
+                        ellipsizeMode="tail">
+                        {item.content}
+                      </Text>
+                      <MyButton
+                        icon={require('../assets/icons/delete.png')}
+                        onPress={() => handleDeleteSubtask(index)}
+                        style={styles.deleteIcon}
+                      />
+                    </View>
+                    <Text style={[styles.dueDate]}>{`Due: ${item.ddl}`}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+            <InputField
+              label="Details"
+              props={{
+                name: 'details',
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please input the details!',
+                  },
+                ],
+              }}
+              inputStyle={styles.textInput}
+            />
+            <View style={styles.ddlContainer}>
+              <View style={styles.textContainer}>
+                <Text style={styles.ddlText}>DDL</Text>
+                <Text style={styles.dateText}>
+                  {`${toDate(event.ddlDate)}  `}
+                  {event.startTime &&
+                    event.endTime &&
+                    `${toTime(event.startTime)}~${toTime(event.endTime)}`}
+                </Text>
+              </View>
+              <MyButton
+                icon={require('../assets/icons/time-select.png')}
+                onPress={() => setShowCalendar(!showCalendar)}
+                style={styles.timeZoneIcon}
+                buttonStyle={styles.timeZoneButton}
+              />
+            </View>
+            <View style={styles.timeSelectContainer}>
+              {showStartTimePicker && (
+                <RNDateTimePicker
+                  mode="time"
+                  display="clock"
+                  value={event.startTime || new Date()}
+                  onChange={(e, selectedDate) => {
+                    if (event.endTime && selectedDate > event.endTime) {
+                      Alert.alert(
+                        'Error',
+                        'Start time should be earlier than end time',
+                      );
+                      setShowStartTimePicker(false);
+                      return;
+                    }
+                    setEvent({
+                      ...event,
+                      startTime: selectedDate || event.startTime,
+                    });
+                    if (!event.endTime)
+                      setEvent({
+                        ...event,
+                        endTime: selectedDate || event.startTime,
+                      });
                     setShowStartTimePicker(false);
-                    return;
-                  }
-                  setStartTime(selectedDate || startTime);
-                  if (!endTime) setEndTime(selectedDate || startTime);
-                  setShowStartTimePicker(false);
-                }}
-              />
-            )}
-            {showEndTimePicker && (
-              <RNDateTimePicker
-                mode="time"
-                display="clock"
-                value={endTime || new Date()}
-                onChange={(event, selectedDate) => {
-                  if (startTime && selectedDate < startTime) {
-                    Alert.alert(
-                      'Error',
-                      'End time should be later than start time',
-                    );
+                  }}
+                />
+              )}
+              {showEndTimePicker && (
+                <RNDateTimePicker
+                  mode="time"
+                  display="clock"
+                  value={event.endTime || new Date()}
+                  onChange={(e, selectedDate) => {
+                    if (event.startTime && selectedDate < event.startTime) {
+                      Alert.alert(
+                        'Error',
+                        'End time should be later than start time',
+                      );
+                      setShowEndTimePicker(false);
+                      return;
+                    }
+                    setEvent({
+                      ...event,
+                      endTime: selectedDate || event.endTime,
+                    });
+                    if (!event.startTime)
+                      setEvent({
+                        ...event,
+                        startTime: selectedDate || event.endTime,
+                      });
                     setShowEndTimePicker(false);
-                    return;
-                  }
-                  setEndTime(selectedDate || endTime);
-                  if (!startTime) setStartTime(selectedDate || endTime);
-                  setShowEndTimePicker(false);
-                }}
+                  }}
+                />
+              )}
+              <TouchableOpacity
+                style={styles.startButton}
+                onPress={() => setShowStartTimePicker(true)}>
+                <Text style={styles.startButtonText}>Start Time</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.startButton}
+                onPress={() => setShowEndTimePicker(true)}>
+                <Text style={styles.startButtonText}>End Time</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.saveButton}
+              accessibilityRole="button"
+              onPress={onSubmit}>
+              <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </KeyboardAvoidingView>
+        {showCalendar && (
+          <Modal
+            animationType="fade" // 动画效果
+            transparent={true} // 透明背景
+            visible={showCalendar}
+            onRequestClose={() => {
+              setShowCalendar(!showCalendar);
+            }}>
+            <View style={styles.modalView}>
+              <Text style={styles.calendarSpanTitle}>DDL Date</Text>
+              <Calendar
+                selectedDate={event.ddlDate}
+                setSelectedDate={(date: Date) =>
+                  setEvent({...event, ddlDate: date})
+                }
               />
-            )}
-            <TouchableOpacity
-              style={styles.startButton}
-              onPress={() => setShowStartTimePicker(true)}>
-              <Text style={styles.startButtonText}>Start Time</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.startButton}
-              onPress={() => setShowEndTimePicker(true)}>
-              <Text style={styles.startButtonText}>End Time</Text>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity
-            style={styles.saveButton}
-            accessibilityRole="button"
-            onPress={onSubmit}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </KeyboardAvoidingView>
-      {showCalendar && (
-        <Modal
-          animationType="fade" // 动画效果
-          transparent={true} // 透明背景
-          visible={showCalendar}
-          onRequestClose={() => {
-            setShowCalendar(!showCalendar);
-          }}>
-          <View style={styles.modalView}>
-            <Text style={styles.calendarSpanTitle}>DDL Date</Text>
-            <Calendar selectedDate={ddlDate} setSelectedDate={setDdlDate} />
-            <TouchableOpacity
-              onPress={() => setShowCalendar(!showCalendar)}
-              style={styles.doneButton}>
-              <Text style={styles.doneButtonText}>Done</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      )}
-    </Form>
+              <TouchableOpacity
+                onPress={() => setShowCalendar(!showCalendar)}
+                style={styles.doneButton}>
+                <Text style={styles.doneButtonText}>Done</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        )}
+      </Form>
+    )
   );
 };
 

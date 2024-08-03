@@ -18,9 +18,11 @@ import {categoryOptions, priorityOptions} from '../utils/offline';
 import SelectModal from '../components/select_modal';
 import {Form, Input} from '@ant-design/react-native';
 import Loading from '../components/loading';
-import MyHeader from '../components/my_header';
-import {toDate, toTime} from '../utils/date';
+import {formatDate, toDate, toTime} from '../utils/date';
 import {generateId, getObject, storeObject} from '../services/offlineService';
+import Switch from '../components/switch';
+import Subtasks from '../components/subtasks';
+import Reminder from '../components/reminder';
 
 const InputField = ({
   label,
@@ -45,21 +47,26 @@ const InputField = ({
   </View>
 );
 
-const AddOffScreen = () => {
+const AddMealScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [event, setEvent] = useState<any>({
     subtasks: [],
-    ddlDate: new Date(),
+    reminders: [],
+    ddl: new Date(),
     category: 1,
-    priority: 1,
     startTime: null,
     endTime: null,
   });
-  const [subtask, setSubtask] = useState({content: '', ddl: new Date()});
+  const [subtask, setSubtask] = useState({
+    content: '',
+    ddl: new Date(),
+    saved: false,
+  });
   const [subtaskCalendar, setSubtaskCalendar] = useState(false);
+  const [tab, setTab] = useState('Subtasks');
   const [form] = Form.useForm();
 
   useEffect(() => {}, [event]);
@@ -70,7 +77,7 @@ const AddOffScreen = () => {
   const handleSave = (newEvent: any) => {
     if (event.startTime) newEvent.startTime = toTime(event.startTime);
     if (event.endTime) newEvent.endTime = toTime(event.endTime);
-    newEvent.ddl = toDate(event.ddlDate);
+    newEvent.ddl = toDate(event.ddl);
     newEvent.category = event.category;
     newEvent.priority = event.priority;
     newEvent.subtasks = event.subtasks;
@@ -94,7 +101,7 @@ const AddOffScreen = () => {
         form.resetFields();
         setEvent({
           subtasks: [],
-          ddlDate: new Date(),
+          ddl: new Date(),
           category: 1,
           priority: 1,
           startTime: null,
@@ -109,12 +116,18 @@ const AddOffScreen = () => {
       return;
     }
     setEvent({...event, subtasks: [...event.subtasks, subtask]});
-    setSubtask({content: '', ddl: new Date()});
+    setSubtask({content: '', ddl: new Date(), saved: false});
   };
-  const handleDeleteSubtask = (index: number) => {
+
+  const handleCheckSubtask = (index: number) => {
     const newSubtasks = event.subtasks;
-    newSubtasks.splice(index, 1);
+    newSubtasks[index].saved = !newSubtasks[index].saved;
     setEvent({...event, subtasks: newSubtasks});
+  };
+  const handleCheckReminder = (index: number) => {
+    const newReminders = event.reminders;
+    newReminders[index].saved = !newReminders[index].saved;
+    setEvent({...event, reminders: newReminders});
   };
 
   return (
@@ -167,15 +180,52 @@ const AddOffScreen = () => {
                 setSelectedValue={category => setEvent({...event, category})}
               />
             </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Priority</Text>
-              <SelectModal
-                style={styles.input}
-                data={priorityOptions}
-                selectedValue={event.priority}
-                setSelectedValue={priority => setEvent({...event, priority})}
-              />
-            </View>
+            <Switch tab={tab} setTab={setTab} />
+            {tab === 'Subtasks'
+              ? event.subtasks.map((subtask, index) => (
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}>
+                    <View style={styles.taskItemContainer}>
+                      <MyButton
+                        icon={
+                          subtask.saved
+                            ? require('../assets/icons/checked.png')
+                            : require('../assets/icons/checkbox.png')
+                        }
+                        style={styles.taskIcon}
+                        onPress={() => handleCheckSubtask(index)}
+                      />
+                      <Text style={styles.taskTitle}>{subtask.content}</Text>
+                    </View>
+
+                    <Text style={styles.dueDate}>
+                      Due: {toDate(subtask.ddl)}
+                    </Text>
+                  </View>
+                ))
+              : event.reminders.map((reminder, index) => (
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}>
+                    <View style={styles.taskItemContainer}>
+                      <MyButton
+                        icon={
+                          reminder.saved
+                            ? require('../assets/icons/checked.png')
+                            : require('../assets/icons/checkbox.png')
+                        }
+                        style={styles.taskIcon}
+                        onPress={() => handleCheckReminder(index)}
+                      />
+                      <Text style={styles.taskTitle}>{reminder.content}</Text>
+                    </View>
+                  </View>
+                ))}
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Subtasks</Text>
               <Input
@@ -231,52 +281,12 @@ const AddOffScreen = () => {
                 <Text style={styles.doneButtonText}>Add New Subtask</Text>
               </TouchableOpacity>
             </View>
-            {event.subtasks.length > 0 && (
-              <View style={styles.checklistWrapper}>
-                {event.subtasks.map((item, index) => (
-                  <View
-                    key={index}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 4,
-                    }}>
-                    <View style={styles.taskItemContainer}>
-                      <Text
-                        style={[styles.taskTitle]}
-                        numberOfLines={2}
-                        ellipsizeMode="tail">
-                        {item.content}
-                      </Text>
-                      <MyButton
-                        icon={require('../assets/icons/delete.png')}
-                        onPress={() => handleDeleteSubtask(index)}
-                        style={styles.deleteIcon}
-                      />
-                    </View>
-                    <Text style={[styles.dueDate]}>{`Due: ${item.ddl}`}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
-            <InputField
-              label="Details"
-              props={{
-                name: 'details',
-                rules: [
-                  {
-                    required: true,
-                    message: 'Please input the details!',
-                  },
-                ],
-              }}
-              inputStyle={styles.textInput}
-            />
+
             <View style={styles.ddlContainer}>
               <View style={styles.textContainer}>
                 <Text style={styles.ddlText}>DDL</Text>
                 <Text style={styles.dateText}>
-                  {`${toDate(event.ddlDate)}  `}
+                  {`${formatDate(toDate(event.ddl))}  `}
                   {event.startTime &&
                     event.endTime &&
                     `${toTime(event.startTime)}~${toTime(event.endTime)}`}
@@ -374,9 +384,9 @@ const AddOffScreen = () => {
             <View style={styles.modalView}>
               <Text style={styles.calendarSpanTitle}>DDL Date</Text>
               <Calendar
-                selectedDate={event.ddlDate}
+                selectedDate={event.ddl}
                 setSelectedDate={(date: Date) =>
-                  setEvent({...event, ddlDate: date})
+                  setEvent({...event, ddl: date})
                 }
               />
               <TouchableOpacity
@@ -581,6 +591,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginVertical: 10,
   },
+  taskIcon: {
+    width: 24,
+    height: 24,
+  },
 });
 
-export default AddOffScreen;
+export default AddMealScreen;

@@ -10,6 +10,8 @@ import {
   FlatList,
   ScrollView,
   TouchableWithoutFeedback,
+  TextInput,
+  RefreshControl,
 } from 'react-native';
 import {
   challengeOptions,
@@ -32,6 +34,7 @@ import MyButton from '../utils/my_button';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [user, setUser] = useState<any>(null);
+  const [editing, setEditing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -56,7 +59,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
     },
   ];
 
-  useEffect(() => {
+  const handleRefresh = () => {
     setLoading(true);
     getObject('mode').then(mode => {
       if (mode == 'online') {
@@ -76,6 +79,10 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
         });
       }
     });
+  };
+
+  useEffect(() => {
+    handleRefresh();
   }, []);
 
   const handleImagePick = (value: number) => {
@@ -89,7 +96,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
       if (mode == 'online') {
         //用户已登录 且为在线模式 上传数据到云端 然后更新本地数据
         updateUser(user).then(newUser => {
-          Alert.alert('Success', 'Portrait updated successfully');
+          Alert.alert('Success', 'User profile updated successfully');
           storeObject('user', newUser);
           setLoading(false);
         });
@@ -150,30 +157,14 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
 
   return (
     user && (
-      <ScrollView style={{backgroundColor: 'white', height: '100%'}}>
+      <ScrollView
+        style={{backgroundColor: 'white', height: '100%'}}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+        }>
         <Loading visible={loading} />
         <View style={styles.container}>
           <Text style={styles.titleText}>My Portrait</Text>
-          <View style={styles.container2}>
-            <View style={styles.usernameContainer}>
-              <Text style={styles.LabelText}>Email</Text>
-              <Text style={styles.usernameText}>{user.email}</Text>
-            </View>
-            <MyButton
-              icon={require('../assets/icons/pencil.png')}
-              style={styles.avatar}
-            />
-          </View>
-          <View style={styles.container2}>
-            <View style={styles.usernameContainer}>
-              <Text style={styles.LabelText}>Username</Text>
-              <Text style={styles.usernameText}>{user.username}</Text>
-            </View>
-            <MyButton
-              icon={require('../assets/icons/pencil.png')}
-              style={styles.avatar}
-            />
-          </View>
           <View style={styles.imageContainer}>
             <View style={styles.imageWrapper}>
               {user.identity && (
@@ -189,7 +180,29 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
               </TouchableOpacity>
             </View>
           </View>
+          <View style={styles.container2}>
+            <View style={styles.usernameContainer}>
+              <Text style={styles.LabelText}>Email</Text>
+              <Text style={styles.emailText}>{user.email}</Text>
+            </View>
+          </View>
+          <View style={styles.container2}>
+            <View style={styles.usernameContainer}>
+              <Text style={styles.LabelText}>Username</Text>
+              <TextInput
+                value={user?.username}
+                onChange={e => setUser({...user, username: e.nativeEvent.text})} //更新用户信息
+                style={editing ? styles.editingText : styles.usernameText}
+                editable={editing}></TextInput>
+            </View>
+            <MyButton
+              icon={require('../assets/icons/pencil.png')}
+              style={styles.avatar}
+              onPress={() => setEditing(!editing)}
+            />
+          </View>
         </View>
+
         {items.map((item, index) => (
           <View style={styles.inputContainer} key={index}>
             <Text style={styles.inputLabel}>{item.label}</Text>
@@ -247,6 +260,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
 const styles = StyleSheet.create({
   container: {
     padding: 25,
+    paddingBottom: 10,
     display: 'flex',
     alignItems: 'center',
   },
@@ -275,7 +289,7 @@ const styles = StyleSheet.create({
   },
   quitButton: {
     marginRight: 25,
-    marginTop: 20,
+    marginVertical: 20,
     alignSelf: 'flex-end',
     justifyContent: 'center',
     alignItems: 'center',
@@ -350,7 +364,7 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 15,
     paddingHorizontal: 25,
   },
   inputLabel: {
@@ -358,14 +372,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#A8A6A7',
     fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   input: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     padding: 10,
-    marginTop: 5,
     zIndex: 1,
   },
   dropdown: {
@@ -385,15 +398,13 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
   },
   container2: {
-    width: '100%',
-    display: 'flex',
+    height: 80,
     alignItems: 'center',
-    justifyContent: 'space-between',
     flexDirection: 'row',
+    gap: 20,
   },
   usernameContainer: {
-    display: 'flex',
-    justifyContent: 'flex-start',
+    flex: 1,
   },
   LabelText: {
     color: 'rgba(255, 195, 116, 1)',
@@ -405,10 +416,30 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontSize: 18,
     fontWeight: 'bold',
+    paddingHorizontal: 10,
+    height: 50,
+  },
+  editingText: {
+    fontFamily: 'Inter',
+    fontSize: 18,
+    fontWeight: 'bold',
+    borderRadius: 10,
+    borderColor: '#D6D6D6',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    height: 50,
+  },
+  emailText: {
+    marginTop: 5,
+    fontFamily: 'Inter',
+    fontSize: 18,
+    fontWeight: 'bold',
+    height: 50,
+    paddingHorizontal: 10,
   },
   avatar: {
-    height: 40,
-    width: 40,
+    height: 60,
+    width: 60,
   },
 });
 
