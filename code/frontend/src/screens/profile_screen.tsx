@@ -8,12 +8,15 @@ import {
   View,
   Modal,
   FlatList,
+  ScrollView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import GoBack from '../utils/go_back';
 import DropdownInput from '../components/dropdown_input';
 import {
   challengeOptions,
+  exerciseOptions,
   identityAvatars,
   identityOptions,
   sleepOptions,
@@ -21,6 +24,14 @@ import {
 import {getUser, portraitUpload} from '../services/userService';
 import {logout} from '../services/loginService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNetInfo} from '@react-native-community/netinfo';
+import {
+  clearAllUnpushed,
+  getObject,
+  removeObject,
+  storeObject,
+} from '../services/offlineService';
+import SelectModal from '../components/select_modal';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [sleep, setSleep] = useState<null | number>(null);
@@ -28,6 +39,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
   const [exercise, setExercise] = useState<null | number>(null);
   const [identity, setIdentity] = useState<null | number>(null);
   const [modalVisible, setModalVisible] = useState(false);
+
   const items = [
     {
       label: 'sleep schedule',
@@ -43,24 +55,35 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
     },
     {
       label: 'exercise',
-      data: challengeOptions,
+      data: exerciseOptions,
       value: exercise,
       setValue: setExercise,
     },
   ];
 
   useEffect(() => {
-    getUser()
-      .then(res => {
-        console.log(res);
-        setSleep(res.sleep_schedule);
-        setChallenge(res.challenge);
-        setExercise(res.exercise);
-        setIdentity(res.identity);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    getObject('mode').then(mode => {
+      if (mode == 'online') {
+        //用户已登录 且为在线模式 从云端获取数据
+        getUser().then(user => {
+          storeObject('user', user);
+          setSleep(user.sleep_schedule);
+          setChallenge(user.challenge);
+          setExercise(user.exercise);
+          setIdentity(user.identity);
+        });
+      } else {
+        //用户已登录 但为离线模式 从本地获取数据
+        getObject('user').then(user => {
+          if (user) {
+            setSleep(user.sleep_schedule);
+            setChallenge(user.challenge);
+            setExercise(user.exercise);
+            setIdentity(user.identity);
+          }
+        });
+      }
+    });
   }, []);
 
   const handleImagePick = (value: number) => {
@@ -75,31 +98,72 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
       exercise: exercise,
       identity: identity,
     };
-    console.log(portrait);
-    portraitUpload(portrait)
-      .then(res => {
-        Alert.alert('Success', 'Portrait updated successfully');
-      })
-      .catch(err => {
-        Alert.alert('Error', err);
-      });
+    getObject('mode').then(mode => {
+      if (mode == 'online') {
+        //用户已登录 且为在线模式 上传数据到云端 然后更新本地数据
+        portraitUpload(portrait).then(newUser => {
+          Alert.alert('Success', 'Portrait updated successfully');
+          storeObject('user', newUser);
+        });
+      } else {
+        //用户已登录 但为离线模式 保存数据到unpushed 然后更新本地数据
+        Alert.alert(
+          'Offline',
+          'You are in offline mode now, your data will be uploaded when you are online again',
+        );
+        storeObject('user_unpushed', portrait); //保存未上传的数据
+        //更新本地数据
+        getObject('user').then(user => {
+          user.sleep_schedule = sleep;
+          user.challenge = challenge;
+          user.exercise = exercise;
+          user.identity = identity;
+          storeObject('user', user);
+        });
+      }
+    });
+    //更新界面渲染
+    setSleep(sleep);
+    setChallenge(challenge);
+    setExercise(exercise);
+    setIdentity(identity);
   };
 
   const handleLogout = () => {
-    logout()
-      .then(() => {
-        AsyncStorage.removeItem('auth'); //清除登录信息
-        navigation.navigate('Login');
-      })
-      .catch(err => {
-        Alert.alert('Error', err);
-        navigation.navigate('Login');
-      });
+    getObject('mode').then(mode => {
+      if (mode == 'online')
+        logout()
+          .then(() => {
+            removeObject('auth'); //清除登录信息
+            removeObject('user'); //清除用户信息
+            navigation.replace('Login');
+          })
+          .catch(err => {
+            Alert.alert('Error', err);
+          });
+      else {
+        Alert.alert(
+          'Warning',
+          "You are in offline mode now, if you logout, you'll lose all unsynced data, are you sure to logout?",
+          [
+            {text: 'Cancel', onPress: () => {}},
+            {
+              text: 'OK',
+              onPress: () => {
+                clearAllUnpushed(); //清除未上传的数据
+                removeObject('auth'); //清除登录信息
+                removeObject('user'); //清除用户信息
+                navigation.replace('Login');
+              },
+            },
+          ],
+        );
+      }
+    });
   };
 
   return (
-    <View style={{backgroundColor: 'white', height: '100%'}}>
-      <GoBack title="Settings" />
+    <ScrollView style={{backgroundColor: 'white', height: '100%'}}>
       <View style={styles.container}>
         <Text style={styles.titleText}>My Portrait</Text>
         <View style={styles.imageContainer}>
@@ -121,11 +185,12 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
       {items.map((item, index) => (
         <View style={styles.inputContainer} key={index}>
           <Text style={styles.inputLabel}>{item.label}</Text>
-          <DropdownInput
+
+          <SelectModal
+            style={styles.input}
             data={item.data}
             selectedValue={item.value}
             setSelectedValue={item.setValue}
-            style={styles.input}
           />
         </View>
       ))}
@@ -135,35 +200,39 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
         onPress={handleSave}>
         <Text style={styles.saveButtonText}>Save</Text>
       </TouchableOpacity>
+
       <TouchableOpacity onPress={handleLogout} style={styles.quitButton}>
         <Text style={styles.quitButtonText}>Logout</Text>
       </TouchableOpacity>
+
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <FlatList
-              data={identityOptions}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  onPress={() => handleImagePick(item.value)}
-                  style={styles.modalItem}>
-                  <Text style={styles.modalItemText}>{item.label}</Text>
-                </TouchableOpacity>
-              )}
-            />
-            <TouchableOpacity
-              onPress={() => setModalVisible(false)}
-              style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Cancel</Text>
-            </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <FlatList
+                data={identityOptions}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    onPress={() => handleImagePick(item.value)}
+                    style={styles.modalItem}>
+                    <Text style={styles.modalItemText}>{item.label}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -175,36 +244,31 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '700',
     color: '#000',
     width: '100%',
     textAlign: 'left', // 使标题左对齐
   },
   saveButton: {
-    position: 'absolute',
-    bottom: 15,
     alignSelf: 'center',
-    width: '90%',
-    marginHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,
     backgroundColor: '#80B3FF',
     paddingVertical: 11,
-    paddingHorizontal: 15,
+    paddingHorizontal: 150,
   },
   saveButtonText: {
     color: '#000',
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
   },
   quitButton: {
-    position: 'absolute',
-    bottom: 100,
-    right: 25,
-    alignSelf: 'center',
+    marginRight: 25,
+    marginTop: 20,
+    alignSelf: 'flex-end',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,
@@ -214,7 +278,7 @@ const styles = StyleSheet.create({
   },
   quitButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 12,
   },
   imageContainer: {
     marginTop: 20,
@@ -225,9 +289,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   portraitImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 50,
+    width: 120,
+    height: 150,
+    borderRadius: 30,
   },
   editButton: {
     position: 'absolute',
@@ -238,7 +302,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   editButtonText: {
-    fontSize: 22,
+    fontSize: 18,
     color: '#000',
   },
   modalOverlay: {
@@ -248,7 +312,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-    width: '80%',
+    width: 200,
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
@@ -262,7 +326,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalItemText: {
-    fontSize: 18,
+    fontSize: 12,
     color: '#000',
   },
   closeButton: {
@@ -274,7 +338,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 12,
   },
 
   inputContainer: {
@@ -283,7 +347,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     color: '#A8A6A7',
     fontWeight: '700',
     marginBottom: 8,

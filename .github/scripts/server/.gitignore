@@ -1,0 +1,3 @@
+event-service-with-secrets.sh
+user-service-with-secrets.sh
+load-balance-with-secrets.sh

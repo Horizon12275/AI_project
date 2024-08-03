@@ -86,4 +86,8 @@ public class EventServiceImpl implements EventService {
     public Result<List<Object>> summary(LocalDate start, LocalDate end) {
         return client.summary(start, end, getUid());
     }
+    @Override
+    public Result<List<Event>> pushAll(List<Event> events) {
+        return client.pushAll(events,getUid());
+    }
 }

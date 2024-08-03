@@ -7,29 +7,28 @@ import PortraitIdentityScreen from './src/screens/portrait_identity_screen';
 import IdentityDetailsScreen from './src/screens/identity_details_screen';
 import PortraitQuestionScreen from './src/screens/portrait_question_screen';
 import TodayScreen from './src/screens/today_screen';
-import {Alert, Image, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Text} from 'react-native';
 import AIScreen from './src/screens/AI_screen.tsx';
 import AddOnScreen from './src/screens/add_screen_on';
-import AddOffScreen from './src/screens/add_screen_off';
 import StatsScreen from './src/screens/stats_screen';
 import ProfileScreen from './src/screens/profile_screen';
 import {useEffect, useState} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import MyHeader from './src/components/my_header';
-import {login} from './src/services/loginService';
-import {getUser} from './src/services/userService';
-import MyButton from './src/utils/my_button';
+
 import {
   challengeOptions,
   exerciseOptions,
   sleepOptions,
 } from './src/utils/offline.tsx';
-import {USERPORT, WSURL} from './src/services/requestService.jsx';
+import {useNetInfo} from '@react-native-community/netinfo';
+import {getObject, storeObject} from './src/services/offlineService.tsx';
+import NetworkListener from './src/components/network_listener.tsx';
+import AddOffScreen from './src/screens/add_screen_off.tsx';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const {isConnected} = useNetInfo();
   const options = {
     headerShown: false,
   };
@@ -65,7 +64,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Add"
-        component={AddOnScreen}
+        component={isConnected ? AddOnScreen : AddOffScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
@@ -94,11 +93,32 @@ const TabNavigator = () => {
 };
 
 function App() {
+  const [user, setUser] = useState<null | any>(null);
+  const [auth, setAuth] = useState<null | any>(null);
+  const [mode, setMode] = useState<null | any>(null);
+  const {isConnected} = useNetInfo();
+
+  useEffect(() => {
+    Promise.all([getObject('user'), getObject('auth'), getObject('mode')]).then(
+      ([user, auth, mode]) => {
+        setUser(user);
+        setAuth(auth);
+        setMode(mode);
+      },
+    );
+    
+  }, []);
+
   const options = {
     headerShown: false,
   };
   return (
     <NavigationContainer>
+      {/* <Text>{user?.email}</Text>
+      <Text>{auth?.username}</Text>
+      <Text>{`mode:${mode}`}</Text>
+      <Text>{`isConnected:${isConnected}`}</Text> */}
+      <NetworkListener />
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={options} />
         <Stack.Screen name="Tabs" component={TabNavigator} options={options} />

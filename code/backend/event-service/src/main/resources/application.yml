@@ -1,20 +1,26 @@
 server:
   port: ${EVENT_SERVICE_PORT}
+  tomcat:
+    accept-count: 1000
+    threads:
+      max: 1000
 
 spring:
   datasource:
     url: ${DB2_URL}
     username: ${DB2_USERNAME}
     password: ${DB2_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 1000
+      minimum-idle: 100
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
     hibernate:
       ddl-auto: none
   application:
     name: event-service
-  cloud:
+  cloud: # 服务注册
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR}

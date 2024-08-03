@@ -96,17 +96,11 @@ const Calendar = ({
   }, [selectedDate]);
 
   const goToPreviousMonth = () => {
-    setCurrentMonth((currentMonth - 1 + 12) % 12);
-    if (currentMonth === 0) {
-      setCurrentYear(currentYear - 1);
-    }
+    setSelectedDate(new Date(currentYear, currentMonth - 1, 1));
   };
 
   const goToNextMonth = () => {
-    setCurrentMonth((currentMonth + 1) % 12);
-    if (currentMonth === 11) {
-      setCurrentYear(currentYear + 1);
-    }
+   setSelectedDate(new Date(currentYear, currentMonth + 1, 1));
   };
 
   const dates = getDates(currentYear, currentMonth);
@@ -196,7 +190,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   monthText: {
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: '500',
     color: '#121212',
     fontFamily: 'Inter, sans-serif',
@@ -222,7 +216,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   dayText: {
-    fontSize: 12,
+    fontSize: 9,
     fontWeight: '400',
     color: '#121212',
     fontFamily: 'Inter, sans-serif',
@@ -242,7 +236,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   dateText: {
-    fontSize: 12,
+    fontSize: 9,
     fontWeight: '400',
     color: '#858585',
     fontFamily: 'Inter, sans-serif',
@@ -268,7 +262,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   text: {
-    fontSize: 20,
+    fontSize: 15,
     marginRight: 10,
   },
   badgeContainer: {

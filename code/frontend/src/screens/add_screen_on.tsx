@@ -8,6 +8,7 @@ import {
   ScrollView,
   Modal,
   Alert,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import MyButton from '../utils/my_button';
 import Calendar from '../components/calendar';
@@ -18,6 +19,9 @@ import {Form, Input} from '@ant-design/react-native';
 import MyHeader from '../components/my_header';
 import {toDate, toTime} from '../utils/date';
 import {addEvent} from '../services/eventService';
+import SelectModal from '../components/select_modal';
+import Loading from '../components/loading';
+import {getObject, storeObject} from '../services/offlineService';
 
 const InputField = ({
   label,
@@ -47,7 +51,7 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
-  const [category, setCategory] = useState(0);
+  const [category, setCategory] = useState(1);
   const [startTime, setStartTime] = useState<null | Date>(null);
   const [endTime, setEndTime] = useState<null | Date>(null);
   const [ddlDate, setDdlDate] = useState(new Date());
@@ -76,6 +80,11 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
       eventDetails,
     })
       .then(event => {
+        //本地存储 保持数据一致性
+        getObject('events').then(events => {
+          events.push(event);
+          storeObject('events', events);
+        });
         setLoading(false);
         navigation.navigate('AI', {event}); //传入响应的event给ai界面 来渲染ai的帮助内容
       })
@@ -86,15 +95,14 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
   };
   return (
     <Form onFinish={handleSave} form={form}>
+      <Loading visible={loading} />
       <MyHeader onSave={onSubmit} />
-      <View
+      <ScrollView
         style={{
           backgroundColor: '#fff',
-          height: '100%',
           padding: 20,
           display: 'flex',
           flexDirection: 'column',
-          gap: 10,
         }}>
         <View style={styles.container}>
           <Text style={styles.titleText}>New Schedule</Text>
@@ -125,12 +133,11 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
         />
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Category</Text>
-          <DropdownInput
+          <SelectModal
+            style={styles.input}
             data={categoryOptions}
             selectedValue={category}
             setSelectedValue={setCategory}
-            style={styles.input}
-            placeholder="Select a category"
           />
         </View>
         <InputField
@@ -215,14 +222,20 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
             <Text style={styles.startButtonText}>End Time</Text>
           </TouchableOpacity>
         </View>
-        {showCalendar && (
-          <Modal
-            animationType="fade" // 动画效果
-            transparent={true} // 透明背景
-            visible={showCalendar}
-            onRequestClose={() => {
-              setShowCalendar(!showCalendar);
-            }}>
+
+        {/* <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
+        <Text style={styles.saveButtonText}>Save</Text>
+      </TouchableOpacity> */}
+      </ScrollView>
+      {showCalendar && (
+        <Modal
+          animationType="fade" // 动画效果
+          transparent={true} // 透明背景
+          visible={showCalendar}
+          onRequestClose={() => {
+            setShowCalendar(!showCalendar);
+          }}>
+          <TouchableWithoutFeedback onPress={() => setShowCalendar(false)}>
             <View style={styles.modalView}>
               <Text style={styles.calendarSpanTitle}>DDL Date</Text>
               <Calendar selectedDate={ddlDate} setSelectedDate={setDdlDate} />
@@ -232,12 +245,9 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
                 <Text style={styles.doneButtonText}>Done</Text>
               </TouchableOpacity>
             </View>
-          </Modal>
-        )}
-        {/* <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
-        <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity> */}
-      </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      )}
     </Form>
   );
 };
@@ -252,7 +262,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '700',
     color: '#000',
   },
@@ -270,7 +280,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#000',
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
   },
   inputContainer: {
@@ -279,7 +289,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     color: 'black',
     fontWeight: '300',
   },
@@ -289,13 +299,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     width: '100%',
+    height: 50,
   },
   textInput: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     marginTop: 5,
-    height: 80, // 自定义文本输入框高度
+    height: 300, // 自定义文本输入框高度
   },
   timeZoneIcon: {
     height: 40,
@@ -311,13 +322,13 @@ const styles = StyleSheet.create({
   doneButton: {
     backgroundColor: '#4A90E2',
     borderRadius: 20,
-    width: '90%',
-    margin: 10,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
   },
   doneButtonText: {
     color: 'white',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 16,
+    fontSize: 12,
     padding: 3,
     textAlign: 'center',
   },
@@ -325,12 +336,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   ddlText: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
   },
   dateText: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#80B3FF',
   },
@@ -346,7 +357,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 150,
   },
   startButton: {
     justifyContent: 'center',
@@ -360,27 +371,20 @@ const styles = StyleSheet.create({
     color: '#0A84FF',
     textAlign: 'center',
     fontWeight: '800',
-    fontSize: 17,
-    lineHeight: 22,
+    fontSize: 12,
+    lineHeight: 15,
     fontFamily: 'Inter, sans-serif',
   },
   modalView: {
-    marginTop: 200,
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 50,
+    padding: 20,
   },
   calendarSpanTitle: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: '700',
     color: '#010618',
     marginTop: 10,

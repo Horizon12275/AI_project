@@ -130,5 +130,14 @@ public class EventServiceImpl implements EventService {
 
         return Result.success(result);
     }
-
+    @Override
+    public Result<List<Event>> pushAll(List<Event> events, int uid) {
+        for (Event event : events) {//遍历所有事件 逐个添加或更新
+           if(event.getId()==null) addEvent(event,uid);//如果id为空则添加
+           else if(event.getDdl()==null) repo.deleteById(event.getId());//如果ddl为空则删除 约定好的
+           else updateEvent(event.getId(),event,uid);//否则更新
+        }
+        List<Event> allEvents = repo.getEventsByUid(uid);//返回所有事件
+        return Result.success(allEvents);
+    }
 }

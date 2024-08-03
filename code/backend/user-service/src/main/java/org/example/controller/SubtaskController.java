@@ -16,7 +16,7 @@ public class SubtaskController {
     }
     //修改某一个子任务为完成状态或未完成状态
     @PutMapping("/changeDone/{id}")
-    public Result<Subtask> changeStatus(@PathVariable int id) {
+    public Result<Subtask> changeDone(@PathVariable int id) {
         return service.changeDone(id);
     }
     //删除某一个子任务

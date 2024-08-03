@@ -5,6 +5,7 @@ import org.example.entity.RegisterRequest;
 import org.example.entity.Result;
 import org.example.entity.User;
 import org.example.service.Impl.MyUserDetailsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
     private final MyUserDetailsService service;
+    @Value("${server.port}")
+    private  String port;
     public UserController(MyUserDetailsService service) {
         this.service = service;
     }
@@ -23,11 +26,19 @@ public class UserController {
     }
     @PostMapping("/register")//注册
     public Result<User> register(@RequestBody RegisterRequest request) {
-        return service.register(request);
+        return service.addUser(request);
     }
     @PostMapping("/portrait")//提交个人肖像
     public Result<User> portrait(@RequestBody User user) {
         return service.portrait(user);
+    }
+    @GetMapping("/testGET")//测试GET请求
+    public String testGET() {
+        return "GET请求成功,端口号为"+port;
+    }
+    @PostMapping("/testPOST")//测试POST请求
+    public String testPOST() {
+        return "POST请求成功,端口号为"+port;
     }
 
 }

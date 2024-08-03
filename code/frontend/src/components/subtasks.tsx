@@ -143,14 +143,14 @@ const styles = StyleSheet.create({
   taskTitle: {
     color: '#010618',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 18,
+    fontSize: 13,
     fontWeight: '400',
     flex: 1,
   },
   dueDate: {
     color: '#21283F',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 13,
+    fontSize: 9,
     fontWeight: '400',
   },
   plusIcon: {

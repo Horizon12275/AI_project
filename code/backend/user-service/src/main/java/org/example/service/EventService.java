@@ -18,4 +18,6 @@ public interface EventService {
     Result<Event> updateEvent(@PathVariable("id") int id, @RequestBody Event event);
 
     Result<List<Object>> summary(LocalDate start, LocalDate end);
+
+    Result<List<Event>> pushAll(List<Event> events);
 }

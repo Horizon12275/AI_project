@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontFamily: 'Inter, sans-serif',
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '700',
     color: '#000',
   },
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#000',
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
   },
   dateContainer: {
@@ -129,13 +129,13 @@ const styles = StyleSheet.create({
   dateText: {
     color: '#010618',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: '700',
   },
   sectionTitle: {
     color: '#FFC374',
     fontFamily: 'Inter, sans-serif',
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: '700',
   },
   sectionIcon: {
