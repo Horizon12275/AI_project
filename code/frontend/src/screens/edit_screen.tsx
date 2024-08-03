@@ -21,6 +21,7 @@ import Loading from '../components/loading';
 import MyHeader from '../components/my_header';
 import {fromDate, fromTime, toDate, toTime} from '../utils/date';
 import {generateId, getObject, storeObject} from '../services/offlineService';
+import {updateEvent} from '../services/eventService';
 
 const InputField = ({
   label,
@@ -45,7 +46,13 @@ const InputField = ({
   </View>
 );
 
-const EditScreen = ({route}: {route: {params: {event: any}}}) => {
+const EditScreen = ({
+  route,
+  navigation,
+}: {
+  route: {params: {event: any}};
+  navigation: any;
+}) => {
   const event = route.params.event;
   const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
@@ -70,34 +77,47 @@ const EditScreen = ({route}: {route: {params: {event: any}}}) => {
   const onSubmit = () => {
     form.submit();
   };
-  const handleSave = (event: any) => {
-    if (startTime) event.startTime = toTime(startTime);
-    if (endTime) event.endTime = toTime(endTime);
-    event.ddl = toDate(ddlDate);
-    event.category = category;
-    event.priority = priority;
-    event.subtasks = subtasks;
-    event.id = generateId();
-    //离线存储
-    Promise.all([getObject('events'), getObject('events_unpushed')]).then(
-      ([events, events_unpushed]) => {
-        if (events_unpushed) {
-          events_unpushed.push(event);
-          storeObject('events_unpushed', events_unpushed);
-        } else {
-          storeObject('events_unpushed', [event]);
-        }
-        if (events) {
-          events.push(event);
-          storeObject('events', events);
-        } else {
-          storeObject('events', [event]);
-        }
-        Alert.alert('Success', 'Event saved successfully');
-        form.resetFields();
-        setSubtasks([]);
-      },
-    );
+
+  const handleSave = (newEvent:any) => {
+    newEvent.id = event.id;
+    if (startTime) newEvent.startTime = toTime(startTime);
+    if (endTime) newEvent.endTime = toTime(endTime);
+    newEvent.ddl = toDate(ddlDate);
+    newEvent.category = category;
+    newEvent.priority = priority;
+    newEvent.subtasks = subtasks;
+    getObject('mode').then(mode => {
+      if (mode === 'online') {
+        updateEvent(newEvent)
+          .then(event => {
+            getObject('events').then(events => {
+              const eventIndex = events.findIndex(
+                (e: any) => e.id === event.id,
+              );
+              events[eventIndex] = event;
+              storeObject('events', events);
+            });
+          })
+          .catch(error => Alert.alert('Error', error));
+      } else {
+        Promise.all([getObject('events'), getObject('events_unpushed')]).then(
+          ([events, events_unpushed]) => {
+            events_unpushed.push(newEvent);
+            storeObject('events_unpushed', events_unpushed);
+
+            const eventIndex = events.findIndex((e: any) => e.id === newEvent.id);
+            events[eventIndex] = newEvent;
+            storeObject('events', events);
+          },
+        );
+      }
+      Alert.alert('Success', 'Event updated successfully', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    });
   };
   const handleAddSubtask = () => {
     if (!subtask.content) {

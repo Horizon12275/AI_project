@@ -28,9 +28,9 @@ public class UserController {
     public Result<User> register(@RequestBody RegisterRequest request) {
         return service.addUser(request);
     }
-    @PostMapping("/portrait")//提交个人肖像
-    public Result<User> portrait(@RequestBody User user) {
-        return service.portrait(user);
+    @PostMapping("/update")//更新用户信息
+    public Result<User> update(@RequestBody User user) {
+        return service.updateUser(user);
     }
     @GetMapping("/testGET")//测试GET请求
     public String testGET() {

@@ -102,7 +102,7 @@ class UserControllerTest {
         updatedUser.setExercise(4);
         updatedUser.setEmail("test@example.com");
 
-        when(service.portrait(any(User.class))).thenReturn(Result.success(updatedUser));
+        when(service.updateUser(any(User.class))).thenReturn(Result.success(updatedUser));
 
         mockMvc.perform(post("/api/user/portrait")
                         .contentType("application/json")

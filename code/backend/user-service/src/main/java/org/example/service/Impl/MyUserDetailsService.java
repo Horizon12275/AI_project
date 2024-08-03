@@ -75,13 +75,24 @@ public class MyUserDetailsService implements UserDetailsService {
         return Result.success(user);
     }
 
-    public Result<User> portrait(User user) {
+    public Result<User> updateUser(User user) {
         String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         User newUser = userRepository.findUserByEmail(username);
-        newUser.setChallenge(user.getChallenge());
-        newUser.setSleep_schedule(user.getSleep_schedule());
-        newUser.setIdentity(user.getIdentity());
-        newUser.setExercise(user.getExercise());
+        if(newUser.getUsername() != null) {
+            user.setUsername(newUser.getUsername());
+        }
+        if(newUser.getChallenge() != null) {
+            user.setChallenge(newUser.getChallenge());
+        }
+        if(newUser.getIdentity() != null) {
+            user.setIdentity(newUser.getIdentity());
+        }
+        if(newUser.getSleep_schedule() != null) {
+            user.setSleep_schedule(newUser.getSleep_schedule());
+        }
+        if(newUser.getRole() != null) {
+            user.setRole(newUser.getRole());
+        }
         userRepository.save(newUser);
         return Result.success(newUser);
     }
