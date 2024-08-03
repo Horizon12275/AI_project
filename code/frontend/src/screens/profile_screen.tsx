@@ -11,9 +11,6 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
-
-import GoBack from '../utils/go_back';
-import DropdownInput from '../components/dropdown_input';
 import {
   challengeOptions,
   exerciseOptions,
@@ -21,10 +18,8 @@ import {
   identityOptions,
   sleepOptions,
 } from '../utils/offline';
-import {getUser, portraitUpload} from '../services/userService';
+import {getUser, updateUser} from '../services/userService';
 import {logout} from '../services/loginService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNetInfo} from '@react-native-community/netinfo';
 import {
   clearAllUnpushed,
   getObject,
@@ -33,12 +28,10 @@ import {
 } from '../services/offlineService';
 import SelectModal from '../components/select_modal';
 import Loading from '../components/loading';
+import MyButton from '../utils/my_button';
 
 const ProfileScreen = ({navigation}: {navigation: any}) => {
-  const [sleep, setSleep] = useState<null | number>(null);
-  const [challenge, setChallenge] = useState<null | number>(null);
-  const [exercise, setExercise] = useState<null | number>(null);
-  const [identity, setIdentity] = useState<null | number>(null);
+  const [user, setUser] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -46,20 +39,20 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
     {
       label: 'sleep schedule',
       data: sleepOptions,
-      value: sleep,
-      setValue: setSleep,
+      value: user.sleep_schedule,
+      setValue: (value: number) => setUser({...user, sleep_schedule: value}),
     },
     {
       label: 'challenges',
       data: challengeOptions,
-      value: challenge,
-      setValue: setChallenge,
+      value: user.challenge,
+      setValue: (value: number) => setUser({...user, challenge: value}),
     },
     {
       label: 'exercise',
       data: exerciseOptions,
-      value: exercise,
-      setValue: setExercise,
+      value: user.exercise,
+      setValue: (value: number) => setUser({...user, exercise: value}),
     },
   ];
 
@@ -70,20 +63,14 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
         //用户已登录 且为在线模式 从云端获取数据
         getUser().then(user => {
           storeObject('user', user);
-          setSleep(user.sleep_schedule);
-          setChallenge(user.challenge);
-          setExercise(user.exercise);
-          setIdentity(user.identity);
+          setUser(user);
           setLoading(false);
         });
       } else {
         //用户已登录 但为离线模式 从本地获取数据
         getObject('user').then(user => {
           if (user) {
-            setSleep(user.sleep_schedule);
-            setChallenge(user.challenge);
-            setExercise(user.exercise);
-            setIdentity(user.identity);
+            setUser(user);
           }
           setLoading(false);
         });
@@ -92,22 +79,16 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
   }, []);
 
   const handleImagePick = (value: number) => {
-    setIdentity(value);
+    setUser({...user, identity: value});
     setModalVisible(false);
   };
 
   const handleSave = () => {
     setLoading(true);
-    const portrait = {
-      sleep_schedule: sleep,
-      challenge: challenge,
-      exercise: exercise,
-      identity: identity,
-    };
     getObject('mode').then(mode => {
       if (mode == 'online') {
         //用户已登录 且为在线模式 上传数据到云端 然后更新本地数据
-        portraitUpload(portrait).then(newUser => {
+        updateUser(user).then(newUser => {
           Alert.alert('Success', 'Portrait updated successfully');
           storeObject('user', newUser);
           setLoading(false);
@@ -118,23 +99,17 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
           'Offline',
           'You are in offline mode now, your data will be uploaded when you are online again',
         );
-        storeObject('user_unpushed', portrait); //保存未上传的数据
+        storeObject('user_unpushed', user); //保存未上传的数据
         //更新本地数据
-        getObject('user').then(user => {
-          user.sleep_schedule = sleep;
-          user.challenge = challenge;
-          user.exercise = exercise;
-          user.identity = identity;
+        getObject('user').then(oldUser => {
+          oldUser = user;
           storeObject('user', user);
           setLoading(false);
         });
       }
     });
     //更新界面渲染
-    setSleep(sleep);
-    setChallenge(challenge);
-    setExercise(exercise);
-    setIdentity(identity);
+    //setUser(user);
   };
 
   const handleLogout = () => {
@@ -175,76 +150,98 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
   };
 
   return (
-    <ScrollView style={{backgroundColor: 'white', height: '100%'}}>
-      <Loading visible={loading} />
-      <View style={styles.container}>
-        <Text style={styles.titleText}>My Portrait</Text>
-        <View style={styles.imageContainer}>
-          <View style={styles.imageWrapper}>
-            {identity && (
-              <Image
-                source={identityAvatars[identity - 1]}
-                style={styles.portraitImage}
-              />
-            )}
-            <TouchableOpacity
-              onPress={() => setModalVisible(true)}
-              style={styles.editButton}>
-              <Text style={styles.editButtonText}>✏️</Text>
-            </TouchableOpacity>
+    user && (
+      <ScrollView style={{backgroundColor: 'white', height: '100%'}}>
+        <Loading visible={loading} />
+        <View style={styles.container}>
+          <Text style={styles.titleText}>My Portrait</Text>
+          <View style={styles.container2}>
+            <View style={styles.usernameContainer}>
+              <Text style={styles.LabelText}>Email</Text>
+              <Text style={styles.usernameText}>{user.email}</Text>
+            </View>
+            <MyButton
+              icon={require('../assets/icons/pencil.png')}
+              style={styles.avatar}
+            />
           </View>
-        </View>
-      </View>
-      {items.map((item, index) => (
-        <View style={styles.inputContainer} key={index}>
-          <Text style={styles.inputLabel}>{item.label}</Text>
-          <SelectModal
-            style={styles.input}
-            data={item.data}
-            selectedValue={item.value}
-            setSelectedValue={item.setValue}
-          />
-        </View>
-      ))}
-      <TouchableOpacity
-        style={styles.saveButton}
-        accessibilityRole="button"
-        onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleLogout} style={styles.quitButton}>
-        <Text style={styles.quitButtonText}>Logout</Text>
-      </TouchableOpacity>
-
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <FlatList
-                data={identityOptions}
-                renderItem={({item}) => (
-                  <TouchableOpacity
-                    onPress={() => handleImagePick(item.value)}
-                    style={styles.modalItem}>
-                    <Text style={styles.modalItemText}>{item.label}</Text>
-                  </TouchableOpacity>
-                )}
-              />
+          <View style={styles.container2}>
+            <View style={styles.usernameContainer}>
+              <Text style={styles.LabelText}>Username</Text>
+              <Text style={styles.usernameText}>{user.username}</Text>
+            </View>
+            <MyButton
+              icon={require('../assets/icons/pencil.png')}
+              style={styles.avatar}
+            />
+          </View>
+          <View style={styles.imageContainer}>
+            <View style={styles.imageWrapper}>
+              {user.identity && (
+                <Image
+                  source={identityAvatars[user.identity - 1]}
+                  style={styles.portraitImage}
+                />
+              )}
               <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.closeButton}>
-                <Text style={styles.closeButtonText}>Cancel</Text>
+                onPress={() => setModalVisible(true)}
+                style={styles.editButton}>
+                <Text style={styles.editButtonText}>✏️</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </ScrollView>
+        </View>
+        {items.map((item, index) => (
+          <View style={styles.inputContainer} key={index}>
+            <Text style={styles.inputLabel}>{item.label}</Text>
+            <SelectModal
+              style={styles.input}
+              data={item.data}
+              selectedValue={item.value}
+              setSelectedValue={item.setValue}
+            />
+          </View>
+        ))}
+        <TouchableOpacity
+          style={styles.saveButton}
+          accessibilityRole="button"
+          onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleLogout} style={styles.quitButton}>
+          <Text style={styles.quitButtonText}>Logout</Text>
+        </TouchableOpacity>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <FlatList
+                  data={identityOptions}
+                  renderItem={({item}) => (
+                    <TouchableOpacity
+                      onPress={() => handleImagePick(item.value)}
+                      style={styles.modalItem}>
+                      <Text style={styles.modalItemText}>{item.label}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}
+                  style={styles.closeButton}>
+                  <Text style={styles.closeButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </ScrollView>
+    )
   );
 };
 
@@ -387,6 +384,32 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+  },
+  container2: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  usernameContainer: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+  },
+  LabelText: {
+    color: 'rgba(255, 195, 116, 1)',
+    fontFamily: 'Inter',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  usernameText: {
+    fontFamily: 'Inter',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  avatar: {
+    height: 40,
+    width: 40,
   },
 });
 

@@ -30,9 +30,9 @@ public class UserController {
     public Result<User> register(@RequestBody RegisterRequest request) {
         return client.register(request);
     }
-    @PostMapping("/portrait")//提交个人肖像
+    @PostMapping("/update")//提交个人肖像
     public Result<User> portrait(@RequestBody User user) {
-        return client.portrait(user);
+        return client.updateUser(user);
     }
     @GetMapping("/testGET")//测试GET请求
     public String testGET() {
