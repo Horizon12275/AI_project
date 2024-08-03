@@ -39,19 +39,19 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
     {
       label: 'sleep schedule',
       data: sleepOptions,
-      value: user.sleep_schedule,
+      value: user?.sleep_schedule,
       setValue: (value: number) => setUser({...user, sleep_schedule: value}),
     },
     {
       label: 'challenges',
       data: challengeOptions,
-      value: user.challenge,
+      value: user?.challenge,
       setValue: (value: number) => setUser({...user, challenge: value}),
     },
     {
       label: 'exercise',
       data: exerciseOptions,
-      value: user.exercise,
+      value: user?.exercise,
       setValue: (value: number) => setUser({...user, exercise: value}),
     },
   ];
@@ -101,8 +101,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
         );
         storeObject('user_unpushed', user); //保存未上传的数据
         //更新本地数据
-        getObject('user').then(oldUser => {
-          oldUser = user;
+        getObject('user').then(() => {
           storeObject('user', user);
           setLoading(false);
         });
