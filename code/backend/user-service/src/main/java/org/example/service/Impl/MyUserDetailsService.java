@@ -77,23 +77,23 @@ public class MyUserDetailsService implements UserDetailsService {
 
     public Result<User> updateUser(User user) {
         String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        User newUser = userRepository.findUserByEmail(username);
-        if(newUser.getUsername() != null) {
-            user.setUsername(newUser.getUsername());
+        User oldUser = userRepository.findUserByEmail(username);
+        if(user.getUsername() != null) {
+            oldUser.setUsername(user.getUsername());
         }
-        if(newUser.getChallenge() != null) {
-            user.setChallenge(newUser.getChallenge());
+        if(user.getChallenge() != null) {
+            oldUser.setChallenge(user.getChallenge());
         }
-        if(newUser.getIdentity() != null) {
-            user.setIdentity(newUser.getIdentity());
+        if(user.getSleep_schedule() != null) {
+            oldUser.setSleep_schedule(user.getSleep_schedule());
         }
-        if(newUser.getSleep_schedule() != null) {
-            user.setSleep_schedule(newUser.getSleep_schedule());
+        if(user.getIdentity() != null) {
+            oldUser.setIdentity(user.getIdentity());
         }
-        if(newUser.getRole() != null) {
-            user.setRole(newUser.getRole());
+        if(user.getExercise() != null) {
+            oldUser.setExercise(user.getExercise());
         }
-        userRepository.save(newUser);
-        return Result.success(newUser);
+        userRepository.save(oldUser);
+        return Result.success(oldUser);
     }
 }
