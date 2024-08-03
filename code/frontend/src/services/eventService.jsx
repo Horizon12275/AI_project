@@ -1,4 +1,4 @@
-import {BASEURL, get, post} from './requestService';
+import {BASEURL, Delete, get, post} from './requestService';
 const PREFIX = `${BASEURL}/api/event`;
 //获取登录用户某一天的所有事件
 export const getAllEvents = async date => {
@@ -42,7 +42,7 @@ export async function updateEvent(event) {
 export async function deleteEvent(id) {
   const url = `${PREFIX}/delete/${id}`;
   let result;
-  result = await get(url);
+  result = await Delete(url);
   return result;
 }
 //

@@ -19,8 +19,9 @@ import SelectModal from '../components/select_modal';
 import {Form, Input} from '@ant-design/react-native';
 import Loading from '../components/loading';
 import MyHeader from '../components/my_header';
-import {toDate, toTime} from '../utils/date';
+import {fromDate, fromTime, toDate, toTime} from '../utils/date';
 import {generateId, getObject, storeObject} from '../services/offlineService';
+import {updateEvent} from '../services/eventService';
 
 const InputField = ({
   label,
@@ -45,54 +46,78 @@ const InputField = ({
   </View>
 );
 
-const EditScreen = () => {
+const EditScreen = ({
+  route,
+  navigation,
+}: {
+  route: {params: {event: any}};
+  navigation: any;
+}) => {
+  const event = route.params.event;
   const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
-  const [category, setCategory] = useState(1);
-  const [priority, setPriority] = useState(1);
+  const [category, setCategory] = useState(event.category);
+  const [priority, setPriority] = useState(event.priority);
   const [startTime, setStartTime] = useState<null | Date>(null);
   const [endTime, setEndTime] = useState<null | Date>(null);
-  const [ddlDate, setDdlDate] = useState(new Date());
-  const [subtasks, setSubtasks] = useState([] as any[]);
+  const [ddlDate, setDdlDate] = useState(fromDate(event.ddl));
+  const [subtasks, setSubtasks] = useState(event.subtasks || []);
   const [subtask, setSubtask] = useState({content: '', ddl: new Date()});
   const [subtaskCalendar, setSubtaskCalendar] = useState(false);
   const [form] = Form.useForm();
 
-  useEffect(() => {}, [ddlDate, startTime, endTime]);
+  useEffect(() => {
+    if (event.startTime) setStartTime(fromTime(event.startTime));
+    if (event.endTime) setEndTime(fromTime(event.endTime));
+    form.setFieldsValue(event);
+  }, [ddlDate, startTime, endTime]);
 
   const onSubmit = () => {
     form.submit();
   };
-  const handleSave = (event: any) => {
-    if (startTime) event.startTime = toTime(startTime);
-    if (endTime) event.endTime = toTime(endTime);
-    event.ddl = toDate(ddlDate);
-    event.category = category;
-    event.priority = priority;
-    event.subtasks = subtasks;
-    event.id = generateId();
-    //离线存储
-    Promise.all([getObject('events'), getObject('events_unpushed')]).then(
-      ([events, events_unpushed]) => {
-        if (events_unpushed) {
-          events_unpushed.push(event);
-          storeObject('events_unpushed', events_unpushed);
-        } else {
-          storeObject('events_unpushed', [event]);
-        }
-        if (events) {
-          events.push(event);
-          storeObject('events', events);
-        } else {
-          storeObject('events', [event]);
-        }
-        Alert.alert('Success', 'Event saved successfully');
-        form.resetFields();
-        setSubtasks([]);
-      },
-    );
+
+  const handleSave = (newEvent:any) => {
+    newEvent.id = event.id;
+    if (startTime) newEvent.startTime = toTime(startTime);
+    if (endTime) newEvent.endTime = toTime(endTime);
+    newEvent.ddl = toDate(ddlDate);
+    newEvent.category = category;
+    newEvent.priority = priority;
+    newEvent.subtasks = subtasks;
+    getObject('mode').then(mode => {
+      if (mode === 'online') {
+        updateEvent(newEvent)
+          .then(event => {
+            getObject('events').then(events => {
+              const eventIndex = events.findIndex(
+                (e: any) => e.id === event.id,
+              );
+              events[eventIndex] = event;
+              storeObject('events', events);
+            });
+          })
+          .catch(error => Alert.alert('Error', error));
+      } else {
+        Promise.all([getObject('events'), getObject('events_unpushed')]).then(
+          ([events, events_unpushed]) => {
+            events_unpushed.push(newEvent);
+            storeObject('events_unpushed', events_unpushed);
+
+            const eventIndex = events.findIndex((e: any) => e.id === newEvent.id);
+            events[eventIndex] = newEvent;
+            storeObject('events', events);
+          },
+        );
+      }
+      Alert.alert('Success', 'Event updated successfully', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    });
   };
   const handleAddSubtask = () => {
     if (!subtask.content) {
@@ -120,7 +145,7 @@ const EditScreen = () => {
             gap: 10,
           }}>
           <View style={styles.container}>
-            <Text style={styles.titleText}>New Schedule</Text>
+            <Text style={styles.titleText}>Edit Schedule</Text>
           </View>
           <InputField
             label="Title"

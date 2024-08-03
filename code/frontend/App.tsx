@@ -7,7 +7,7 @@ import PortraitIdentityScreen from './src/screens/portrait_identity_screen';
 import IdentityDetailsScreen from './src/screens/identity_details_screen';
 import PortraitQuestionScreen from './src/screens/portrait_question_screen';
 import TodayScreen from './src/screens/today_screen';
-import {Appearance, Image, Text} from 'react-native';
+import {Appearance, Image} from 'react-native';
 import AIScreen from './src/screens/AI_screen.tsx';
 import AddOnScreen from './src/screens/add_screen_on';
 import StatsScreen from './src/screens/stats_screen';
@@ -23,6 +23,7 @@ import {useNetInfo} from '@react-native-community/netinfo';
 import {getObject, storeObject} from './src/services/offlineService.tsx';
 import NetworkListener from './src/components/network_listener.tsx';
 import AddOffScreen from './src/screens/add_screen_off.tsx';
+import EditScreen from './src/screens/edit_screen.tsx';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -115,10 +116,6 @@ function App() {
   };
   return (
     <NavigationContainer>
-      {/* <Text>{user?.email}</Text>
-      <Text>{auth?.username}</Text>
-      <Text>{`mode:${mode}`}</Text>
-      <Text>{`isConnected:${isConnected}`}</Text> */}
       <NetworkListener />
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={options} />
@@ -128,6 +125,7 @@ function App() {
           component={SignUpScreen}
           options={options}
         />
+        <Stack.Screen name="Edit" component={EditScreen} options={options} />
         <Stack.Screen name="AI" component={AIScreen} options={options} />
         <Stack.Screen
           name="Portrait"

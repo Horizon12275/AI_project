@@ -36,7 +36,6 @@ export async function pushAll() {
       // 用户修改的日程数据 先用map维护每一个event的最新状态
       let map = new Map<string, any>();
       events_unpushed.map((event: any) => {
-        console.log(event);
         if (isNaN(event.id) && event.title == null) {
           map.delete(event.id);
           return;
@@ -51,7 +50,9 @@ export async function pushAll() {
         }
       });
 
-      console.log(events_unpushed);
+      events_unpushed.forEach((event: any) => {
+        console.log(event);
+      });
       pushUnpushedEvents(events_unpushed)
         .then(events => {
           storeObject('events', events);

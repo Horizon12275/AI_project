@@ -3,12 +3,17 @@ import React, {useEffect, useState} from 'react';
 import {Alert, FlatList, RefreshControl, ScrollView, View} from 'react-native';
 import CalendarHeader from '../components/calendar_header';
 import EventCard from '../components/event_card';
-import {getAllEvents, getEventNums} from '../services/eventService';
+import {
+  deleteEvent,
+  getAllEvents,
+  getEventNums,
+} from '../services/eventService';
 import {toDate} from '../utils/date';
 import {
   getAllEventsOffline,
   getEventNumsOffline,
   getObject,
+  storeObject,
 } from '../services/offlineService';
 
 const TodayScreen = () => {
@@ -50,6 +55,35 @@ const TodayScreen = () => {
         .catch(e => Alert.alert('Error', e));
     });
   };
+  //删除事件 由于event是从父组件传递的 重新渲染需要在父组件进行
+  const handleDeleteEvent = (eid: number) => {
+    getObject('mode').then(mode => {
+      if (mode === 'online') {
+        deleteEvent(eid)
+          .then(() => {
+            getObject('events').then(events => {
+              const eventIndex = events.findIndex((e: any) => e.id === eid);
+              events.splice(eventIndex, 1); //删除event
+              storeObject('events', events);
+              onRefresh();
+            });
+          })
+          .catch(e => Alert.alert('Error', e));
+      } else {
+        Promise.all([getObject('events'), getObject('events_unpushed')]).then(
+          ([events, events_unpushed]) => {
+            const eventIndex = events.findIndex((e: any) => e.id === eid);
+            events.splice(eventIndex, 1); //删除event
+            storeObject('events', events);
+
+            events_unpushed.push({id: eid}); //title为null 代表删除
+            storeObject('events_unpushed', events_unpushed);
+            onRefresh();
+          },
+        );
+      }
+    });
+  };
 
   return (
     <View style={{height: '100%'}}>
@@ -75,6 +109,7 @@ const TodayScreen = () => {
             event={event}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
+            handleDeleteEvent={handleDeleteEvent}
           />
         )}
         ListHeaderComponent={

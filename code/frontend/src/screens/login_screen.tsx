@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  Image,
 } from 'react-native';
 import {Form, Input} from '@ant-design/react-native';
 import {login} from '../services/loginService';
@@ -84,7 +85,7 @@ function LoginScreen({navigation}: {navigation: any}) {
         },
       );
     }, 1000);
-    return () => setLoading(true);
+    
   }, [isConnected]);
 
   //登录+获取用户信息存储到本地+存储auth
@@ -178,17 +179,21 @@ function LoginScreen({navigation}: {navigation: any}) {
           <View style={styles.divider} />
         </View>
       </Form>
-      <Modal visible={loading} animationType="fade" transparent={true}>
-        <View
+      <Modal
+        visible={loading}
+        animationType="fade"
+        transparent={true}>
+        <Image
+          source={require('../assets/images/initializing.png')}
           style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'pink',
-          }}>
-          <Text style={{color: '#FFF', fontSize: 20}}>loading...</Text>
-        </View>
+            backgroundColor: '#7092B1',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
       </Modal>
+
       <Loading visible={logging && !loading} />
     </ScrollView>
   );

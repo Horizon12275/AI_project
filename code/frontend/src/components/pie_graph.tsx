@@ -22,9 +22,9 @@ const PieGraph: React.FC<PieGraphProps> = ({data}) => {
           colorScale={categoryColors}
           padding={70} // 设置页面内边距
           data={data}
-          innerRadius={25} // 设置内半径
+          innerRadius={50} // 设置内半径
           labelRadius={125} // 设置标签半径
-          radius={({datum}) => 10 + (datum.y || 0) * 2.5} // 设置分块扇形的半径
+          radius={({datum}) => 10 + (datum.y || 0) * 1} // 设置分块扇形的半径
           labels={({datum}) => `${datum.x}: ${datum.y}%`} // 设置标签内容
           style={{
             labels: {fill: 'black'},
@@ -46,11 +46,13 @@ const PieGraph: React.FC<PieGraphProps> = ({data}) => {
 
 const styles = StyleSheet.create({
   pieGraph: {
+    alignSelf: 'center',
     marginTop: -70,
   },
   legend: {
+    alignSelf: 'center',
     height: 30,
-    marginTop: -60,
+    marginTop: -30,
   },
 });
 
