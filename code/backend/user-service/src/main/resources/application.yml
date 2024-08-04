@@ -26,8 +26,8 @@ spring:
         server-addr: ${NACOS_SERVER_ADDR}
   data:
     redis:
-      host: 127.0.0.1
-      port: 6379
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
 
 
