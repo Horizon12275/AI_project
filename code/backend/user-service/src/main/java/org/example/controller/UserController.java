@@ -6,6 +6,7 @@ import org.example.entity.Result;
 import org.example.entity.User;
 import org.example.service.Impl.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final MyUserDetailsService service;
     @Value("${server.port}")
-    private  String port;
+    private String port;
     public UserController(MyUserDetailsService service) {
         this.service = service;
     }
