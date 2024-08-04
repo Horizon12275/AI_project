@@ -27,3 +27,4 @@ replay_pid*
 /code/backend/nacos
 .env
 /__pycache__
+/私钥
