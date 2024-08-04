@@ -48,7 +48,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./.github/docker/jar/load-balance/Dockerfile
+          file: ./.github/docker/agent/load-balance/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/load-balance-with-skywalking:latest
       # build and push user-service image
@@ -57,7 +57,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./.github/docker/jar/user-service/Dockerfile
+          file: ./.github/docker/agent/user-service/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/user-service-with-skywalking:latest
       # build and push event-service image
@@ -66,7 +66,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./.github/docker/jar/event-service/Dockerfile
+          file: ./.github/docker/agent/event-service/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/event-service-with-skywalking:latest
       # push后，用ssh连接服务器执行脚本
