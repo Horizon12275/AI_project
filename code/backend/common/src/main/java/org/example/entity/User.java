@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler","events","password"})
-public class User {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
