@@ -1,6 +1,7 @@
 package org.example.config;
 
 
+import com.alibaba.fastjson2.JSON;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.entity.Result;
@@ -25,25 +26,30 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Configuration
 public class SecurityConfig {
     List<IpAddressMatcher> hasIpAddress = new ArrayList<>();
-    @Value("${myapp.user_server_ip}")
-    private String user_server_ip;
+    @Value("${myapp.allowed_ips}")
+    private String allowed_ips;
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //进行ip拦截设置
         hasIpAddress.add(new IpAddressMatcher("0:0:0:0:0:0:0:1"));//本地ip postman测试的ip是ipv6
-        hasIpAddress.add(new IpAddressMatcher(user_server_ip));//用户服务注册到nacos的ip
+        JSON.parseArray(allowed_ips).forEach(ip->{
+            System.out.println(ip.toString());
+            hasIpAddress.add(new IpAddressMatcher(ip.toString()));
+        });
 
          http.authorizeHttpRequests((requests) ->{requests
                                 .requestMatchers("**").access((authentication, context) -> //对所有请求进行ip地址拦截
-                                 new AuthorizationDecision(hasIpAddress.stream().map(ipAddressMatcher ->
+                                         new AuthorizationDecision(hasIpAddress.stream().map(ipAddressMatcher ->
                                          ipAddressMatcher.matches(context.getRequest())).reduce(false, Boolean::logicalOr)))
+                                .requestMatchers(request -> Objects.equals(request.getHeader("Authorization"), "123")).permitAll()//对特定请求放行
                                 .anyRequest()
-                                .permitAll();
+                                .authenticated();
                         }
                 )
                .exceptionHandling(

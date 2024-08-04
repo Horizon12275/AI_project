@@ -27,3 +27,4 @@ spring:
 
 myapp:
   user_server_ip: ${USER_SERVER_IP}
+  allowed_ips: ${ALLOWED_IPS}

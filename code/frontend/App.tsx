@@ -24,6 +24,8 @@ import {getObject, storeObject} from './src/services/offlineService.tsx';
 import NetworkListener from './src/components/network_listener.tsx';
 import AddOffScreen from './src/screens/add_screen_off.tsx';
 import EditScreen from './src/screens/edit_screen.tsx';
+import MealScreen from './src/screens/meal_screen.tsx';
+import AddMealScreen from './src/screens/add_screen_meal.tsx';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,9 +36,7 @@ const TabNavigator = () => {
     headerShown: false,
   };
   return (
-    <Tab.Navigator
-    //initialRouteName='Add'
-    >
+    <Tab.Navigator>
       <Tab.Screen
         name="Today"
         component={TodayScreen}
@@ -65,7 +65,8 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Add"
-        component={isConnected ? AddOnScreen : AddOffScreen}
+        //component={isConnected ? AddOnScreen : AddOffScreen}
+        component={AddMealScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
@@ -100,7 +101,7 @@ function App() {
   const {isConnected} = useNetInfo();
 
   useEffect(() => {
-    Appearance.setColorScheme('light');//强制设置为light模式 默认字体颜色为灰色 否则为白色会看不清
+    Appearance.setColorScheme('light'); //强制设置为light模式 默认字体颜色为灰色 否则为白色会看不清
     Promise.all([getObject('user'), getObject('auth'), getObject('mode')]).then(
       ([user, auth, mode]) => {
         setUser(user);
@@ -108,7 +109,6 @@ function App() {
         setMode(mode);
       },
     );
-    
   }, []);
 
   const options = {

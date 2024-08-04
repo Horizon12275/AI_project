@@ -14,10 +14,8 @@ import {
 import MyButton from '../utils/my_button';
 import Calendar from '../components/calendar';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import DropdownInput from '../components/dropdown_input';
 import {categoryOptions} from '../utils/offline';
 import {Form, Input} from '@ant-design/react-native';
-import MyHeader from '../components/my_header';
 import {toDate, toTime} from '../utils/date';
 import {addEvent} from '../services/eventService';
 import SelectModal from '../components/select_modal';

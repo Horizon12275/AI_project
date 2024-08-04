@@ -15,6 +15,7 @@ import {
   getObject,
   storeObject,
 } from '../services/offlineService';
+import Loading from '../components/loading';
 
 const TodayScreen = () => {
   const currentDate = new Date();
@@ -30,9 +31,11 @@ const TodayScreen = () => {
   }, [selectedDate]);
 
   const onRefresh = () => {
+    setEventNums([]);
+    setEvents([]);
+    setIsEditing(-1); //刷新时取消编辑状态
     getObject('mode').then(mode => {
       setRefreshing(true);
-      setIsEditing(-1); //刷新时取消编辑状态
       Promise.all([
         mode === 'online'
           ? getAllEvents(toDate(selectedDate))
@@ -87,6 +90,7 @@ const TodayScreen = () => {
 
   return (
     <View style={{height: '100%'}}>
+      <Loading visible={refreshing} />
       <CalendarHeader
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}

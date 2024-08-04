@@ -32,7 +32,7 @@ export async function pushAll() {
           storeObject('user', user);
         });
       }
-
+      if (events_unpushed == null) events_unpushed = [];
       // 用户修改的日程数据 先用map维护每一个event的最新状态
       let map = new Map<string, any>();
       events_unpushed.map((event: any) => {

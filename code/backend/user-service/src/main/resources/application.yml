@@ -24,3 +24,11 @@ spring:
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR}
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
+
+
+

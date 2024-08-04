@@ -53,8 +53,10 @@ export function toTime(date: Date) {
 // 时间从23:59:00格式转换为Date
 export function fromTime(time: string) {
   const timeParts = time.split(':');
-  return new Date(0, 0, 0, parseInt(timeParts[0]), parseInt(timeParts[1]), parseInt(timeParts[2]));
+  console.log(timeParts);
+  return new Date(2000, 0, 1, parseInt(timeParts[0]), parseInt(timeParts[1]), parseInt(timeParts[2]));
 }
+
 // 把标准日期格式转换为好看的格式
 export function formatDate(inputDate: string): string {
   const dateParts = inputDate.split('-');

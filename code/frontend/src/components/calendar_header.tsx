@@ -14,7 +14,7 @@ type DateItemProps = {
   day: string;
   date: string;
   isSelected?: boolean;
-  hasEvent?: number;
+  hasEvent: number;
   handlePress: () => void;
 };
 
