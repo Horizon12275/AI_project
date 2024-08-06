@@ -85,3 +85,15 @@ curl -X POST "http://127.0.0.1:8000/generate_summary" -H "Content-Type: applicat
 }'
 ```
 
+对于吃的部分
+
+```
+uvicorn eat:app --reload
+```
+
+然后我的测试数据格式
+
+```
+curl -X POST "http://127.0.0.1:8000/restaurants" -H "Content-Type: application/json" -d '{"question": "I want to eat something spicy. Can you recommend a restaurant?"}'
+```
+

@@ -5,6 +5,8 @@ import org.example.entity.RegisterRequest;
 import org.example.entity.Result;
 import org.example.entity.User;
 import org.example.repository.UserRepo;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,8 +45,9 @@ public class MyUserDetailsService implements UserDetailsService {
             return Result.error(404, "用户不存在！");
         }
     }
-    public Result<User> getUserByUsername(String username) {
-        User user = userRepository.findUserByEmail(username);
+    @Cacheable(value = "user", key = "#email")
+    public Result<User> getUserByEmail(String email) {
+        User user = userRepository.findUserByEmail(email);
         if (user == null) {
             return Result.error(404, "用户不存在！");
         }
@@ -74,10 +77,9 @@ public class MyUserDetailsService implements UserDetailsService {
         userRepository.save(user);
         return Result.success(user);
     }
-
-    public Result<User> updateUser(User user) {
-        String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        User oldUser = userRepository.findUserByEmail(username);
+    @CacheEvict(value = "user", key = "#email")
+    public Result<User> updateUserByEmail(User user, String email) {//更新用户信息 传入用户信息和用户邮箱
+        User oldUser = userRepository.findUserByEmail(email);
         if(user.getUsername() != null) {
             oldUser.setUsername(user.getUsername());
         }

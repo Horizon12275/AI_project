@@ -49,7 +49,7 @@ class UserControllerTest {
         user.setId(1);
         user.setEmail("test@example.com");
 
-        when(service.getUserByUsername("test@example.com")).thenReturn(Result.success(user));
+        when(service.getUserByEmail("test@example.com")).thenReturn(Result.success(user));
 
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);

@@ -1,8 +1,12 @@
 package org.example.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.example.component.HibernateCollectionMixIn;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +20,11 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
  * 配置类，用于设置缓存管理器及相关配置，以启用缓存功能
- *
- * @author shijun
- * @date 2024/06/13
  */
 @EnableCaching
 @Configuration
@@ -43,7 +45,12 @@ public class CacheConfig implements CachingConfigurer {
      * @return GenericJackson2JsonRedisSerializer，使用Jackson库以JSON格式序列化和反序列化Redis中的值
      */
     private RedisSerializer<Object> valueSerializer() {
-        return new GenericJackson2JsonRedisSerializer();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        mapper.registerModule(new Jdk8Module());
+        mapper.registerModule(new JavaTimeModule());
+        mapper.addMixIn(Collection.class, HibernateCollectionMixIn.class);
+        return new GenericJackson2JsonRedisSerializer(mapper);
     }
 
     /**

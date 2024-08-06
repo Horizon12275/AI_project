@@ -6,7 +6,6 @@ import org.example.entity.Result;
 import org.example.entity.User;
 import org.example.service.Impl.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +21,8 @@ public class UserController {
     }
     @GetMapping("/get")//获取当前登录用户的信息
     public Result<User> get() {
-        UserDetails user =(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return service.getUserByUsername( user.getUsername());
+        UserDetails user =(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//注意security的user中的username是自定义user的email
+        return service.getUserByEmail(user.getUsername());
     }
     @PostMapping("/register")//注册
     public Result<User> register(@RequestBody RegisterRequest request) {
@@ -31,7 +30,8 @@ public class UserController {
     }
     @PostMapping("/update")//更新用户信息
     public Result<User> update(@RequestBody User user) {
-        return service.updateUser(user);
+        String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        return service.updateUserByEmail(user, username);
     }
     @GetMapping("/testGET")//测试GET请求
     public String testGET() {
