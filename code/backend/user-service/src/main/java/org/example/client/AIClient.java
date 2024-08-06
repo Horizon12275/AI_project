@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "AI-service",url = "172.17.0.1:8000")
+@FeignClient(name = "AI-service")
 public interface AIClient {
     @PostMapping("/generate_reminders")
     String[] generateReminders(@RequestBody EventDetails eventDetails);
     @PostMapping("/generate_subtasks")
     List<Subtask> generateSubtasks(@RequestBody EventDetails eventDetails);
     @PostMapping("/generate_priority")
-    String generatePriority(@RequestBody EventDetails eventDetails);
+    Integer generatePriority(@RequestBody EventDetails eventDetails);
     @PostMapping("/generate_priority")
     String generateSummary(@RequestBody List<EventDetails> eventDetails);
     @PostMapping("/set_user_details")

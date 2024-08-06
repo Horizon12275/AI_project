@@ -106,7 +106,7 @@ async def generate_priority(event: EventDetails):
         logging.error(f"Error in llm invoke: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-    return result.strip()
+    return result
 
 
 @app.post("/generate_reminders")
