@@ -213,3 +213,18 @@ systemctl restart containerd.service
 ```bash
    crictl info
 ```
+
+```bash
+kubectl get services --all-namespaces
+
+watch kubectl get all -o wide -n monitoring
+
+watch kubectl get all -o wide -n kubernetes-dashboard
+
+watch kubectl get all -o wide -n kube-system
+
+kubectl taint nodes ecs-c9ec node-role.kubernetes.io/master-
+
+kubectl get pods --all-namespaces -o wide
+
+```

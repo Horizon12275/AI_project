@@ -94,6 +94,8 @@ use private key:（这里没有用私钥 需要第一次进入之后手动输入
 
 2. 查看所有端口监听情况 netstat -lntp
 
+netstat -lnp|grep 30080
+
 3. 查看所有项目状态 pm2 list 查看日志 pm2 logs index 查看所有当前用 pm2 管理的项目 pm2 list
 
 4. 查看 npm 全局安装过的所有包 npm list -g --depth 0
