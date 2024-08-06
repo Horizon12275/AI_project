@@ -156,6 +156,8 @@ docker rm <container_id/container_name>
 
 服务器运行 node_exporter ： https://blog.csdn.net/qq_37688023/article/details/106532101
 
+- docker run -d -p 9100:9100 prom/node-exporter
+
 本地下载 prometheus 和 grafana 进行监控 ：https://blog.csdn.net/qq_27229113/article/details/125892854
 
 - （服务器）netstat -anpt 查看监听端口情况
