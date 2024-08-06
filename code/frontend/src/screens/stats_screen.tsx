@@ -41,11 +41,12 @@ const StatsScreen = () => {
         }
         setLoading(true);
         getSummary(toDate(startDate), toDate(endDate))
-          .then(res => {
+          .then(({percentages, ai_summary}) => {
+            console.log(ai_summary);
             setLoading(false);
-            if (res.length === 0)
+            if (percentages.length === 0)
               Alert.alert('No data found for the selected date range');
-            let data = res.map(item => {
+            let data = percentages.map(item => {
               return {
                 x: categoryOptions.find(cat => cat.value === item.category)
                   ?.label,
