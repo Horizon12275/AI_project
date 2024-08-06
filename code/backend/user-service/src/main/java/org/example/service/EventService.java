@@ -4,6 +4,7 @@ package org.example.service;
 import org.example.entity.Event;
 import org.example.entity.EventDetails;
 import org.example.entity.Result;
+import org.example.entity.Summary;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -16,6 +17,6 @@ public interface EventService {
     Result<Event> addEventOnline(Event event, EventDetails eventDetails);
     Result<String> deleteEvent(int id);
     Result<Event> updateEvent(@PathVariable("id") int id, @RequestBody Event event);
-    Result<List<Object>> summary(LocalDate start, LocalDate end);
+    Result<Summary> summary(LocalDate start, LocalDate end);
     Result<List<Event>> pushAll(List<Event> events);
 }

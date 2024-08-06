@@ -85,6 +85,26 @@ curl -X POST "http://127.0.0.1:8000/generate_summary" -H "Content-Type: applicat
 }'
 ```
 
+- 为后端解析方便 我改为了以下格式：
+[
+    {
+        "category": "Test",
+        "details": "Tests are about Cache and Optimization. Cheating paper is allowed",
+        "title": "Introduction to Computer System test",
+        "a":1
+    },
+    {
+        "category": "Test",
+        "details": "Tests are about Cache and Optimization. Cheating paper is allowed",
+        "title": "Introduction to Computer System test"
+    },
+    {
+        "category": "Test",
+        "details": "Tests are about Cache and Optimization. Cheating paper is allowed",
+        "title": "Introduction to Computer System test"
+    }
+]
+
 对于吃的部分
 
 ```
