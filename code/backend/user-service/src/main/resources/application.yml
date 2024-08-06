@@ -30,6 +30,22 @@ spring:
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
 
+#增加开启springboot actuator监控的配置
+management:
+  endpoint:
+    shutdown:
+      enabled: true # 开启端点
+    health:
+      show-details: always # 是否展示健康检查详情
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
+          - health
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 
 
