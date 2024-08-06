@@ -44,6 +44,7 @@ public class SecurityConfig {
         });
 
          http.authorizeHttpRequests((requests) ->{requests
+                                .requestMatchers("/actuator/**").permitAll()
                                 .requestMatchers("**").access((authentication, context) -> //对所有请求进行ip地址拦截
                                          new AuthorizationDecision(hasIpAddress.stream().map(ipAddressMatcher ->
                                          ipAddressMatcher.matches(context.getRequest())).reduce(false, Boolean::logicalOr)))
