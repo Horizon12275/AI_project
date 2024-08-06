@@ -11,11 +11,13 @@ import os
 
 app = FastAPI()
 
-SERVER_ADDRESSES = "123.60.87.102:8848"
+SERVER_ADDRESSES = "192.168.0.106:8848"
 NAMESPACE = "public"
 
 client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE)
-client.add_naming_instance("AI-service","172.17.0.1","8000","DEFAULT",heartbeat_interval=5)
+client.add_naming_instance(
+    service_name="AI-service", port="8000", cluster_name="DEFAULT", heartbeat_interval=5
+)
 
 # Set OpenAI API key and base URL
 
@@ -106,7 +108,7 @@ async def generate_priority(event: EventDetails):
         logging.error(f"Error in llm invoke: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-    return result
+    return result.strip()
 
 
 @app.post("/generate_reminders")
@@ -156,10 +158,9 @@ async def generate_reminders(event: EventDetails):
         raise HTTPException(status_code=500, detail=str(e))
 
     reminders = result.strip().split("\n")
-    formatted_reminders = [ reminder.strip() for reminder in reminders if reminder]
+    formatted_reminders = [reminder.strip() for reminder in reminders if reminder]
     print(formatted_reminders[:3])  # 打印返回的内容
     return formatted_reminders[:3]
-
 
 
 @app.post("/generate_subtasks")
@@ -212,7 +213,9 @@ async def generate_subtasks(event: EventDetails):
             parts = subtask.split(" - Deadline: ")
             if len(parts) == 2:
                 content, ddl = parts
-                formatted_subtasks.append({"content": content.strip(), "ddl": ddl.strip()})
+                formatted_subtasks.append(
+                    {"content": content.strip(), "ddl": ddl.strip()}
+                )
 
     end_time = time.time()
     processing_time = end_time - start_time
