@@ -7,9 +7,9 @@ server:
 
 spring:
   datasource:
-    url: ${DB2_URL}
-    username: ${DB2_USERNAME}
-    password: ${DB2_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 1000
@@ -24,6 +24,8 @@ spring:
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR}
+        ip: ${NACOS_IP}
+
   data:
     redis:
       host: ${REDIS_HOST}
