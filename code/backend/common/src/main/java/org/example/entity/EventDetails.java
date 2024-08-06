@@ -15,5 +15,4 @@ public class EventDetails {
     private String details;
     private String ddl;
     private String priority;
-
 }

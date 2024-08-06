@@ -18,6 +18,7 @@ public class ConstMaps {
     private Map<Integer,String> identityMap;
     private Map<Integer,String> sleepScheduleMap;
     private Map<Integer,String> challengeMap;
+    private Map<Integer,String> categoryMap;
     @PostConstruct
     public void init() {
         // 添加固定的初始数据
@@ -41,5 +42,14 @@ public class ConstMaps {
         challengeMap.put(3, "Lack of prioritisation");
         challengeMap.put(4, "Confusing schedule");
         challengeMap.put(5, "Others");
+
+        categoryMap = new HashMap<>();
+        categoryMap.put(1, "Work & study");
+        categoryMap.put(2, "Leisure & Recreation");
+        categoryMap.put(3, "Sports");
+        categoryMap.put(4, "Family & Socializing");
+        categoryMap.put(5, "Personal Development");
+        categoryMap.put(6, "Daily Living");
+
     }
 }

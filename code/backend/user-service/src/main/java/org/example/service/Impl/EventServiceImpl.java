@@ -89,7 +89,7 @@ public class EventServiceImpl implements EventService {
         return client.updateEvent(id, event, getUid());
     }
     @Override
-    public Result<List<Object>> summary(LocalDate start, LocalDate end) {
+    public Result<Summary> summary(LocalDate start, LocalDate end) {
         return client.summary(start, end, getUid());
     }
     @Override
