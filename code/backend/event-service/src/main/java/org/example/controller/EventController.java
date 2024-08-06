@@ -3,6 +3,9 @@ package org.example.controller;
 import org.example.entity.Event;
 import org.example.entity.Result;
 import org.example.service.EventService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -16,11 +19,13 @@ public class EventController {
         this.service = service;
     }
     //获取某一个月的每一天的事件数量 返回一个数组
+    @Cacheable(value = "eventNums", key = "#year+'-'+#month+'-'+#uid")
     @GetMapping("/getNums")
     public Result<int[]> getNums(@RequestParam int year, @RequestParam int month, @RequestParam int uid) {
         return Result.success(service.getNumsByMonth(year, month, uid));
     }
     //获取某一天的所有事件 返回一个事件数组
+    @Cacheable(value = "events", key = "#date+'-'+#uid")
     @GetMapping("/getEvents")
     public Result<List<Event>> getEvents(@RequestParam LocalDate date, @RequestParam int uid) {
         return Result.success(service.getEventsByDate(date, uid));

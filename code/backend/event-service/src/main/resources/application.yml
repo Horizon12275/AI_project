@@ -24,7 +24,11 @@ spring:
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
 
 myapp:
-  user_server_ip: ${USER_SERVER_IP}
   allowed_ips: ${ALLOWED_IPS}
