@@ -18,6 +18,8 @@ public interface AIClient {
     List<Subtask> generateSubtasks(@RequestBody EventDetails eventDetails);
     @PostMapping("/generate_priority")
     String generatePriority(@RequestBody EventDetails eventDetails);
+    @PostMapping("/generate_priority")
+    String generateSummary(@RequestBody List<EventDetails> eventDetails);
     @PostMapping("/set_user_details")
     String setUserDetails(@RequestBody UserPortrait userPortrait);
 }

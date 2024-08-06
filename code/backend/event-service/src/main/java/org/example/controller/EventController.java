@@ -2,6 +2,7 @@ package org.example.controller;
 
 import org.example.entity.Event;
 import org.example.entity.Result;
+import org.example.entity.Summary;
 import org.example.service.EventService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -45,7 +46,7 @@ public class EventController {
     }
     //获取用户各个类别的日程时间占比
     @GetMapping("/summary")
-    public Result<List<Object>> summary(@RequestParam LocalDate start,@RequestParam LocalDate end,@RequestParam int uid) {
+    public Result<Summary> summary(@RequestParam LocalDate start, @RequestParam LocalDate end, @RequestParam int uid) {
         return service.summary(start,end,uid);
     }
     @PostMapping("/pushAll")

@@ -1,8 +1,12 @@
 package org.example.service.Impl;
 
 
+import org.example.client.AIClient;
+import org.example.constant.ConstMaps;
 import org.example.entity.Event;
+import org.example.entity.EventDetails;
 import org.example.entity.Result;
+import org.example.entity.Summary;
 import org.example.repository.EventRepo;
 import org.example.service.EventService;
 import org.springframework.stereotype.Service;
@@ -18,9 +22,13 @@ import java.util.Map;
 public class EventServiceImpl implements EventService {
     private final EventRepo repo;
     private final EventCacheService cacheService;
-    public EventServiceImpl(EventRepo repo, EventCacheService cacheService) {
+    private final AIClient aiClient;
+    private final ConstMaps constMaps;
+    public EventServiceImpl(EventRepo repo, EventCacheService cacheService, AIClient aiClient, ConstMaps constMaps) {
         this.repo = repo;
         this.cacheService = cacheService;
+        this.aiClient = aiClient;
+        this.constMaps = constMaps;
     }
     @Override
     public int[] getNumsByMonth(int year, int month, int uid) {
@@ -62,14 +70,17 @@ public class EventServiceImpl implements EventService {
         return cacheService.updateEvent(id,event,uid,oldEvent);
     }
     @Override
-    public Result<List<Object>> summary(LocalDate start, LocalDate end, int uid) {
+    public Result<Summary> summary(LocalDate start, LocalDate end, int uid) {
         List<Event> events = repo.getEventsByDdlBetweenAndUid(start, end, uid);
 
         // 统计各个 category 的总时间
         Map<Integer, Long> categoryTotalTime = new HashMap<>();
         long totalDuration = 0;
+        // 构建事件详情列表 用于aiClient生成总结
+        List<EventDetails> eventDetails = new ArrayList<>();
 
         for (Event event : events) {
+            eventDetails.add(new EventDetails(event.getTitle(),constMaps.getCategoryMap().get(event.getCategory()) ,"",event.getDetails(),"",""));
             Integer category = event.getCategory();
             if(event.getEndTime() == null||event.getStartTime() == null){//如果开始时间或结束时间为空则跳过
                 continue;
@@ -80,8 +91,8 @@ public class EventServiceImpl implements EventService {
             totalDuration += duration;
         }
 
-        // 计算各个 category 的时间占比并构建结果数组
-        List<Object> result = new ArrayList<>();
+        // 计算各个 category 的时间占比并构建百分比数组
+        List<Object> percentages = new ArrayList<>();
         for (Map.Entry<Integer, Long> entry : categoryTotalTime.entrySet()) {
             Integer category = entry.getKey();
             long duration = entry.getValue();
@@ -92,10 +103,12 @@ public class EventServiceImpl implements EventService {
             categoryPercentage.put("category", category);
             categoryPercentage.put("percentage", percentage);
 
-            result.add(categoryPercentage);
+            percentages.add(categoryPercentage);
         }
 
-        return Result.success(result);
+        Summary summary = new Summary(percentages, eventDetails.isEmpty() ? "No events during this period" : aiClient.generateSummary(eventDetails));
+        System.out.println(summary);
+        return Result.success(summary);
     }
     @Override
     public Result<List<Event>> pushAll(List<Event> events, int uid) {
