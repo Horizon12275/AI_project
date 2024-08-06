@@ -15,7 +15,7 @@ SERVER_ADDRESSES = "123.60.87.102:8848"
 NAMESPACE = "public"
 
 client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE)
-client.add_naming_instance("AI-service","172.17.0.1","8000","DEFAULT")
+client.add_naming_instance("AI-service","172.17.0.1","8000","DEFAULT",heartbeat_interval=5)
 
 # Set OpenAI API key and base URL
 

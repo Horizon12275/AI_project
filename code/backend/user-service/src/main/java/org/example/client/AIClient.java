@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "AI-service")
+@FeignClient(name = "AI-service",url = "172.17.0.1")
 public interface AIClient {
     @PostMapping("/generate_reminders")
     String[] generateReminders(@RequestBody EventDetails eventDetails);
