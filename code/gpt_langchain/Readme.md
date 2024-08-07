@@ -15,6 +15,8 @@ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 ```
 pip install nacos-sdk-python （nacos注册）
+pip install pandas
+pip install openpyxl
 pip install uvicorn
 pip install fastapi
 pip install langchain==0.2.6

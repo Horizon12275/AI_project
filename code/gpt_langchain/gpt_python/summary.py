@@ -17,13 +17,6 @@ class EventData(BaseModel):
     category: str
     details: str
 
-
-# Define response data model
-class SummaryResponse(BaseModel):
-    result: str
-
-
-
 # Define a class for OpenAI interaction
 class OpenAIHandler:
 
