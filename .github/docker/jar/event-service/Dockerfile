@@ -16,6 +16,6 @@ ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV EVENT_SERVICE_PORT=${EVENT_SERVICE_PORT}
 ENV USER_SERVER_IP=${USER_SERVER_IP}
 # 指定docker容器启动时运行jar包
-ENTRYPOINT ["java", "-jar","event-service-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-Xms512m", "-Xmx512m", "-jar","event-service-0.0.1-SNAPSHOT.jar"]
 # 指定维护者的名字
 MAINTAINER horizon22
