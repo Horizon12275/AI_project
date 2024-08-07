@@ -14,7 +14,7 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: 100
       minimum-idle: 10
   jpa:
     show-sql: false
