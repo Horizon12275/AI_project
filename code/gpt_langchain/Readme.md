@@ -73,7 +73,7 @@ curl -X POST "http://localhost:8000/generate_reminders" \
 
 ```
 对于总结的部分
-uvicorn summary:app --reload
+uvicorn main:app --reload
 ```
 
 然后我的测试数据格式是这样的
