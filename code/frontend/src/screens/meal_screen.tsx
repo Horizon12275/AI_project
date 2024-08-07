@@ -1,116 +1,104 @@
-import * as React from 'react';
 import {
-  FlatList,
-  ScrollView,
-  View,
-  StyleSheet,
-  Image,
   Text,
-  Pressable,
+  Image,
+  StyleSheet,
   TextInput,
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
+import {getEat} from '../services/aiService';
+import {useState} from 'react';
+import Loading from '../components/loading';
 
-function MealScreen() {
+const MealScreen = ({navigation}: {navigation: any}) => {
+  const [text, setText] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleEat = () => {
+    setLoading(true);
+    getEat(text).then(res => {
+      setLoading(false);
+      navigation.navigate('AddMeal', {data: res});
+    });
+  };
+
   return (
-    <View style={styles.view1}>
-      <View style={styles.view2}>
-        <View style={styles.view3}>
-          <View style={styles.view4}>
-            <Text>New Schedule</Text>
-          </View>
-          <View style={styles.view5}>
-            <Text>What would you like to eat?</Text>
-          </View>
-          <View style={styles.view6}>
-            <TextInput placeholder='Type here'></TextInput>
-          </View>
-          <Image
-            resizeMode="contain"
-            source={{
-              uri: 'https://cdn.builder.io/api/v1/image/assets/TEMP/8a22599af180462164ba2b19c0ffd19af420e81a457093d02ca679f507bd7a88?apiKey=9e661a5e0ad74c878ca984d592b3752c&&apiKey=9e661a5e0ad74c878ca984d592b3752c',
-            }}
-            style={styles.image1}
-          />
-        </View>
-        <View style={styles.view7} />
-      </View>
-    </View>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentWrapper}>
+      <Loading visible={loading} />
+      <Text style={styles.title}>New Schedule</Text>
+      <Image
+        source={require('../assets/images/eat_text.png')}
+        style={styles.icon}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Type here"
+        value={text}
+        onChangeText={setText}
+        accessibilityLabel="Enter food preference"
+      />
+      <TouchableOpacity style={styles.summaryButton} onPress={handleEat}>
+        <Text style={styles.summaryButtonText}>Get your Meals!</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  view1: {
+  container: {
     display: 'flex',
-    minHeight: 611,
-    maxWidth: 390,
     flexDirection: 'column',
-    alignItems: 'stretch',
     fontFamily: 'Inter, sans-serif',
     color: 'rgba(33, 40, 63, 1)',
     fontWeight: '400',
+  },
+  contentWrapper: {
     justifyContent: 'flex-start',
+    gap: 20,
+    padding: 20,
+    alignContent: 'center',
+    alignItems: 'center',
   },
-  view2: {
-    position: 'relative',
-    display: 'flex',
-    minHeight: 611,
-    width: '100%',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-
-  },
-  view3: {
-    position: 'relative',
-    zIndex: 0,
-    display: 'flex',
-    minHeight: 308,
-    width: '100%',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: "flex-start",
-    marginTop: 50,
-  },
-  view4: {
+  title: {
     color: '#010618',
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '900',
     alignSelf: 'stretch',
-    zIndex: 0,
   },
-  view5: {
+  question: {
     position: 'absolute',
     minHeight: 164,
     maxWidth: '100%',
+    width: 358,
     textAlign: 'center',
     bottom: 30,
     height: 164,
-    
+    fontFamily: 'Lemon, sans-serif',
+    fontSize: 32,
   },
-  view6: {
+  summaryButton: {
+    backgroundColor: '#4A90E2',
+    borderRadius: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  summaryButtonText: {
+    color: '#FFF',
+    fontFamily: 'Nunito, sans-serif',
     fontSize: 16,
+  },
 
+  input: {
+    fontSize: 16,
+    alignSelf: 'flex-start',
   },
-  image1: {
-    position: 'absolute',
-    zIndex: 0,
-    display: 'flex',
-    maxWidth: '100%',
-    left: 26,
-    bottom: 47,
-    height: 20,
-    aspectRatio: '0.05',
-  },
-  view7: {
-    position: 'absolute',
-    zIndex: 0,
-    display: 'flex',
-    minHeight: 70,
-    width: 167,
-    maxWidth: '100%',
-    justifyContent: 'center',
-    alignItems: 'stretch',
-    left: 11,
+  icon: {
+    objectFit: 'contain',
+    width: '100%',
   },
 });
 

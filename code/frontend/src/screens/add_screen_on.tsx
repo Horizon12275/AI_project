@@ -17,7 +17,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {categoryOptions} from '../utils/offline';
 import {Form, Input} from '@ant-design/react-native';
 import {toDate, toTime} from '../utils/date';
-import {addEvent} from '../services/eventService';
+import {addEventOnline} from '../services/eventService';
 import SelectModal from '../components/select_modal';
 import Loading from '../components/loading';
 import {getObject, storeObject} from '../services/offlineService';
@@ -74,7 +74,7 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
       title: event.title,
     };
     setLoading(true);
-    addEvent({
+    addEventOnline({
       event,
       eventDetails,
     })

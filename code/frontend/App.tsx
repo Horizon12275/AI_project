@@ -64,9 +64,21 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
+        name="Eat"
+        component={MealScreen}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <Image
+              source={require('./src/assets/icons/add.png')}
+              style={{width: size, height: size, tintColor: color}}
+            />
+          ),
+          ...options,
+        }}
+      />
+      <Tab.Screen
         name="Add"
-        //component={isConnected ? AddOnScreen : AddOffScreen}
-        component={AddMealScreen}
+        component={isConnected ? AddOnScreen : AddOffScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
@@ -125,6 +137,7 @@ function App() {
           component={SignUpScreen}
           options={options}
         />
+        <Stack.Screen name="AddMeal" component={AddMealScreen} options={options} />
         <Stack.Screen name="Edit" component={EditScreen} options={options} />
         <Stack.Screen name="AI" component={AIScreen} options={options} />
         <Stack.Screen
