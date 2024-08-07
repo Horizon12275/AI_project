@@ -2,6 +2,10 @@ server:
   port: ${LOAD_BALANCE_PORT}
   tomcat:
     accept-count: 1000 # 服务端等待队列长度
+    threads:
+      max: 800
+      min-spare: 100
+    max-connections: 10000
 
 spring:
   application:
