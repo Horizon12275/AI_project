@@ -45,10 +45,7 @@ public class SecurityConfig {
 
          http.authorizeHttpRequests((requests) ->{requests
                                 .requestMatchers("/actuator/**").permitAll()
-                                .requestMatchers(request ->{
-                                         System.out.println(request.getRemoteAddr());
-                                         return true;
-                                }).permitAll()
+                                .requestMatchers(request -> request.getRemoteAddr().startsWith("172.17.0")).permitAll()//对容器ip放行
                                 .requestMatchers("**").access((authentication, context) -> //对所有请求进行ip地址拦截
                                          new AuthorizationDecision(hasIpAddress.stream().map(ipAddressMatcher ->
                                          ipAddressMatcher.matches(context.getRequest())).reduce(false, Boolean::logicalOr)))
