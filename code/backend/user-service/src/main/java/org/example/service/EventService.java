@@ -15,8 +15,11 @@ public interface EventService {
     Result<int[]> getNumsByMonth(int year, int month);
     Result<List<Event>> getEventsByDate(LocalDate date);
     Result<Event> addEventOnline(Event event, EventDetails eventDetails);
+    Result<Event> addEvent(Event event);
     Result<String> deleteEvent(int id);
     Result<Event> updateEvent(@PathVariable("id") int id, @RequestBody Event event);
     Result<Summary> summary(LocalDate start, LocalDate end);
     Result<List<Event>> pushAll(List<Event> events);
+
+
 }

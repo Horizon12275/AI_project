@@ -81,6 +81,10 @@ public class EventServiceImpl implements EventService {
         return Result.success(event);
     }
     @Override
+    public Result<Event> addEvent(Event event) {
+        return client.addEvent(event, getUid());
+    }
+    @Override
     public Result<String> deleteEvent(@PathVariable("id") int id) {
         return client.deleteEvent(id, getUid());
     }
