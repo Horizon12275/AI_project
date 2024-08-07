@@ -34,7 +34,7 @@ export async function addEvent(event) {
 export async function getSummary(startDate, endDate) {
   const url = `${PREFIX}/summary?start=${startDate}&end=${endDate}`;
   let result;
-
+  console.log(url);
   result = await get(url);
   return result;
 }

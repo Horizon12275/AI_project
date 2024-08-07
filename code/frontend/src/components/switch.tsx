@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tabBarContainer: {
-    height: 50,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'stretch',
     borderRadius: 24,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 44,
+    height: 40,
   },
   activeTab: {
     backgroundColor: '#80B3FF',

@@ -37,6 +37,8 @@ const InputField = ({
     <Text style={styles.inputLabel}>{label}</Text>
     <Form.Item {...props}>
       <Input
+        textAlignVertical="top"
+        multiline={true}
         style={[styles.input, inputStyle]}
         accessibilityLabel={label}
         placeholder={placeholder}
@@ -301,14 +303,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     width: '100%',
-    height: 50,
+    minHeight: 50,
   },
   textInput: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     marginTop: 5,
-    height: 300, // 自定义文本输入框高度
+    minHeight: 200, // 自定义文本输入框高度
   },
   timeZoneIcon: {
     height: 40,

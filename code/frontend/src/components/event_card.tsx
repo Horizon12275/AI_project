@@ -12,8 +12,8 @@ import {categoryColors} from '../utils/offline';
 import {changeSubtaskDone, deleteSubtask} from '../services/subtaskService';
 import {useEffect, useState} from 'react';
 import {getObject, storeObject} from '../services/offlineService';
-import {deleteEvent} from '../services/eventService';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import Switch from './switch';
 
 type eventProps = {
   id: number;
@@ -28,6 +28,11 @@ type eventProps = {
     ddl: string;
     done: boolean;
   }>;
+  reminders: Array<{
+    id: number;
+    content: string;
+    done: boolean;
+  }>;
 };
 
 const EventCard = ({
@@ -39,10 +44,11 @@ const EventCard = ({
   isEditing: number;
   setIsEditing: (isEditing: number) => void;
   event: eventProps;
-  handleDeleteEvent: (eid:number) => void;
+  handleDeleteEvent: (eid: number) => void;
 }) => {
   const navigation = useNavigation();
   const [refresh, setRefresh] = useState(0); //setEvent逻辑太麻烦 偷懒使用refresh手动刷新渲染
+  const [tab, setTab] = useState('Subtasks');
   useEffect(() => {}, [refresh]);
 
   const handleExpand = () => {
@@ -149,7 +155,6 @@ const EventCard = ({
   const handleEdit = () => {
     navigation.navigate('Edit', {event: event});
   };
-  
 
   const color = categoryColors[event.category];
   return (
@@ -212,56 +217,80 @@ const EventCard = ({
             </View>
           )} */}
         </View>
-        {isEditing === event.id && event.subtasks.length > 0 && (
-          <View style={styles.checklistWrapper}>
-            <View style={styles.checklistHeader}>
-              <Text style={styles.checklist}>Checklists</Text>
-            </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: 8,
-                marginTop: 10,
-              }}>
-              {event.subtasks.map((subtask, index) => (
-                <View key={index}>
-                  <View style={styles.taskItemContainer}>
-                    <MyButton
-                      icon={
-                        subtask.done
-                          ? require('../assets/icons/checked.png')
-                          : require('../assets/icons/checkbox.png')
-                      }
-                      style={styles.taskIcon}
-                      onPress={() => handleCheck(subtask.id)}
-                    />
-                    <Text
-                      style={[
-                        styles.taskTitle,
-                        subtask.done && styles.completedText,
-                      ]}
-                      //numberOfLines={2}
-                      ellipsizeMode="tail">
-                      {subtask.content}
-                    </Text>
-                    <MyButton
-                      icon={require('../assets/icons/delete.png')}
-                      onPress={() => handleDeleteSubtask(subtask.id)}
-                      style={styles.deleteIcon}
-                    />
-                  </View>
-                  <Text
-                    style={[
-                      styles.dueDate,
-                      subtask.done && styles.completedText,
-                    ]}>
-                    {`Due: ${subtask.ddl}`}
-                  </Text>
-                </View>
-              ))}
-              {/* <View style={styles.buttonWrapper}>
+        {isEditing === event.id &&
+          (event.subtasks.length > 0 || event.reminders.length > 0) && (
+            <View style={styles.checklistWrapper}>
+              <Switch tab={tab} setTab={setTab} />
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: 8,
+                  marginTop: 10,
+                }}>
+                {tab === 'Subtasks'
+                  ? event.subtasks.map((subtask, index) => (
+                      <View key={index}>
+                        <View style={styles.taskItemContainer}>
+                          <MyButton
+                            icon={
+                              subtask.done
+                                ? require('../assets/icons/checked.png')
+                                : require('../assets/icons/checkbox.png')
+                            }
+                            style={styles.taskIcon}
+                            onPress={() => handleCheck(subtask.id)}
+                          />
+                          <Text
+                            style={[
+                              styles.taskTitle,
+                              subtask.done && styles.completedText,
+                            ]}
+                            //numberOfLines={2}
+                            ellipsizeMode="tail">
+                            {subtask.content}
+                          </Text>
+                          <MyButton
+                            icon={require('../assets/icons/delete.png')}
+                            onPress={() => handleDeleteSubtask(subtask.id)}
+                            style={styles.deleteIcon}
+                          />
+                        </View>
+                        <Text
+                          style={[
+                            styles.dueDate,
+                            subtask.done && styles.completedText,
+                          ]}>
+                          {`Due: ${subtask.ddl}`}
+                        </Text>
+                      </View>
+                    ))
+                  : event.reminders.map((reminder, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          marginTop: 10,
+                        }}>
+                        <View style={styles.taskItemContainer}>
+                          <MyButton
+                            icon={
+                              reminder.done
+                                ? require('../assets/icons/checked.png')
+                                : require('../assets/icons/checkbox.png')
+                            }
+                            style={styles.taskIcon}
+                            onPress={() => {}}
+                          />
+                          <Text style={styles.taskTitle}>
+                            {reminder.content}
+                          </Text>
+                        </View>
+                      </View>
+                    ))}
+                {/* <View style={styles.buttonWrapper}>
                 <TouchableOpacity
                   style={[styles.button, styles.secondaryButton]}>
                   <Text style={[styles.buttonText, styles.secondaryButtonText]}>
@@ -274,9 +303,9 @@ const EventCard = ({
                   </Text>
                 </TouchableOpacity>
               </View> */}
+              </View>
             </View>
-          </View>
-        )}
+          )}
       </View>
     </View>
   );
@@ -328,6 +357,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: 'black',
+    marginRight: 50,
   },
   detailsWrapper: {
     display: 'flex',

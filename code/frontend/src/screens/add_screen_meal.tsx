@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  TextInput,
   ScrollView,
   Modal,
   Alert,
@@ -19,10 +18,9 @@ import SelectModal from '../components/select_modal';
 import {Form, Input} from '@ant-design/react-native';
 import Loading from '../components/loading';
 import {formatDate, toDate, toTime} from '../utils/date';
-import {generateId, getObject, storeObject} from '../services/offlineService';
+import {getObject, storeObject} from '../services/offlineService';
 import Switch from '../components/switch';
-import Subtasks from '../components/subtasks';
-import Reminder from '../components/reminder';
+
 import {addEvent} from '../services/eventService';
 
 const InputField = ({
@@ -40,6 +38,7 @@ const InputField = ({
     <Text style={styles.inputLabel}>{label}</Text>
     <Form.Item {...props}>
       <Input
+        multiline={true}
         style={[styles.input, inputStyle]}
         accessibilityLabel={label}
         placeholder={placeholder}
@@ -61,6 +60,7 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
     category: 6,
     startTime: null,
     endTime: null,
+    priority: 1,
   });
   const [subtask, setSubtask] = useState({
     content: '',
@@ -91,11 +91,13 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
   const handleSave = (newEvent: any) => {
     if (event.startTime) newEvent.startTime = toTime(event.startTime);
     if (event.endTime) newEvent.endTime = toTime(event.endTime);
+    newEvent.details = `Eat at ${data.restaurant_name} in ${data.location}`;
     newEvent.ddl = toDate(event.ddl);
     newEvent.category = event.category;
     newEvent.priority = event.priority;
-    newEvent.subtasks = event.subtasks;
-    newEvent.id = generateId();
+    //newEvent.subtasks = event.subtasks;
+    newEvent.reminders = event.reminders;
+    console.log(newEvent);
     getObject('mode').then(mode => {
       if (mode === 'offline') {
         Alert.alert('You are offline, please connect to the internet');
@@ -108,6 +110,7 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
               storeObject('events', events);
             });
             setLoading(false);
+            form.resetFields();
             Alert.alert('Success', 'Event added successfully');
           })
           .catch(e => Alert.alert('Error', e));
@@ -435,6 +438,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     gap: 5,
+    marginBottom: 15,
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
@@ -447,14 +451,14 @@ const styles = StyleSheet.create({
     borderColor: '#D6D6D6',
     borderWidth: 1,
     paddingHorizontal: 10,
-    height: 50,
+    minHeight: 50,
   },
   textInput: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     marginTop: 5,
-    height: 200, // 自定义文本输入框高度
+    minHeight: 200, // 自定义文本输入框高度
   },
   timeZoneIcon: {
     height: 40,

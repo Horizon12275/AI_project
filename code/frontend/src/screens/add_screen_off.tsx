@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  TextInput,
   ScrollView,
   Modal,
   Alert,
@@ -18,7 +17,6 @@ import {categoryOptions, priorityOptions} from '../utils/offline';
 import SelectModal from '../components/select_modal';
 import {Form, Input} from '@ant-design/react-native';
 import Loading from '../components/loading';
-import MyHeader from '../components/my_header';
 import {toDate, toTime} from '../utils/date';
 import {generateId, getObject, storeObject} from '../services/offlineService';
 
@@ -37,6 +35,7 @@ const InputField = ({
     <Text style={styles.inputLabel}>{label}</Text>
     <Form.Item {...props}>
       <Input
+      multiline={true}
         style={[styles.input, inputStyle]}
         accessibilityLabel={label}
         placeholder={placeholder}
@@ -433,18 +432,17 @@ const styles = StyleSheet.create({
     fontWeight: '300',
   },
   input: {
-    borderRadius: 10,
-    borderColor: '#D6D6D6',
+    borderRadius: 10,    borderColor: '#D6D6D6',
     borderWidth: 1,
     paddingHorizontal: 10,
-    height: 50,
+    minHeight: 50,
   },
   textInput: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     marginTop: 5,
-    height: 200, // 自定义文本输入框高度
+    minHeight: 200, // 自定义文本输入框高度
   },
   timeZoneIcon: {
     height: 40,

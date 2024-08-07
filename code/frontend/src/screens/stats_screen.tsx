@@ -26,7 +26,7 @@ const StatsScreen = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [summaryText, setSummaryText] = useState(
-    'Based on the provided event data, it is evident that majority of your time has been allocated towards work & study as well as leisure & recreation. However, there seems to be a lack of balance between the two categories, with more emphasis on leisure & recreation activities.\n\nTo improve your time management moving forward, consider the following suggestions:\n1. Implement a daily schedule or time tracking system to better monitor how you are allocating your time.\n2. Prioritize tasks and allocate specific time blocks for work & study to ensure productivity and avoid procrastination.\n3. Limit the amount of time spent on leisure & recreation activities to create a better balance with your work & study commitments.\n4. Consider setting specific goals and targets for each category to ensure that you are making progress in both areas.\n5. Take regular breaks and incorporate relaxation activities into your schedule to avoid burnout and maintain overall well-being.\n\nBy implementing these suggestions, you can improve your time management skills and create a more balanced lifestyle moving forward.',
+    "Click the button to get your summary!",
   );
 
   const handleSummary = () => {
@@ -41,13 +41,11 @@ const StatsScreen = () => {
         setLoading(true);
         getSummary(toDate(startDate), toDate(endDate))
           .then(({percentages, ai_summary}) => {
-            ai_summary = ai_summary.replace(/\"/g, "").replace(/\\n/g, "\n");
-
-            console.log(ai_summary);
+            ai_summary = ai_summary.replace(/\"/g, '').replace(/\\n/g, '\n');
             setSummaryText(ai_summary);
             setLoading(false);
             if (percentages.length === 0)
-              Alert.alert('No data found for the selected date range');
+              Alert.alert('No Visualizations found for the selected date range');
             let data = percentages.map(item => {
               return {
                 x: categoryOptions.find(cat => cat.value === item.category)
@@ -58,7 +56,8 @@ const StatsScreen = () => {
             if (data.length > 0) setData(data);
           })
           .catch(err => {
-            console.log(err);
+            setLoading(false);
+            Alert.alert('Error', err);
           });
       }
     });
