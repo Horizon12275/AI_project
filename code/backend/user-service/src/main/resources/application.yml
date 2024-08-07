@@ -1,9 +1,11 @@
 server:
   port: ${USER_SERVICE_PORT}
   tomcat:
-    accept-count: 1000 # 服务端等待队列长度
+    accept-count: 500 # 服务端等待队列长度
     threads:
-      max: 1000
+      max: 400
+      min-spare: 50
+    max-connections: 5000
 
 spring:
   datasource:
@@ -12,7 +14,7 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 1000
+      maximum-pool-size: 10
       minimum-idle: 10
   jpa:
     show-sql: false
