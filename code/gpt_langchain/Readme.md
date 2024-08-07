@@ -8,12 +8,15 @@ ide 打开两个窗口 一个打开 gpt_python folder 一个打开 gptclient fol
 
 在 gpt_python folder 终端中
 
-注：pip 下载太慢 切换一下国内镜像源 
+注：pip 下载太慢 切换一下国内镜像源
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 运行
 
 ```
+pip install nacos-sdk-python （nacos注册）
+pip install pandas
+pip install openpyxl
 pip install uvicorn
 pip install fastapi
 pip install langchain==0.2.6
@@ -37,7 +40,7 @@ nohup uvicorn main:app --host 0.0.0.0 --port 8000 &
 
 `uvicorn rag:app --reload`
 
-如果我自己用curl 测试 输入是类似这样的
+如果我自己用 curl 测试 输入是类似这样的
 
 ```
 curl -X POST "http://localhost:8000/generate_subtasks" \
@@ -85,6 +88,26 @@ curl -X POST "http://127.0.0.1:8000/generate_summary" -H "Content-Type: applicat
 }'
 ```
 
+- 为后端解析方便 我改为了以下格式：
+  [
+  {
+  "category": "Test",
+  "details": "Tests are about Cache and Optimization. Cheating paper is allowed",
+  "title": "Introduction to Computer System test",
+  "a":1
+  },
+  {
+  "category": "Test",
+  "details": "Tests are about Cache and Optimization. Cheating paper is allowed",
+  "title": "Introduction to Computer System test"
+  },
+  {
+  "category": "Test",
+  "details": "Tests are about Cache and Optimization. Cheating paper is allowed",
+  "title": "Introduction to Computer System test"
+  }
+  ]
+
 对于吃的部分
 
 ```
@@ -96,4 +119,3 @@ uvicorn eat:app --reload
 ```
 curl -X POST "http://127.0.0.1:8000/restaurants" -H "Content-Type: application/json" -d '{"question": "I want to eat something spicy. Can you recommend a restaurant?"}'
 ```
-

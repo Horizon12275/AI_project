@@ -2,30 +2,32 @@ import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
-  Image,
   Text,
   ScrollView,
   TouchableOpacity,
   Modal,
   Alert,
   TouchableWithoutFeedback,
+  TextInput,
 } from 'react-native';
 import PieGraph from '../components/pie_graph';
-import SummaryBox from '../components/summary_box';
 import MyButton from '../utils/my_button';
 import Calendar from '../components/calendar';
 import {getSummary} from '../services/eventService';
 import {toDate} from '../utils/date';
 import {categoryOptions} from '../utils/offline';
 import {getObject} from '../services/offlineService';
-
-const summaryData = 'You have been spending most of your time eating!';
+import Loading from '../components/loading';
 
 const StatsScreen = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([{x: 'Example', y: 100}]);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [summaryText, setSummaryText] = useState(
+    "Click the button to get your summary!",
+  );
 
   const handleSummary = () => {
     getObject('mode').then(mode => {
@@ -36,21 +38,26 @@ const StatsScreen = () => {
           Alert.alert('Start date should be before end date');
           return;
         }
+        setLoading(true);
         getSummary(toDate(startDate), toDate(endDate))
-          .then(res => {
-            if (res.length === 0)
-              Alert.alert('No data found for the selected date range');
-            let data = res.map(item => {
+          .then(({percentages, ai_summary}) => {
+            ai_summary = ai_summary.replace(/\"/g, '').replace(/\\n/g, '\n');
+            setSummaryText(ai_summary);
+            setLoading(false);
+            if (percentages.length === 0)
+              Alert.alert('No Visualizations found for the selected date range');
+            let data = percentages.map(item => {
               return {
                 x: categoryOptions.find(cat => cat.value === item.category)
                   ?.label,
                 y: item.percentage.toFixed(2),
               };
             });
-            setData(data);
+            if (data.length > 0) setData(data);
           })
           .catch(err => {
-            console.log(err);
+            setLoading(false);
+            Alert.alert('Error', err);
           });
       }
     });
@@ -58,9 +65,10 @@ const StatsScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <Loading visible={loading} />
       <View>
         <Text style={styles.header}>Visualize Time</Text>
-        {data.length > 0 && <PieGraph data={data} />}
+        <PieGraph data={data} />
       </View>
       <View style={styles.timeZoneSelector}>
         <Text style={styles.timeZoneText}>Select a time zone</Text>
@@ -101,11 +109,7 @@ const StatsScreen = () => {
       <TouchableOpacity style={styles.summaryButton} onPress={handleSummary}>
         <Text style={styles.summaryButtonText}>Get your Summary</Text>
       </TouchableOpacity>
-      <SummaryBox
-        data={summaryData}
-        startDate={startDate.toDateString()}
-        endDate={endDate.toDateString()}
-      />
+      <Text style={styles.summaryText}>{summaryText}</Text>
     </ScrollView>
   );
 };
@@ -114,8 +118,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
-    maxWidth: 480,
     width: '100%',
+    paddingHorizontal: 20,
   },
   header: {
     fontFamily: 'Inter, sans-serif',
@@ -154,13 +158,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#4A90E2',
     borderRadius: 20,
     paddingVertical: 16,
-    marginHorizontal: 20,
+    marginTop: 20,
     alignItems: 'center',
   },
   summaryButtonText: {
     color: '#FFF',
     fontFamily: 'Nunito, sans-serif',
     fontSize: 16,
+  },
+  summaryText: {
+    marginVertical: 20,
+    borderRadius: 10,
+    borderColor: '#D6D6D6',
+    color: '#010618',
+    borderWidth: 1,
+    padding: 10,
+    width: '100%',
+    minHeight: 200,
   },
   modalView: {
     height: '100%',

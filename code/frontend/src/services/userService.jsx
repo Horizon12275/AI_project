@@ -1,5 +1,5 @@
-import { BASEURL, USERPORT, get, post, put } from "./requestService";
-const PREFIX = `${BASEURL}:${USERPORT}/api/user`;
+import {BASEURL, get, post} from './requestService';
+const PREFIX = `${BASEURL}/api/user`;
 
 export async function getUser() {
   const url = `${PREFIX}/get`;
@@ -8,9 +8,9 @@ export async function getUser() {
   return result;
 }
 
-export async function portraitUpload(portrait) {
-  const url = `${PREFIX}/portrait`;
+export async function updateUser(user) {
+  const url = `${PREFIX}/update`;
   let result;
-  result = await post(url, portrait);
+  result = await post(url, user);
   return result;
 }

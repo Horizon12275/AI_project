@@ -4,21 +4,20 @@ import {
   Text,
   TouchableOpacity,
   View,
-  TextInput,
   ScrollView,
   Modal,
   Alert,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import MyButton from '../utils/my_button';
 import Calendar from '../components/calendar';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import DropdownInput from '../components/dropdown_input';
 import {categoryOptions} from '../utils/offline';
 import {Form, Input} from '@ant-design/react-native';
-import MyHeader from '../components/my_header';
 import {toDate, toTime} from '../utils/date';
-import {addEvent} from '../services/eventService';
+import {addEventOnline} from '../services/eventService';
 import SelectModal from '../components/select_modal';
 import Loading from '../components/loading';
 import {getObject, storeObject} from '../services/offlineService';
@@ -38,6 +37,8 @@ const InputField = ({
     <Text style={styles.inputLabel}>{label}</Text>
     <Form.Item {...props}>
       <Input
+        textAlignVertical="top"
+        multiline={true}
         style={[styles.input, inputStyle]}
         accessibilityLabel={label}
         placeholder={placeholder}
@@ -75,7 +76,7 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
       title: event.title,
     };
     setLoading(true);
-    addEvent({
+    addEventOnline({
       event,
       eventDetails,
     })
@@ -96,137 +97,140 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
   return (
     <Form onFinish={handleSave} form={form}>
       <Loading visible={loading} />
-      <MyHeader onSave={onSubmit} />
-      <ScrollView
-        style={{
-          backgroundColor: '#fff',
-          padding: 20,
-          display: 'flex',
-          flexDirection: 'column',
-        }}>
-        <View style={styles.container}>
-          <Text style={styles.titleText}>New Schedule</Text>
-        </View>
-        <InputField
-          label="Title"
-          props={{
-            name: 'title',
-            rules: [
-              {
-                required: true,
-                message: 'Please input the title!',
-              },
-            ],
-          }}
-        />
-        <InputField
-          label="Location"
-          props={{
-            name: 'location',
-            rules: [
-              {
-                required: true,
-                message: 'Please input the location!',
-              },
-            ],
-          }}
-        />
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Category</Text>
-          <SelectModal
-            style={styles.input}
-            data={categoryOptions}
-            selectedValue={category}
-            setSelectedValue={setCategory}
-          />
-        </View>
-        <InputField
-          label="Details"
-          props={{
-            name: 'details',
-            rules: [
-              {
-                required: true,
-                message: 'Please input the details!',
-              },
-            ],
-          }}
-          inputStyle={styles.textInput}
-        />
-        <View style={styles.ddlContainer}>
-          <View style={styles.textContainer}>
-            <Text style={styles.ddlText}>DDL</Text>
-            <Text style={styles.dateText}>
-              {`${toDate(ddlDate)}  `}
-              {startTime &&
-                endTime &&
-                `${toTime(startTime)}~${toTime(endTime)}`}
-            </Text>
+      <KeyboardAvoidingView behavior={'position'}>
+        <ScrollView
+          style={{
+            backgroundColor: '#fff',
+            padding: 20,
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+          <View style={styles.container}>
+            <Text style={styles.titleText}>New Schedule</Text>
           </View>
-          <MyButton
-            icon={require('../assets/icons/time-select.png')}
-            onPress={() => setShowCalendar(!showCalendar)}
-            style={styles.timeZoneIcon}
-            buttonStyle={styles.timeZoneButton}
+          <InputField
+            label="Title"
+            props={{
+              name: 'title',
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input the title!',
+                },
+              ],
+            }}
           />
-        </View>
-        <View style={styles.timeSelectContainer}>
-          {showStartTimePicker && (
-            <RNDateTimePicker
-              mode="time"
-              display="clock"
-              value={startTime || new Date()}
-              onChange={(event, selectedDate) => {
-                if (endTime && selectedDate > endTime) {
-                  Alert.alert(
-                    'Error',
-                    'Start time should be earlier than end time',
-                  );
+          <InputField
+            label="Location"
+            props={{
+              name: 'location',
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input the location!',
+                },
+              ],
+            }}
+          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Category</Text>
+            <SelectModal
+              style={styles.input}
+              data={categoryOptions}
+              selectedValue={category}
+              setSelectedValue={setCategory}
+            />
+          </View>
+          <InputField
+            label="Details"
+            props={{
+              name: 'details',
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input the details!',
+                },
+              ],
+            }}
+            inputStyle={styles.textInput}
+          />
+          <View style={styles.ddlContainer}>
+            <View style={styles.textContainer}>
+              <Text style={styles.ddlText}>DDL</Text>
+              <Text style={styles.dateText}>
+                {`${toDate(ddlDate)}  `}
+                {startTime &&
+                  endTime &&
+                  `${toTime(startTime)}~${toTime(endTime)}`}
+              </Text>
+            </View>
+            <MyButton
+              icon={require('../assets/icons/time-select.png')}
+              onPress={() => setShowCalendar(!showCalendar)}
+              style={styles.timeZoneIcon}
+              buttonStyle={styles.timeZoneButton}
+            />
+          </View>
+          <View style={styles.timeSelectContainer}>
+            {showStartTimePicker && (
+              <RNDateTimePicker
+                mode="time"
+                display="clock"
+                value={startTime || new Date()}
+                onChange={(event, selectedDate) => {
+                  if (endTime && selectedDate > endTime) {
+                    Alert.alert(
+                      'Error',
+                      'Start time should be earlier than end time',
+                    );
+                    setShowStartTimePicker(false);
+                    return;
+                  }
+                  setStartTime(selectedDate || startTime);
+                  if (!endTime) setEndTime(selectedDate || startTime);
                   setShowStartTimePicker(false);
-                  return;
-                }
-                setStartTime(selectedDate || startTime);
-                if (!endTime) setEndTime(selectedDate || startTime);
-                setShowStartTimePicker(false);
-              }}
-            />
-          )}
-          {showEndTimePicker && (
-            <RNDateTimePicker
-              mode="time"
-              display="clock"
-              value={endTime || new Date()}
-              onChange={(event, selectedDate) => {
-                if (startTime && selectedDate < startTime) {
-                  Alert.alert(
-                    'Error',
-                    'End time should be later than start time',
-                  );
+                }}
+              />
+            )}
+            {showEndTimePicker && (
+              <RNDateTimePicker
+                mode="time"
+                display="clock"
+                value={endTime || new Date()}
+                onChange={(event, selectedDate) => {
+                  if (startTime && selectedDate < startTime) {
+                    Alert.alert(
+                      'Error',
+                      'End time should be later than start time',
+                    );
+                    setShowEndTimePicker(false);
+                    return;
+                  }
+                  setEndTime(selectedDate || endTime);
+                  if (!startTime) setStartTime(selectedDate || endTime);
                   setShowEndTimePicker(false);
-                  return;
-                }
-                setEndTime(selectedDate || endTime);
-                if (!startTime) setStartTime(selectedDate || endTime);
-                setShowEndTimePicker(false);
-              }}
-            />
-          )}
+                }}
+              />
+            )}
+            <TouchableOpacity
+              style={styles.startButton}
+              onPress={() => setShowStartTimePicker(true)}>
+              <Text style={styles.startButtonText}>Start Time</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.startButton}
+              onPress={() => setShowEndTimePicker(true)}>
+              <Text style={styles.startButtonText}>End Time</Text>
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity
-            style={styles.startButton}
-            onPress={() => setShowStartTimePicker(true)}>
-            <Text style={styles.startButtonText}>Start Time</Text>
+            style={styles.saveButton}
+            accessibilityRole="button"
+            onPress={onSubmit}>
+            <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.startButton}
-            onPress={() => setShowEndTimePicker(true)}>
-            <Text style={styles.startButtonText}>End Time</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* <TouchableOpacity style={styles.saveButton} accessibilityRole="button">
-        <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity> */}
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
       {showCalendar && (
         <Modal
           animationType="fade" // 动画效果
@@ -267,15 +271,15 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   saveButton: {
-    position: 'absolute',
-    bottom: 0,
+    marginTop: 30,
     alignSelf: 'center',
-    marginHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,
     backgroundColor: '#80B3FF',
     paddingVertical: 11,
+    paddingHorizontal: 70,
+    marginBottom: 50,
   },
   saveButtonText: {
     color: '#000',
@@ -299,14 +303,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     width: '100%',
-    height: 50,
+    minHeight: 50,
   },
   textInput: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     marginTop: 5,
-    height: 300, // 自定义文本输入框高度
+    minHeight: 200, // 自定义文本输入框高度
   },
   timeZoneIcon: {
     height: 40,
@@ -357,7 +361,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 150,
   },
   startButton: {
     justifyContent: 'center',

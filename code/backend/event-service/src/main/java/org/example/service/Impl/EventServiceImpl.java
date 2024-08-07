@@ -1,10 +1,12 @@
 package org.example.service.Impl;
 
 
+import org.example.client.AIClient;
+import org.example.constant.ConstMaps;
 import org.example.entity.Event;
-import org.example.entity.Reminder;
+import org.example.entity.EventDetails;
 import org.example.entity.Result;
-import org.example.entity.Subtask;
+import org.example.entity.Summary;
 import org.example.repository.EventRepo;
 import org.example.service.EventService;
 import org.springframework.stereotype.Service;
@@ -19,8 +21,14 @@ import java.util.Map;
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepo repo;
-    public EventServiceImpl(EventRepo repo) {
+    private final EventCacheService cacheService;
+    private final AIClient aiClient;
+    private final ConstMaps constMaps;
+    public EventServiceImpl(EventRepo repo, EventCacheService cacheService, AIClient aiClient, ConstMaps constMaps) {
         this.repo = repo;
+        this.cacheService = cacheService;
+        this.aiClient = aiClient;
+        this.constMaps = constMaps;
     }
     @Override
     public int[] getNumsByMonth(int year, int month, int uid) {
@@ -37,13 +45,18 @@ public class EventServiceImpl implements EventService {
     }
     @Override
     public Result<Event> addEvent(Event event, int uid) {
-        event.setUid(uid);
-        if (event.getSubtasks() != null)
-            event.getSubtasks().forEach(subtask -> subtask.setEvent(event));//设置subtask的event属性 否则保存的subtask中的eid为空
-        if (event.getReminders() != null)
-            event.getReminders().forEach(reminder -> reminder.setEvent(event));//设置reminder的event属性 否则保存的reminder中的eid为空
-        repo.save(event);
-        return Result.success(event);
+        return cacheService.addEvent(event,uid);
+    }
+    @Override
+    public Result<String> deleteEvent(int id, int uid) {
+        Event oldEvent = repo.findById(id).orElse(null);
+        if (oldEvent == null) {
+            return Result.error(404, "Event not found");
+        }
+        if (oldEvent.getUid() != uid) {
+            return Result.error(403, "Permission denied");
+        }
+        return cacheService.deleteEvent(id,uid,oldEvent);
     }
     @Override
     public Result<Event> updateEvent(int id, Event event, int uid) {
@@ -54,55 +67,20 @@ public class EventServiceImpl implements EventService {
         if (oldEvent.getUid() != uid) {
             return Result.error(403, "Permission denied");
         }
-        //为了避免前端传入的event中的属性为null导致覆盖原有数据 逐个判断是否为null 不知道有没有更好的方法
-        if (event.getTitle() != null) {
-            oldEvent.setTitle(event.getTitle());
-        }
-        if (event.getCategory() != null) {
-            oldEvent.setCategory(event.getCategory());
-        }
-        if (event.getStartTime() != null) {
-            oldEvent.setStartTime(event.getStartTime());
-        }
-        if (event.getEndTime() != null) {
-            oldEvent.setEndTime(event.getEndTime());
-        }
-        if (event.getDdl() != null) {
-            oldEvent.setDdl(event.getDdl());
-        }
-        if(event.getDetails()!=null){
-            oldEvent.setDetails(event.getDetails());
-        }
-        if(event.getLocation()!=null){
-            oldEvent.setLocation(event.getLocation());
-        }
-        if(event.getPriority()!=null){
-            oldEvent.setPriority(event.getPriority());
-        }
-        if(event.getReminders()!=null){
-            List<Reminder> reminders = oldEvent.getReminders();
-            reminders.clear();
-            reminders.addAll(event.getReminders());
-            oldEvent.getReminders().forEach(reminder -> reminder.setEvent(oldEvent));
-        }
-        if (event.getSubtasks() != null) {
-            List<Subtask> subtasks = oldEvent.getSubtasks();
-            subtasks.clear();
-            subtasks.addAll(event.getSubtasks());
-            oldEvent.getSubtasks().forEach(subtask -> subtask.setEvent(oldEvent));
-        }
-        repo.save(oldEvent);
-        return Result.success(oldEvent);
+        return cacheService.updateEvent(id,event,uid,oldEvent);
     }
     @Override
-    public Result<List<Object>> summary(LocalDate start, LocalDate end, int uid) {
+    public Result<Summary> summary(LocalDate start, LocalDate end, int uid) {
         List<Event> events = repo.getEventsByDdlBetweenAndUid(start, end, uid);
 
         // 统计各个 category 的总时间
         Map<Integer, Long> categoryTotalTime = new HashMap<>();
         long totalDuration = 0;
+        // 构建事件详情列表 用于aiClient生成总结
+        List<EventDetails> eventDetails = new ArrayList<>();
 
         for (Event event : events) {
+            eventDetails.add(new EventDetails(event.getTitle(),constMaps.getCategoryMap().get(event.getCategory()) ,"",event.getDetails(),"",""));
             Integer category = event.getCategory();
             if(event.getEndTime() == null||event.getStartTime() == null){//如果开始时间或结束时间为空则跳过
                 continue;
@@ -113,8 +91,8 @@ public class EventServiceImpl implements EventService {
             totalDuration += duration;
         }
 
-        // 计算各个 category 的时间占比并构建结果数组
-        List<Object> result = new ArrayList<>();
+        // 计算各个 category 的时间占比并构建百分比数组
+        List<Object> percentages = new ArrayList<>();
         for (Map.Entry<Integer, Long> entry : categoryTotalTime.entrySet()) {
             Integer category = entry.getKey();
             long duration = entry.getValue();
@@ -125,16 +103,18 @@ public class EventServiceImpl implements EventService {
             categoryPercentage.put("category", category);
             categoryPercentage.put("percentage", percentage);
 
-            result.add(categoryPercentage);
+            percentages.add(categoryPercentage);
         }
 
-        return Result.success(result);
+        Summary summary = new Summary(percentages, eventDetails.isEmpty() ? "No events during this period" : aiClient.generateSummary(eventDetails));
+
+        return Result.success(summary);
     }
     @Override
     public Result<List<Event>> pushAll(List<Event> events, int uid) {
         for (Event event : events) {//遍历所有事件 逐个添加或更新
            if(event.getId()==null) addEvent(event,uid);//如果id为空则添加
-           else if(event.getDdl()==null) repo.deleteById(event.getId());//如果ddl为空则删除 约定好的
+           else if(event.getTitle()==null) deleteEvent(event.getId(),uid);//如果title为空则删除 约定
            else updateEvent(event.getId(),event,uid);//否则更新
         }
         List<Event> allEvents = repo.getEventsByUid(uid);//返回所有事件

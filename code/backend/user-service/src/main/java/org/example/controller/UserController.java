@@ -15,22 +15,23 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final MyUserDetailsService service;
     @Value("${server.port}")
-    private  String port;
+    private String port;
     public UserController(MyUserDetailsService service) {
         this.service = service;
     }
     @GetMapping("/get")//获取当前登录用户的信息
     public Result<User> get() {
-        UserDetails user =(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return service.getUserByUsername( user.getUsername());
+        UserDetails user =(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();//注意security的user中的username是自定义user的email
+        return service.getUserByEmail(user.getUsername());
     }
     @PostMapping("/register")//注册
     public Result<User> register(@RequestBody RegisterRequest request) {
         return service.addUser(request);
     }
-    @PostMapping("/portrait")//提交个人肖像
-    public Result<User> portrait(@RequestBody User user) {
-        return service.portrait(user);
+    @PostMapping("/update")//更新用户信息
+    public Result<User> update(@RequestBody User user) {
+        String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        return service.updateUserByEmail(user, username);
     }
     @GetMapping("/testGET")//测试GET请求
     public String testGET() {

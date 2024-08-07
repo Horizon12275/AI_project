@@ -27,3 +27,5 @@ replay_pid*
 /code/backend/nacos
 .env
 /__pycache__
+/私钥
+/code/gpt_langchain/gpt_python/__pycache__

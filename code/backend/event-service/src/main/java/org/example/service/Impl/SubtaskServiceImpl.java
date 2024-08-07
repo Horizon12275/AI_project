@@ -15,9 +15,11 @@ import java.time.LocalDate;
 public class SubtaskServiceImpl implements SubtaskService {
     private final SubtaskRepo repo;
     private final EventRepo eventRepo;
-    public SubtaskServiceImpl(SubtaskRepo repo, EventRepo eventRepo) {
+    private final SubtaskCacheService cacheService;
+    public SubtaskServiceImpl(SubtaskRepo repo, EventRepo eventRepo, SubtaskCacheService cacheService) {
         this.repo = repo;
         this.eventRepo = eventRepo;
+        this.cacheService = cacheService;
     }
     @Override
     public Result<Subtask> changeDone(int id, int uid) {
@@ -28,9 +30,7 @@ public class SubtaskServiceImpl implements SubtaskService {
         if(subtask.getEvent().getUid() != uid){
             return Result.error(403, "Permission denied");
         }
-        subtask.setDone(!subtask.isDone());
-        repo.save(subtask);
-        return Result.success(subtask);
+        return cacheService.changeDone(subtask,uid);
     }
     @Override
     public Result<String> deleteSubtask(int id, int uid) {
@@ -41,8 +41,7 @@ public class SubtaskServiceImpl implements SubtaskService {
         if(subtask.getEvent().getUid() != uid){
             return Result.error(403, "Permission denied");
         }
-        repo.deleteById(id);
-        return Result.success("Delete success");
+        return cacheService.deleteSubtask(id,subtask,uid);
     }
     @Override
     public Result<Subtask> addSubtask(int eid, String content, LocalDate deadline, int uid) {
@@ -58,6 +57,6 @@ public class SubtaskServiceImpl implements SubtaskService {
         subtask.setDdl(deadline);
         subtask.setEvent(event);
         subtask.setDone(false);
-        return Result.success(repo.save(subtask));
+        return cacheService.addSubtask(subtask,uid);
     }
 }

@@ -9,16 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -92,7 +88,7 @@ class MyUserDetailsServiceTest {
 
         when(userRepo.findUserByEmail("test@example.com")).thenReturn(user);
 
-        Result<User> result = userDetailsService.getUserByUsername("test@example.com");
+        Result<User> result = userDetailsService.getUserByEmail("test@example.com");
         assertEquals(200, result.getCode());
         assertEquals(user, result.getData());
     }
@@ -101,7 +97,7 @@ class MyUserDetailsServiceTest {
     void getUserByUsername_UserNotFound() {
         when(userRepo.findUserByEmail("unknown@example.com")).thenReturn(null);
 
-        Result<User> result = userDetailsService.getUserByUsername("unknown@example.com");
+        Result<User> result = userDetailsService.getUserByEmail("unknown@example.com");
         assertEquals(404, result.getCode());
         assertEquals("用户不存在！", result.getMessage());
     }
@@ -256,7 +252,7 @@ class MyUserDetailsServiceTest {
         // 将模拟的 SecurityContext 对象设置到 SecurityContextHolder 中
         SecurityContextHolder.setContext(securityContext);
 
-        Result<User> result = userDetailsService.portrait(user);
+        Result<User> result = userDetailsService.updateUser(user);
         assertEquals(200, result.getCode());
         assertEquals(1, result.getData().getChallenge());
         assertEquals(2, result.getData().getSleep_schedule());

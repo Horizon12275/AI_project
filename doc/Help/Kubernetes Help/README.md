@@ -50,3 +50,181 @@
 - 使用 prometheus，grafana 等、监控其中的后端进程的运行情况
 
 ![1](./img/1.png)
+
+#### 安装
+
+https://blog.csdn.net/m0_51510236/article/details/136329885?ydreferer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8%3D
+
+```bash
+sudo vi /etc/hosts
+
+#k8s
+192.168.0.226 k8s-control-plane
+192.168.0.106 k8s-worker01
+192.168.0.212 k8s-worker02
+```
+
+```bash
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# 设置所需的 sysctl 参数，参数在重新启动后保持不变
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+# 应用 sysctl 参数而不重新启动
+sudo sysctl --system
+```
+
+```bash
+lsmod | grep br_netfilter
+lsmod | grep overlay
+
+sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward
+```
+
+```bash
+sudo tar -zxvf cri-containerd-cni-1.7.13-linux-amd64.tar.gz -C /
+
+containerd -v
+
+sudo mkdir /etc/containerd
+
+containerd config default | sudo tee /etc/containerd/config.toml
+
+sudo vi /etc/containerd/config.toml
+
+sudo systemctl enable --now containerd
+
+
+```
+
+```bash
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+```
+
+```bash
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+apt-cache madison kubelet kubeadm kubectl
+
+sudo apt-get update
+sudo apt-get install -y kubelet=1.28.7-1.1 kubeadm=1.28.7-1.1 kubectl=1.28.7-1.1
+sudo apt-mark hold kubelet kubeadm kubectl
+sudo apt-mark unhold kubelet kubeadm kubectl
+
+kubeadm version
+
+systemctl enable kubelet --now
+
+sudo systemctl restart containerd
+
+sudo kubeadm init \
+--apiserver-advertise-address=192.168.0.226 \
+--image-repository=registry.aliyuncs.com/google_containers \
+--kubernetes-version=v1.28.7 \
+--service-cidr=10.96.0.0/12 \
+--pod-network-cidr=10.244.0.0/16 \
+--cri-socket=unix:///run/containerd/containerd.sock
+
+```
+
+本机执行
+
+```bash
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+从节点执行
+
+```bash
+kubeadm join 192.168.0.226:6443 --token j9lqkf.fwqmjaf8sdwidtzg \
+        --discovery-token-ca-cert-hash sha256:eaf5923db265465eea402dc7ed14724e2bbee7721ddda324907b4ad96b2a4006 \
+        --cri-socket=unix:///var/run/containerd/containerd.sock
+```
+
+```bash
+kubectl get nodes -o wide
+
+kubectl get all -o wide
+```
+
+#### 安装网络插件 Calico
+
+```bash
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.2/manifests/tigera-operator.yaml
+
+kubectl create -f tigera-operator.yaml
+
+kubectl delete -f tigera-operator.yaml
+```
+
+所有 kubectl 貌似只在 master 节点上执行
+
+```bash
+# 下载客户端资源文件
+curl -LO https://raw.githubusercontent.com/projectcalico/calico/v3.27.2/manifests/custom-resources.yaml
+# 修改pod的网段地址
+sed -i 's/cidr: 192.168.0.0/cidr: 10.244.0.0/g' custom-resources.yaml
+
+kubectl create -f custom-resources.yaml
+
+kubectl delete -f custom-resources.yaml
+
+watch kubectl get all -o wide -n calico-system
+
+```
+
+containerd 也要配置镜像源
+在/etc/containerd/config.toml 中添加如下内容
+
+```bash
+ [plugins."io.containerd.grpc.v1.cri".registry]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors] #主要在这下面配置镜像加速服务
+       [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+        endpoint=["https://hub.uuuadc.top","https://docker.anyhub.us.kg","https://dockerhub.jobcher.com","https://dockerhub.icu","https://docker.ckyl.me","https://docker.awsl9527.cn"]
+       [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry.k8s.io"]
+        endpoint=["https://k8s.m.daocloud.io", "https://docker.mirrors.ustc.edu.cn","https://hub-mirror.c.163.com"]
+```
+
+重启 containerd
+
+```bash
+systemctl restart containerd
+
+systemctl daemon-reload
+systemctl restart containerd.service
+```
+
+查看
+
+```bash
+   crictl info
+```
+
+```bash
+kubectl get services --all-namespaces
+
+watch kubectl get all -o wide -n monitoring
+
+watch kubectl get all -o wide -n kubernetes-dashboard
+
+watch kubectl get all -o wide -n kube-system
+
+kubectl taint nodes ecs-c9ec node-role.kubernetes.io/master-
+
+kubectl get pods --all-namespaces -o wide
+
+```

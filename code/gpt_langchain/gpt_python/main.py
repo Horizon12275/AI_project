@@ -6,17 +6,40 @@ import logging
 from langchain_community.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
-import os
+from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_community.chat_models import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
 from typing import List
+import os
 import openai
+import pandas as pd
+
 
 app = FastAPI()
+
+# register nacos
+
+SERVER_ADDRESSES = "192.168.0.226:8848"
+NAMESPACE = "public"
+
+# client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE)
+# client.add_naming_instance(
+#     service_name="AI-service",
+#     ip="192.168.0.106",
+#     port="8000",
+#     cluster_name="DEFAULT",
+#     heartbeat_interval=5,
+# )
 
 # Set OpenAI API key and base URL
 
 
-os.environ["OPENAI_API_KEY"] = "sk-XysyZtmVqlQayx6tD75eBc6705B5426fA9F422Ad2a38D44c"
-os.environ["OPENAI_API_BASE"] = "https://api.openai-hub.com/v1"
+api_key = "sk-XysyZtmVqlQayx6tD75eBc6705B5426fA9F422Ad2a38D44c"
+api_base = "https://api.openai-hub.com/v1"
+os.environ["OPENAI_API_KEY"] = api_key
+os.environ["OPENAI_API_BASE"] = api_base
 logging.basicConfig(level=logging.INFO)
 
 
@@ -68,7 +91,7 @@ async def generate_priority(event: EventDetails):
 
     prompt_template = (
         "Given that I am a {identity} with the following sleep schedule: {sleep_schedule}, "
-        "and my main challenges with time management are {challenge}, generate a priority level, please just answer in a word (high, medium or low) "
+        "and my main challenges with time management are {challenge}, generate a priority level, please just answer a number range from 1 to 3,the bigger number,the greater priority."
         "for the following event:\n"
         "Title: {title}\n"
         "Category: {category}\n"
@@ -101,19 +124,7 @@ async def generate_priority(event: EventDetails):
         logging.error(f"Error in llm invoke: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-    priority_level = result.strip().lower()
-
-    if "high" in priority_level:
-        priority = "high"
-    elif "medium" in priority_level:
-        priority = "medium"
-    elif "low" in priority_level:
-        priority = "low"
-    else:
-        priority = "unknown"  # 或者你可以抛出一个错误
-
-    print(priority)  # 打印返回的内容
-    return priority
+    return result.strip()
 
 
 @app.post("/generate_reminders")
@@ -163,10 +174,9 @@ async def generate_reminders(event: EventDetails):
         raise HTTPException(status_code=500, detail=str(e))
 
     reminders = result.strip().split("\n")
-    formatted_reminders = [ reminder.strip() for reminder in reminders if reminder]
+    formatted_reminders = [reminder.strip() for reminder in reminders if reminder]
     print(formatted_reminders[:3])  # 打印返回的内容
     return formatted_reminders[:3]
-
 
 
 @app.post("/generate_subtasks")
@@ -219,7 +229,9 @@ async def generate_subtasks(event: EventDetails):
             parts = subtask.split(" - Deadline: ")
             if len(parts) == 2:
                 content, ddl = parts
-                formatted_subtasks.append({"content": content.strip(), "ddl": ddl.strip()})
+                formatted_subtasks.append(
+                    {"content": content.strip(), "ddl": ddl.strip()}
+                )
 
     end_time = time.time()
     processing_time = end_time - start_time
@@ -227,16 +239,12 @@ async def generate_subtasks(event: EventDetails):
     print(formatted_subtasks[:3])  # 打印返回的内容
     return formatted_subtasks[:3]
 
+
+# Define request data model
 class EventData(BaseModel):
-    titles: List[str]
-    categories: List[str]
-    details: List[str]
-
-
-# Define response data model
-class SummaryResponse(BaseModel):
-    result: str
-
+    title: str
+    category: str
+    details: str
 
 
 # Define a class for OpenAI interaction
@@ -249,40 +257,161 @@ class OpenAIHandler:
         openai.api_key = self.api_key
         openai.api_base = self.api_base
 
-    def generate_summary(self, titles: List[str], categories: List[str], details: List[str]) -> str:
+    def generate_summary(self, eventDatas: list[EventData]) -> str:
         prompt = "I have the following event data during this time period, Please evaluate and summarize my recent time allocation across various categories based on the provided information. Also make suggestionsfor improving my time management moving forward.\n"
-        for title, category, detail in zip(titles, categories, details):
-            prompt += f"Event Title: {title}\nCategory: {category}\nDetails: {detail}\n\n"
+        for eventDate in eventDatas:
+            prompt += f"Title: {eventDate.title}\n"
+            prompt += f"Category: {eventDate.category}\n"
+            prompt += f"Details: {eventDate.details}\n\n"
 
         response = openai.ChatCompletion.create(
-            model=self.model_name,
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
+            model=self.model_name, messages=[{"role": "user", "content": prompt}]
         )
 
-        return response.choices[0].message['content'].strip()
+        return response.choices[0].message["content"].strip()
 
 
 # Initialize the OpenAIHandler with the desired model
-llm_handler = OpenAIHandler(api_key="sk-XysyZtmVqlQayx6tD75eBc6705B5426fA9F422Ad2a38D44c", api_base="https://api.openai-hub.com/v1", model_name="gpt-3.5-turbo")
+llm_handler = OpenAIHandler(
+    api_key="sk-XysyZtmVqlQayx6tD75eBc6705B5426fA9F422Ad2a38D44c",
+    api_base="https://api.openai-hub.com/v1",
+    model_name="gpt-3.5-turbo",
+)
 
 
 # Define FastAPI route
-
-@app.post("/generate_summary", response_model=SummaryResponse)
-async def generate_summary(event_data: EventData):
-    if len(event_data.titles) != len(event_data.categories) or len(event_data.categories) != len(event_data.details):
-        raise HTTPException(status_code=400, detail="Input arrays lengths are not consistent")
+@app.post("/generate_summary", response_model=str)
+async def generate_summary(event_datas: list[EventData]):
+    # if len(event_data.titles) != len(event_data.categories) or len(event_data.categories) != len(event_data.details):
+    #     raise HTTPException(status_code=400, detail="Input arrays lengths are not consistent")
 
     # Generate the summary and suggestions using the OpenAIHandler
-    output = llm_handler.generate_summary(event_data.titles, event_data.categories, event_data.details)
+    output = llm_handler.generate_summary(event_datas)
 
     # Return the entire output without splitting
-    return SummaryResponse(result=output.strip())
+    return output
+
+
+# 加载Excel文件
+restaurants_df = pd.read_excel("restaurants.xlsx")
+
+# 配置OpenAI API
+openai.api_key = api_key
+
+
+# 定义用户输入的数据模型
+class UserQuery(BaseModel):
+    question: str
+
+
+class Document:
+    def __init__(self, page_content):
+        self.page_content = page_content
+
+
+# 定义文档加载逻辑
+def load_documents_from_df(df):
+    documents = []
+    for _, row in df.iterrows():
+        doc = Document(
+            page_content=f"Name: {str(row['Name'])}, Recommended Dishes: {str(row['Recommend'])}, Location: {str(row['Location'])}, Rating: {str(row['Rating'])}, Business Hours: {str(row['Business Hours'])}"
+        )
+        documents.append(doc)
+        print("Loaded document:", doc)  # 调试信息
+    return documents
+
+
+documents = load_documents_from_df(restaurants_df)
+
+# 使用 OpenAI 的嵌入模型来生成嵌入
+embedding_model = OpenAIEmbeddings()
+
+# 提取文档内容
+texts = [doc.page_content for doc in documents]
+
+# 创建向量存储并添加嵌入
+vector_store = FAISS.from_texts(texts, embedding_model)
+
+# 创建 OpenAI LLM
+llm2 = ChatOpenAI(api_key=api_key, model_name="gpt-3.5-turbo")
+
+# 自定义提示模板
+prompt = PromptTemplate(
+    input_variables=["context", "question"],
+    template="""
+    Based on the following restaurant information:
+    {context}
+
+    And here is what the customer want to eat:
+    {question}
+
+    Recommend a restaurant in the following format:
+    - Restaurant Name: 
+    - Location: 
+    - Recommended Dishes: 
+    - Business Hours: 
+    """,
+)
+
+# 创建文档检索器
+retriever = vector_store.as_retriever()
+
+
+# 定义格式化文档的函数
+def format_docs(docs):
+    formatted_docs = "\n\n".join(doc.page_content for doc in docs)
+    print("Formatted Docs:", formatted_docs)  # 调试信息
+    return formatted_docs
+
+
+# 创建 RAG 链
+rag_chain = (
+    {"context": retriever | format_docs, "question": RunnablePassthrough()}
+    | prompt
+    | llm2
+    | StrOutputParser()
+)
+
+
+@app.post("/restaurants")
+async def ask_question(user_query: UserQuery):
+    try:
+        question = user_query.question
+        if not isinstance(question, str):
+            raise ValueError("The question must be a string")
+        # 生成RAG链的输入
+
+        # 调试信息
+        # print("RAG Input:", rag_input)
+
+        # 使用RAG链生成回答
+        result = rag_chain.invoke(user_query.question)
+
+        # 调试信息
+        print("RAG Chain Result:", result)
+
+        # 解析结果
+        result_lines = result.split("\n")
+        response = {}
+        for line in result_lines:
+            if line.startswith("- Restaurant Name:"):
+                response["restaurant_name"] = line[len("- Restaurant Name:") :].strip()
+            elif line.startswith("- Location:"):
+                response["location"] = line[len("- Location:") :].strip()
+            elif line.startswith("- Recommended Dishes:"):
+                response["recommended_dishes"] = line[
+                    len("- Recommended Dishes:") :
+                ].strip()
+            elif line.startswith("- Business Hours:"):
+                response["business_hours"] = line[len("- Business Hours:") :].strip()
+
+        return response
+    except Exception as e:
+        # 打印详细的错误信息
+        import traceback
+
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

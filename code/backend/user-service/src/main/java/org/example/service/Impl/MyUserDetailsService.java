@@ -5,6 +5,8 @@ import org.example.entity.RegisterRequest;
 import org.example.entity.Result;
 import org.example.entity.User;
 import org.example.repository.UserRepo;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,8 +45,9 @@ public class MyUserDetailsService implements UserDetailsService {
             return Result.error(404, "用户不存在！");
         }
     }
-    public Result<User> getUserByUsername(String username) {
-        User user = userRepository.findUserByEmail(username);
+    @Cacheable(value = "user", key = "#email")
+    public Result<User> getUserByEmail(String email) {
+        User user = userRepository.findUserByEmail(email);
         if (user == null) {
             return Result.error(404, "用户不存在！");
         }
@@ -65,7 +68,6 @@ public class MyUserDetailsService implements UserDetailsService {
         }
         return Result.success(user);
     }
-
     public Result<User> addUser(RegisterRequest request) {
         if (userRepository.findUserByEmail(request.getEmail()) != null) {
             return Result.error(400, "用户已存在！");
@@ -75,15 +77,25 @@ public class MyUserDetailsService implements UserDetailsService {
         userRepository.save(user);
         return Result.success(user);
     }
-
-    public Result<User> portrait(User user) {
-        String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        User newUser = userRepository.findUserByEmail(username);
-        newUser.setChallenge(user.getChallenge());
-        newUser.setSleep_schedule(user.getSleep_schedule());
-        newUser.setIdentity(user.getIdentity());
-        newUser.setExercise(user.getExercise());
-        userRepository.save(newUser);
-        return Result.success(newUser);
+    @CacheEvict(value = "user", key = "#email")
+    public Result<User> updateUserByEmail(User user, String email) {//更新用户信息 传入用户信息和用户邮箱
+        User oldUser = userRepository.findUserByEmail(email);
+        if(user.getUsername() != null) {
+            oldUser.setUsername(user.getUsername());
+        }
+        if(user.getChallenge() != null) {
+            oldUser.setChallenge(user.getChallenge());
+        }
+        if(user.getSleep_schedule() != null) {
+            oldUser.setSleep_schedule(user.getSleep_schedule());
+        }
+        if(user.getIdentity() != null) {
+            oldUser.setIdentity(user.getIdentity());
+        }
+        if(user.getExercise() != null) {
+            oldUser.setExercise(user.getExercise());
+        }
+        userRepository.save(oldUser);
+        return Result.success(oldUser);
     }
 }

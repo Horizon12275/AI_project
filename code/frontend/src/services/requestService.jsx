@@ -97,7 +97,5 @@ export async function put(url, data) {
   return await res.json().then(handleResponse);
 }
 
-export const WSURL = Config.WSURL;
 export const BASEURL = Config.BASEURL;
-export const USERPORT = Config.USERPORT;
-export const EVENTPORT = Config.EVENTPORT;
+export const AIURL = Config.AIURL;

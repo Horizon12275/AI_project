@@ -3,6 +3,7 @@ package org.example.client;
 import org.example.entity.Event;
 import org.example.entity.Result;
 import org.example.entity.Subtask;
+import org.example.entity.Summary;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,9 @@ public interface EventClient {
     @PostMapping("/api/event/add")
     public Result<Event> addEvent(@RequestBody Event event, @RequestParam("uid") int uid);
     @GetMapping("/api/event/summary")
-    public Result<List<Object>> summary(@RequestParam("start") LocalDate start, @RequestParam("end") LocalDate end, @RequestParam("uid") int uid);
+    public Result<Summary> summary(@RequestParam("start") LocalDate start, @RequestParam("end") LocalDate end, @RequestParam("uid") int uid);
+    @DeleteMapping("/api/event/delete/{id}")
+    Result<String> deleteEvent(@PathVariable("id") int id, @RequestParam("uid") int uid);
     //Subtask
     @PutMapping("/api/subtask/changeDone/{id}")
     public Result<Subtask> changeDone(@PathVariable("id") int id, @RequestParam("uid") int uid);//传入当前登录用户的uid 用于权限验证 下类似
@@ -32,4 +35,5 @@ public interface EventClient {
     Result<Event> updateEvent(@PathVariable("id")int id, @RequestBody Event event, @RequestParam("uid") int uid);
     @PostMapping("/api/event/pushAll")
     Result<List<Event>> pushAll(@RequestBody List<Event> events, @RequestParam("uid") int uid);
+
 }

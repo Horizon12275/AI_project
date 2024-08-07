@@ -1,19 +1,21 @@
 server:
   port: ${USER_SERVICE_PORT}
   tomcat:
-    accept-count: 1000 # 服务端等待队列长度
+    accept-count: 500 # 服务端等待队列长度
     threads:
-      max: 1000
+      max: 400
+      min-spare: 50
+    max-connections: 5000
 
 spring:
   datasource:
-    url: ${DB1_URL}
-    username: ${DB1_USERNAME}
-    password: ${DB1_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 1000
-      minimum-idle: 100
+      maximum-pool-size: 100
+      minimum-idle: 10
   jpa:
     show-sql: false
     hibernate:
@@ -24,3 +26,30 @@ spring:
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR}
+        ip: ${NACOS_IP}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+#增加开启springboot actuator监控的配置
+management:
+  endpoint:
+    shutdown:
+      enabled: true # 开启端点
+    health:
+      show-details: always # 是否展示健康检查详情
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
+          - health
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+
+

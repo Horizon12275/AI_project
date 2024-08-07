@@ -12,6 +12,6 @@ ADD ./code/backend/load-balance/target/load-balance-0.0.1-SNAPSHOT.jar /app/
 ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV LOAD_BALANCE_PORT=${LOAD_BALANCE_PORT} 
 # 指定docker容器启动时运行jar包
-ENTRYPOINT ["java", "-jar","load-balance-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-Xms512m", "-Xmx512m", "-jar","load-balance-0.0.1-SNAPSHOT.jar"]
 # 指定维护者的名字
 MAINTAINER horizon22

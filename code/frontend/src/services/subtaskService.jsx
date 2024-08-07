@@ -1,5 +1,5 @@
-import {BASEURL, Delete, USERPORT, get, post, put} from './requestService';
-const PREFIX = `${BASEURL}:${USERPORT}/api/subtask`;
+import {BASEURL, Delete, post, put} from './requestService';
+const PREFIX = `${BASEURL}/api/subtask`;
 
 //修改子任务完成状态 sid是子任务的id
 export const changeSubtaskDone = async sid => {

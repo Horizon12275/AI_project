@@ -2,6 +2,10 @@ server:
   port: ${LOAD_BALANCE_PORT}
   tomcat:
     accept-count: 1000 # 服务端等待队列长度
+    threads:
+      max: 800
+      min-spare: 100
+    max-connections: 10000
 
 spring:
   application:
@@ -10,3 +14,21 @@ spring:
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR}
+        ip: ${NACOS_IP}
+
+#增加开启springboot actuator监控的配置
+management:
+  endpoint:
+    shutdown:
+      enabled: true # 开启端点
+    health:
+      show-details: always # 是否展示健康检查详情
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
+          - health
+  metrics:
+    tags:
+      application: ${spring.application.name}

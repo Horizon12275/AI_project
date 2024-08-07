@@ -49,7 +49,7 @@ class UserControllerTest {
         user.setId(1);
         user.setEmail("test@example.com");
 
-        when(service.getUserByUsername("test@example.com")).thenReturn(Result.success(user));
+        when(service.getUserByEmail("test@example.com")).thenReturn(Result.success(user));
 
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
@@ -102,7 +102,7 @@ class UserControllerTest {
         updatedUser.setExercise(4);
         updatedUser.setEmail("test@example.com");
 
-        when(service.portrait(any(User.class))).thenReturn(Result.success(updatedUser));
+        when(service.updateUser(any(User.class))).thenReturn(Result.success(updatedUser));
 
         mockMvc.perform(post("/api/user/portrait")
                         .contentType("application/json")
