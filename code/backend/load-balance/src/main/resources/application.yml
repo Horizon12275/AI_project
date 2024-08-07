@@ -8,6 +8,9 @@ server:
     max-connections: 10000
 
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   application:
     name: load-balance
   cloud: # 服务注册
@@ -32,3 +35,6 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+springdoc:
+  swagger-ui:
+    path: /api-docs
