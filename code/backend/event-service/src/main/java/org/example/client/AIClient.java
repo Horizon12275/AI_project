@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(url = "http://127.0.0.1:8000", name = "ai-service")
+@FeignClient(name = "ai-service")
 public interface AIClient {
     @PostMapping("/generate_summary")
     String generateSummary(@RequestBody List<EventDetails> eventDetails);

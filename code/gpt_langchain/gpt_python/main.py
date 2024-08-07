@@ -1,5 +1,4 @@
 import time
-import nacos
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -12,23 +11,27 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.chat_models import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
+from typing import List
 import os
 import openai
 import pandas as pd
 
+
 app = FastAPI()
+
+# register nacos
 
 SERVER_ADDRESSES = "192.168.0.226:8848"
 NAMESPACE = "public"
 
-client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE)
-client.add_naming_instance(
-    service_name="AI-service",
-    ip="192.168.0.106",
-    port="8000",
-    cluster_name="DEFAULT",
-    heartbeat_interval=5,
-)
+# client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE)
+# client.add_naming_instance(
+#     service_name="AI-service",
+#     ip="192.168.0.106",
+#     port="8000",
+#     cluster_name="DEFAULT",
+#     heartbeat_interval=5,
+# )
 
 # Set OpenAI API key and base URL
 
@@ -277,8 +280,6 @@ llm_handler = OpenAIHandler(
 
 
 # Define FastAPI route
-
-
 @app.post("/generate_summary", response_model=str)
 async def generate_summary(event_datas: list[EventData]):
     # if len(event_data.titles) != len(event_data.categories) or len(event_data.categories) != len(event_data.details):
@@ -332,7 +333,7 @@ texts = [doc.page_content for doc in documents]
 vector_store = FAISS.from_texts(texts, embedding_model)
 
 # 创建 OpenAI LLM
-llm = ChatOpenAI(api_key=api_key, model_name="gpt-3.5-turbo")
+llm2 = ChatOpenAI(api_key=api_key, model_name="gpt-3.5-turbo")
 
 # 自定义提示模板
 prompt = PromptTemplate(
@@ -367,7 +368,7 @@ def format_docs(docs):
 rag_chain = (
     {"context": retriever | format_docs, "question": RunnablePassthrough()}
     | prompt
-    | llm
+    | llm2
     | StrOutputParser()
 )
 
