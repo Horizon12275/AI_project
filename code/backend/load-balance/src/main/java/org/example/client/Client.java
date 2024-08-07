@@ -33,7 +33,7 @@ public interface Client {
     @PostMapping("/api/event/update/{id}")
     Result<Event> updateEvent(@PathVariable("id")int id, @RequestBody Event event);
     @GetMapping("/api/event/summary")
-    public Result<List<Object>> summary(@RequestParam("start") LocalDate start, @RequestParam("end") LocalDate end);
+    public Result<Summary> summary(@RequestParam("start") LocalDate start, @RequestParam("end") LocalDate end);
     @PostMapping("/api/event/pushAll")
     Result<List<Event>> pushAll(@RequestBody List<Event> events);
     //Subtask

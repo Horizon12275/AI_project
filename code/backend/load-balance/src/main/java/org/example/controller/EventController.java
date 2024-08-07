@@ -5,6 +5,7 @@ import org.example.client.Client;
 import org.example.entity.Event;
 import org.example.entity.EventDetails;
 import org.example.entity.Result;
+import org.example.entity.Summary;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -41,7 +42,7 @@ public class EventController {
         return client.updateEvent(id, event);
     }
     @GetMapping("/summary")
-    public Result<List<Object>> summary(@RequestParam LocalDate start,@RequestParam LocalDate end) {
+    public Result<Summary> summary(@RequestParam LocalDate start, @RequestParam LocalDate end) {
         return client.summary(start,end);
     }
     @PostMapping("/pushAll")

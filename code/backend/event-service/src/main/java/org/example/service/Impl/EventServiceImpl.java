@@ -107,7 +107,7 @@ public class EventServiceImpl implements EventService {
         }
 
         Summary summary = new Summary(percentages, eventDetails.isEmpty() ? "No events during this period" : aiClient.generateSummary(eventDetails));
-        System.out.println(summary);
+        
         return Result.success(summary);
     }
     @Override
