@@ -98,3 +98,4 @@ export async function put(url, data) {
 }
 
 export const BASEURL = Config.BASEURL;
+export const AIURL = Config.AIURL;

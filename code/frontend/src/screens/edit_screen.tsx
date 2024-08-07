@@ -38,6 +38,7 @@ const InputField = ({
     <Text style={styles.inputLabel}>{label}</Text>
     <Form.Item {...props}>
       <Input
+        multiline={true}
         style={[styles.input, inputStyle]}
         accessibilityLabel={label}
         placeholder={placeholder}
@@ -57,12 +58,6 @@ const EditScreen = ({
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
-  // const [category, setCategory] = useState(event.category);
-  // const [priority, setPriority] = useState(event.priority);
-  // const [startTime, setStartTime] = useState<null | Date>(null);
-  // const [endTime, setEndTime] = useState<null | Date>(null);
-  // const [ddlDate, setDdlDate] = useState(fromDate(event.ddl));
-  // const [subtasks, setSubtasks] = useState(event.subtasks || []);
   const [event, setEvent] = useState<any>({
     details: route.params.event.details,
     title: route.params.event.title,
@@ -71,8 +66,12 @@ const EditScreen = ({
     ddlDate: fromDate(route.params.event.ddl),
     category: route.params.event.category,
     priority: route.params.event.priority,
-    startTime: fromTime(route.params.event.startTime) || null,
-    endTime: fromTime(route.params.event.endTime) || null,
+    startTime: route.params.event.startTime
+      ? fromTime(route.params.event.startTime)
+      : null,
+    endTime: route.params.event.endTime
+      ? fromTime(route.params.event.endTime)
+      : null,
   });
   const [subtask, setSubtask] = useState({content: '', ddl: new Date()});
   const [subtaskCalendar, setSubtaskCalendar] = useState(false);
@@ -467,14 +466,14 @@ const styles = StyleSheet.create({
     borderColor: '#D6D6D6',
     borderWidth: 1,
     paddingHorizontal: 10,
-    height: 50,
+    minHeight: 50,
   },
   textInput: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     marginTop: 5,
-    height: 200, // 自定义文本输入框高度
+    minHeight: 200, // 自定义文本输入框高度
   },
   timeZoneIcon: {
     height: 40,

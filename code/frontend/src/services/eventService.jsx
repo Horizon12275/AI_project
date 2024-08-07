@@ -16,9 +16,16 @@ export const getEventNums = async (year, month) => {
   result = await get(url);
   return result;
 };
+//为当前登录用户添加事件 body是json格式 使用ai生成
+export async function addEventOnline(event) {
+  const url = `${PREFIX}/add_online`;
+  let result;
+  result = await post(url, event);
+  return result;
+}
 //为当前登录用户添加事件 body是json格式
 export async function addEvent(event) {
-  const url = `${PREFIX}/add_online`;
+  const url = `${PREFIX}/add`;
   let result;
   result = await post(url, event);
   return result;
@@ -27,7 +34,7 @@ export async function addEvent(event) {
 export async function getSummary(startDate, endDate) {
   const url = `${PREFIX}/summary?start=${startDate}&end=${endDate}`;
   let result;
-
+  console.log(url);
   result = await get(url);
   return result;
 }

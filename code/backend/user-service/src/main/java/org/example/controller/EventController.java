@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import org.example.entity.Event;
 import org.example.entity.EventDetails;
 import org.example.entity.Result;
+import org.example.entity.Summary;
 import org.example.service.EventService;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,10 @@ public class EventController {
 
         return service.addEventOnline(event,eventDetails);
     }
+    @PostMapping("/add")
+    public Result<Event> addEvent(@RequestBody Event event) {
+        return service.addEvent(event);
+    }
     @DeleteMapping("/delete/{id}")
     public Result<String> deleteEvent(@PathVariable int id) {
         return service.deleteEvent(id);
@@ -44,7 +49,7 @@ public class EventController {
         return service.updateEvent(id, event);
     }
     @GetMapping("/summary")
-    public Result<List<Object>> summary(@RequestParam LocalDate start,@RequestParam LocalDate end) {
+    public Result<Summary> summary(@RequestParam LocalDate start, @RequestParam LocalDate end) {
         return service.summary(start,end);
     }
     @PostMapping("/pushAll")

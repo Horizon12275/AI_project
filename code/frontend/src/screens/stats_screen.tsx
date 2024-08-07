@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
-  Image,
   Text,
   ScrollView,
   TouchableOpacity,
@@ -12,7 +11,6 @@ import {
   TextInput,
 } from 'react-native';
 import PieGraph from '../components/pie_graph';
-import SummaryBox from '../components/summary_box';
 import MyButton from '../utils/my_button';
 import Calendar from '../components/calendar';
 import {getSummary} from '../services/eventService';
@@ -21,14 +19,15 @@ import {categoryOptions} from '../utils/offline';
 import {getObject} from '../services/offlineService';
 import Loading from '../components/loading';
 
-const summaryData = 'You have been spending most of your time eating!';
-
 const StatsScreen = () => {
   const [data, setData] = useState([{x: 'Example', y: 100}]);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [summaryText, setSummaryText] = useState(
+    "Click the button to get your summary!",
+  );
 
   const handleSummary = () => {
     getObject('mode').then(mode => {
@@ -41,11 +40,13 @@ const StatsScreen = () => {
         }
         setLoading(true);
         getSummary(toDate(startDate), toDate(endDate))
-          .then(res => {
+          .then(({percentages, ai_summary}) => {
+            ai_summary = ai_summary.replace(/\"/g, '').replace(/\\n/g, '\n');
+            setSummaryText(ai_summary);
             setLoading(false);
-            if (res.length === 0)
-              Alert.alert('No data found for the selected date range');
-            let data = res.map(item => {
+            if (percentages.length === 0)
+              Alert.alert('No Visualizations found for the selected date range');
+            let data = percentages.map(item => {
               return {
                 x: categoryOptions.find(cat => cat.value === item.category)
                   ?.label,
@@ -55,7 +56,8 @@ const StatsScreen = () => {
             if (data.length > 0) setData(data);
           })
           .catch(err => {
-            console.log(err);
+            setLoading(false);
+            Alert.alert('Error', err);
           });
       }
     });
@@ -107,11 +109,7 @@ const StatsScreen = () => {
       <TouchableOpacity style={styles.summaryButton} onPress={handleSummary}>
         <Text style={styles.summaryButtonText}>Get your Summary</Text>
       </TouchableOpacity>
-      <TextInput
-        style={styles.summaryText}
-        value={summaryData}
-        editable={false}
-      />
+      <Text style={styles.summaryText}>{summaryText}</Text>
     </ScrollView>
   );
 };
@@ -169,13 +167,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   summaryText: {
-    marginTop: 20,
+    marginVertical: 20,
     borderRadius: 10,
     borderColor: '#D6D6D6',
+    color: '#010618',
     borderWidth: 1,
-    paddingHorizontal: 10,
+    padding: 10,
     width: '100%',
-    height: 200,
+    minHeight: 200,
   },
   modalView: {
     height: '100%',

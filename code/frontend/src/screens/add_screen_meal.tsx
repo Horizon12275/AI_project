@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  TextInput,
   ScrollView,
   Modal,
   Alert,
@@ -19,10 +18,10 @@ import SelectModal from '../components/select_modal';
 import {Form, Input} from '@ant-design/react-native';
 import Loading from '../components/loading';
 import {formatDate, toDate, toTime} from '../utils/date';
-import {generateId, getObject, storeObject} from '../services/offlineService';
+import {getObject, storeObject} from '../services/offlineService';
 import Switch from '../components/switch';
-import Subtasks from '../components/subtasks';
-import Reminder from '../components/reminder';
+
+import {addEvent} from '../services/eventService';
 
 const InputField = ({
   label,
@@ -39,6 +38,7 @@ const InputField = ({
     <Text style={styles.inputLabel}>{label}</Text>
     <Form.Item {...props}>
       <Input
+        multiline={true}
         style={[styles.input, inputStyle]}
         accessibilityLabel={label}
         placeholder={placeholder}
@@ -47,7 +47,8 @@ const InputField = ({
   </View>
 );
 
-const AddMealScreen = () => {
+const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
+  const data = route.params.data;
   const [loading, setLoading] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
@@ -56,9 +57,10 @@ const AddMealScreen = () => {
     subtasks: [],
     reminders: [],
     ddl: new Date(),
-    category: 1,
+    category: 6,
     startTime: null,
     endTime: null,
+    priority: 1,
   });
   const [subtask, setSubtask] = useState({
     content: '',
@@ -69,7 +71,19 @@ const AddMealScreen = () => {
   const [tab, setTab] = useState('Subtasks');
   const [form] = Form.useForm();
 
-  useEffect(() => {}, [event]);
+  useEffect(() => {
+    form.setFieldsValue({
+      title: data.restaurant_name,
+      location: data.location,
+    });
+    let reminders = data.recommended_dishes.split(',').map((dish: string) => {
+      return {content: dish, saved: false};
+    });
+    let subtasks = data.business_hours.split(',').map((hour: string) => {
+      return {content: hour, saved: false, ddl: new Date()};
+    });
+    setEvent({...event, reminders: reminders, subtasks: subtasks});
+  }, []);
 
   const onSubmit = () => {
     form.submit();
@@ -77,38 +91,31 @@ const AddMealScreen = () => {
   const handleSave = (newEvent: any) => {
     if (event.startTime) newEvent.startTime = toTime(event.startTime);
     if (event.endTime) newEvent.endTime = toTime(event.endTime);
+    newEvent.details = `Eat at ${data.restaurant_name} in ${data.location}`;
     newEvent.ddl = toDate(event.ddl);
     newEvent.category = event.category;
     newEvent.priority = event.priority;
-    newEvent.subtasks = event.subtasks;
-    newEvent.id = generateId();
-    //离线存储
-    Promise.all([getObject('events'), getObject('events_unpushed')]).then(
-      ([events, events_unpushed]) => {
-        if (events_unpushed) {
-          events_unpushed.push(newEvent);
-          storeObject('events_unpushed', events_unpushed);
-        } else {
-          storeObject('events_unpushed', [newEvent]);
-        }
-        if (events) {
-          events.push(newEvent);
-          storeObject('events', events);
-        } else {
-          storeObject('events', [newEvent]);
-        }
-        Alert.alert('Success', 'Event saved successfully');
-        form.resetFields();
-        setEvent({
-          subtasks: [],
-          ddl: new Date(),
-          category: 1,
-          priority: 1,
-          startTime: null,
-          endTime: null,
-        });
-      },
-    );
+    //newEvent.subtasks = event.subtasks;
+    newEvent.reminders = event.reminders;
+    console.log(newEvent);
+    getObject('mode').then(mode => {
+      if (mode === 'offline') {
+        Alert.alert('You are offline, please connect to the internet');
+      } else {
+        addEvent(newEvent)
+          .then(event => {
+            //本地存储 保持数据一致性
+            getObject('events').then(events => {
+              events.push(event);
+              storeObject('events', events);
+            });
+            setLoading(false);
+            form.resetFields();
+            Alert.alert('Success', 'Event added successfully');
+          })
+          .catch(e => Alert.alert('Error', e));
+      }
+    });
   };
   const handleAddSubtask = () => {
     if (!subtask.content) {
@@ -184,9 +191,11 @@ const AddMealScreen = () => {
             {tab === 'Subtasks'
               ? event.subtasks.map((subtask, index) => (
                   <View
+                    key={index}
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
+                      marginTop: 10,
                     }}>
                     <View style={styles.taskItemContainer}>
                       <MyButton
@@ -208,9 +217,11 @@ const AddMealScreen = () => {
                 ))
               : event.reminders.map((reminder, index) => (
                   <View
+                    key={index}
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
+                      marginTop: 10,
                     }}>
                     <View style={styles.taskItemContainer}>
                       <MyButton
@@ -226,14 +237,6 @@ const AddMealScreen = () => {
                     </View>
                   </View>
                 ))}
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Subtasks</Text>
-              <Input
-                style={[styles.input]}
-                value={subtask.content}
-                onChangeText={text => setSubtask({...subtask, content: text})}
-              />
-            </View>
             <View
               style={{
                 display: 'flex',
@@ -435,6 +438,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     gap: 5,
+    marginBottom: 15,
   },
   inputLabel: {
     fontFamily: 'Nunito, sans-serif',
@@ -447,14 +451,14 @@ const styles = StyleSheet.create({
     borderColor: '#D6D6D6',
     borderWidth: 1,
     paddingHorizontal: 10,
-    height: 50,
+    minHeight: 50,
   },
   textInput: {
     borderRadius: 10,
     borderColor: '#D6D6D6',
     borderWidth: 1,
     marginTop: 5,
-    height: 200, // 自定义文本输入框高度
+    minHeight: 200, // 自定义文本输入框高度
   },
   timeZoneIcon: {
     height: 40,

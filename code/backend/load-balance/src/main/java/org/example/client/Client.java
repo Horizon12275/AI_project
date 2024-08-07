@@ -28,12 +28,14 @@ public interface Client {
     public Result<List<Event>> getEvents(@RequestParam("date") LocalDate date);
     @PostMapping("/api/event/add_online")
     Result<Event> addEventOnline(@RequestBody JSONObject jsonObject);
+    @PostMapping("/api/event/add")
+    Result<Event> addEvent(Event event);
     @DeleteMapping("/api/event/delete/{id}")
     public Result<String> deleteEvent(@PathVariable("id") int id);
     @PostMapping("/api/event/update/{id}")
     Result<Event> updateEvent(@PathVariable("id")int id, @RequestBody Event event);
     @GetMapping("/api/event/summary")
-    public Result<List<Object>> summary(@RequestParam("start") LocalDate start, @RequestParam("end") LocalDate end);
+    public Result<Summary> summary(@RequestParam("start") LocalDate start, @RequestParam("end") LocalDate end);
     @PostMapping("/api/event/pushAll")
     Result<List<Event>> pushAll(@RequestBody List<Event> events);
     //Subtask
@@ -43,5 +45,6 @@ public interface Client {
     public Result<String> deleteSubtask(@PathVariable("id") int id);
     @PostMapping("/api/subtask/add/{eid}")
     public Result<Subtask> addSubtask(@PathVariable("eid") int eid, @RequestParam("content") String content, @RequestParam("deadline") LocalDate deadline);
+
 
 }
