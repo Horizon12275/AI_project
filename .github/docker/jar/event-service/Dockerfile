@@ -22,6 +22,6 @@ ENV JAVA_OPTS="-javaagent:/app/elastic-apm-agent-1.51.1.jar \
               -Delastic.apm.application_packages=org.example \
               -Xms128m -Xmx128m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=64m"
 # 指定docker容器启动时运行jar包
-ENTRYPOINT ["java", ${JAVA_OPTS}, "-jar", "event-service-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT exec java ${JAVA_OPTS} -jar event-service-0.0.1-SNAPSHOT.jar
 # 指定维护者的名字
 MAINTAINER horizon22
