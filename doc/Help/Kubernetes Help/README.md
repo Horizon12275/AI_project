@@ -243,7 +243,9 @@ kubectl logs user-service-deployment-6b94bf89c6-9dxzk -c user-service -n user-se
 
 kubectl logs event-service-deployment-6b94bf89c6-9dxzk -c event-service -n event-service
 
-kubectl logs load-balance-deployment-85dbffd58f-69kvl -c load-balance -n load-balance
+kubectl logs load-balance-deployment-85dbffd58f-dnbz9  -c load-balance -n load-balance
+
+kubectl describe pod load-balance-deployment-85dbffd58f-dnbz9 -n load-balance
 
 docker run -d \
   --name apm-server \
