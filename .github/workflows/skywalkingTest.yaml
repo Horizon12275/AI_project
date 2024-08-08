@@ -69,43 +69,43 @@ jobs:
           file: ./.github/docker/jar/event-service/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/event-service-with-skywalking:latest
-      # push后，用ssh连接服务器执行脚本
-      - name: SSH-8G
-        uses: fifsky/ssh-action@master
-        with:
-          command: |
-            cd ./scripts
-            sh load-balance-with-secrets.sh
-            sh user-service-with-secrets.sh
-            sh event-service-with-secrets.sh
-          host: ${{ secrets.HOST_2 }}
-          user: ${{ secrets.USER }}
-          key: ${{ secrets.PRIVATE_KEY_2}}
-          # 添加args参数，可以看到更多的报错信息
-          args: "-tt -vvv"
-      # push后，用ssh连接服务器执行 脚本
-      - name: SSH-16G
-        uses: fifsky/ssh-action@master
-        with:
-          command: |
-            cd ./scripts
-            sh user-service-with-secrets.sh
-            sh event-service-with-secrets.sh
-          host: ${{ secrets.HOST_1 }}
-          user: ${{ secrets.USER }}
-          key: ${{ secrets.PRIVATE_KEY_1}}
-          # 添加args参数，可以看到更多的报错信息
-          args: "-tt -vvv"
-      # push后，用ssh连接服务器执行脚本
-      - name: SSH-8G-IO
-        uses: fifsky/ssh-action@master
-        with:
-          command: |
-            cd ./scripts
-            sh user-service-with-secrets.sh
-            sh event-service-with-secrets.sh
-          host: ${{ secrets.HOST_3 }}
-          user: ${{ secrets.USER }}
-          key: ${{ secrets.PRIVATE_KEY_3}}
-          # 添加args参数，可以看到更多的报错信息
-          args: "-tt -vvv"
+      # # push后，用ssh连接服务器执行脚本
+      # - name: SSH-8G
+      #   uses: fifsky/ssh-action@master
+      #   with:
+      #     command: |
+      #       cd ./scripts
+      #       sh load-balance-with-secrets.sh
+      #       sh user-service-with-secrets.sh
+      #       sh event-service-with-secrets.sh
+      #     host: ${{ secrets.HOST_2 }}
+      #     user: ${{ secrets.USER }}
+      #     key: ${{ secrets.PRIVATE_KEY_2}}
+      #     # 添加args参数，可以看到更多的报错信息
+      #     args: "-tt -vvv"
+      # # push后，用ssh连接服务器执行 脚本
+      # - name: SSH-16G
+      #   uses: fifsky/ssh-action@master
+      #   with:
+      #     command: |
+      #       cd ./scripts
+      #       sh user-service-with-secrets.sh
+      #       sh event-service-with-secrets.sh
+      #     host: ${{ secrets.HOST_1 }}
+      #     user: ${{ secrets.USER }}
+      #     key: ${{ secrets.PRIVATE_KEY_1}}
+      #     # 添加args参数，可以看到更多的报错信息
+      #     args: "-tt -vvv"
+      # # push后，用ssh连接服务器执行脚本
+      # - name: SSH-8G-IO
+      #   uses: fifsky/ssh-action@master
+      #   with:
+      #     command: |
+      #       cd ./scripts
+      #       sh user-service-with-secrets.sh
+      #       sh event-service-with-secrets.sh
+      #     host: ${{ secrets.HOST_3 }}
+      #     user: ${{ secrets.USER }}
+      #     key: ${{ secrets.PRIVATE_KEY_3}}
+      #     # 添加args参数，可以看到更多的报错信息
+      #     args: "-tt -vvv"

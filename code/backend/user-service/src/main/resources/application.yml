@@ -26,7 +26,7 @@ spring:
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR}
-        ip: ${NACOS_IP}
+#        ip: ${NACOS_IP}
 
   data:
     redis:

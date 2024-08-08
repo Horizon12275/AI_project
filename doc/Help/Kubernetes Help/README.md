@@ -223,8 +223,22 @@ watch kubectl get all -o wide -n kubernetes-dashboard
 
 watch kubectl get all -o wide -n kube-system
 
+watch kubectl get all -o wide -n user-service
+
+watch kubectl get all -o wide -n event-service
+
+watch kubectl get all -o wide -n load-balance
+
 kubectl taint nodes ecs-c9ec node-role.kubernetes.io/master-
 
 kubectl get pods --all-namespaces -o wide
+
+kubectl -n kubernetes-dashboard create token admin-user
+
+kubectl apply -f k8s_yml/
+
+kubectl delete -f k8s_yml/
+
+kubectl logs user-service-deployment-1-8456784d95-7lhwf -c user-service -n user-service
 
 ```
