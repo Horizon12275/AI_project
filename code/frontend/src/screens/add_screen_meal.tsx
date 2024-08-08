@@ -80,7 +80,7 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
       return {content: dish, saved: false};
     });
     let subtasks = data.business_hours.split(',').map((hour: string) => {
-      return {content: hour, saved: false, ddl: new Date()};
+      return {content: `Business Hours:${hour}`, saved: false, ddl: new Date()};
     });
     setEvent({...event, reminders: reminders, subtasks: subtasks});
   }, []);
@@ -95,7 +95,7 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
     newEvent.ddl = toDate(event.ddl);
     newEvent.category = event.category;
     newEvent.priority = event.priority;
-    //newEvent.subtasks = event.subtasks;
+    newEvent.subtasks = event.subtasks;
     newEvent.reminders = event.reminders;
     console.log(newEvent);
     getObject('mode').then(mode => {
