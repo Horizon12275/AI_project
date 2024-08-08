@@ -1,1 +1,1 @@
-To store Dockerfile for each service
+To store Dockerfile for each ser vice
