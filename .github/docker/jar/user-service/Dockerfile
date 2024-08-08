@@ -15,6 +15,6 @@ ENV DB1_PASSWORD=${DB1_PASSWORD}
 ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV USER_SERVICE_PORT=${USER_SERVICE_PORT}
 # 指定docker容器启动时运行jar包
-ENTRYPOINT ["java","-Xms512m", "-Xmx512m", "-jar","user-service-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-Xms128m", "-Xmx128m", "-jar","user-service-0.0.1-SNAPSHOT.jar"]
 # 指定维护者的名字
 MAINTAINER horizon22
