@@ -245,4 +245,12 @@ kubectl logs event-service-deployment-6b94bf89c6-9dxzk -c event-service -n event
 
 kubectl logs load-balance-deployment-85dbffd58f-69kvl -c load-balance -n load-balance
 
+docker run -d \
+  --name apm-server \
+  -v /root/elk/apm-server.docker.yml:/usr/share/apm-server/apm-server.yml \
+  -p 8200:8200 \
+  elastic/apm-server:7.5.1
+
+
+
 ```
