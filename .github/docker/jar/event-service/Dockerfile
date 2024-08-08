@@ -16,12 +16,12 @@ ENV DB2_PASSWORD=${DB2_PASSWORD}
 ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV EVENT_SERVICE_PORT=${EVENT_SERVICE_PORT}
 ENV USER_SERVER_IP=${USER_SERVER_IP}
+ENV JAVA_OPTS="-javaagent:/app/elastic-apm-agent-1.51.1.jar \
+              -Delastic.apm.service_name=event-service \
+              -Delastic.apm.server_urls=http://192.168.0.226:8200 \
+              -Delastic.apm.application_packages=org.example \
+              -Xms128m -Xmx128m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=64m"
 # 指定docker容器启动时运行jar包
-ENTRYPOINT ["java", "-Xms128m", "-Xmx128m","-XX:MetaspaceSize=64m","-XX:MaxMetaspaceSize=64m",
-            "-javaagent:/app/elastic-apm-agent-1.51.1.jar",
-            "-Delastic.apm.service_name=event-service",
-            "-Delastic.apm.server_urls=http://192.168.0.226:8200",
-            "-Delastic.apm.application_packages=org.example",
-            "-jar","event-service-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", ${JAVA_OPTS}, "-jar", "event-service-0.0.1-SNAPSHOT.jar"]
 # 指定维护者的名字
 MAINTAINER horizon22

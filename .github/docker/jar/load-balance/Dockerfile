@@ -12,12 +12,12 @@ ADD ./.github/elastic-apm-agent-1.51.1.jar /app/
 # 设置环境变量
 ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV LOAD_BALANCE_PORT=${LOAD_BALANCE_PORT} 
+ENV JAVA_OPTS="-javaagent:/app/elastic-apm-agent-1.51.1.jar \
+              -Delastic.apm.service_name=load-balance \
+              -Delastic.apm.server_urls=http://192.168.0.226:8200 \
+              -Delastic.apm.application_packages=org.example \
+              -Xms128m -Xmx128m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=64m"
 # 指定docker容器启动时运行jar包
-ENTRYPOINT ["java", "-Xms128m", "-Xmx128m","-XX:MetaspaceSize=64m","-XX:MaxMetaspaceSize=64m",
-            "-javaagent:/app/elastic-apm-agent-1.51.1.jar",
-            "-Delastic.apm.service_name=load-balance",
-            "-Delastic.apm.server_urls=http://192.168.0.226:8200",
-            "-Delastic.apm.application_packages=org.example",
-            "-jar","load-balance-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", ${JAVA_OPTS}, "-jar", "load-balance-0.0.1-SNAPSHOT.jar"]
 # 指定维护者的名字
 MAINTAINER horizon22
