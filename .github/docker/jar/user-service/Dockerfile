@@ -8,18 +8,18 @@ RUN rm -f /etc/localtime \
 WORKDIR /app
 # 将当前目录下的jar包复制到docker容器的/目录下
 ADD ./code/backend/user-service/target/user-service-0.0.1-SNAPSHOT.jar /app/
-ADD ./.github/elastic-apm-agent-1.51.1.jar /app/
+ADD ./.github/elastic-apm-agent-1.33.0.jar /app/
 # 设置环境变量
 ENV DB1_URL=${DB1_URL}
 ENV DB1_USERNAME=${DB1_USERNAME}
 ENV DB1_PASSWORD=${DB1_PASSWORD}
 ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV USER_SERVICE_PORT=${USER_SERVICE_PORT}
-ENV JAVA_OPTS="-javaagent:/app/elastic-apm-agent-1.51.1.jar \
+ENV JAVA_OPTS="-javaagent:/app/elastic-apm-agent-1.33.0.jar \
               -Delastic.apm.service_name=user-service \
               -Delastic.apm.server_urls=http://192.168.0.226:8200 \
               -Delastic.apm.application_packages=org.example \
-              -Xms128m -Xmx128m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=64m"
+              -Xms256m -Xmx256m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=128m"
 # 指定docker容器启动时运行jar包
 ENTRYPOINT exec java ${JAVA_OPTS} -jar user-service-0.0.1-SNAPSHOT.jar
 # 指定维护者的名字
