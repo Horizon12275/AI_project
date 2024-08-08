@@ -239,6 +239,10 @@ kubectl apply -f k8s_yml/
 
 kubectl delete -f k8s_yml/
 
-kubectl logs user-service-deployment-1-8456784d95-7lhwf -c user-service -n user-service
+kubectl logs user-service-deployment-6b94bf89c6-9dxzk -c user-service -n user-service
+
+kubectl logs event-service-deployment-6b94bf89c6-9dxzk -c event-service -n event-service
+
+kubectl logs load-balance-deployment-85dbffd58f-69kvl -c load-balance -n load-balance
 
 ```
