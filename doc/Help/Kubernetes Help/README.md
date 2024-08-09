@@ -130,14 +130,14 @@ systemctl enable kubelet --now
 
 sudo systemctl restart containerd
 
+
 sudo kubeadm init \
 --apiserver-advertise-address=192.168.0.226 \
 --image-repository=registry.aliyuncs.com/google_containers \
 --kubernetes-version=v1.28.7 \
---service-cidr=10.96.0.0/12 \
 --pod-network-cidr=10.244.0.0/16 \
+--service-cidr=10.96.0.0/12 \
 --cri-socket=unix:///run/containerd/containerd.sock
-
 ```
 
 本机执行
