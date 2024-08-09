@@ -8,15 +8,14 @@ RUN rm -f /etc/localtime \
 WORKDIR /app
 # 将当前目录下的jar包复制到docker容器的/目录下
 ADD ./code/backend/load-balance/target/load-balance-0.0.1-SNAPSHOT.jar /app/
-ADD ./.github/elastic-apm-agent-1.33.0.jar /app/
 # 设置环境变量
 ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV LOAD_BALANCE_PORT=${LOAD_BALANCE_PORT} 
-ENV JAVA_OPTS="-javaagent:/app/elastic-apm-agent-1.33.0.jar \
-              -Delastic.apm.service_name=load-balance \
-              -Delastic.apm.server_urls=http://192.168.0.226:8200 \
-              -Delastic.apm.application_packages=org.example \
-              -Xms256m -Xmx256m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=128m"
+ENV TOMCAT_ACCEPT_COUNT=${TOMCAT_ACCEPT_COUNT}
+ENV TOMCAT_MAX_THREAD=${TOMCAT_MAX_THREAD}
+ENV TOMCAT_MIN_THREAD=${TOMCAT_MIN_THREAD}
+ENV TOMCAT_MAX_CONNECTIONS=${TOMCAT_MAX_CONNECTIONS}
+ENV JAVA_OPTS="-Xms256m -Xmx256m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=128m"
 # 指定docker容器启动时运行jar包
 ENTRYPOINT exec java ${JAVA_OPTS} -jar load-balance-0.0.1-SNAPSHOT.jar
 # 指定维护者的名字

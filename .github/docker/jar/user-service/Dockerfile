@@ -15,11 +15,13 @@ ENV DB1_USERNAME=${DB1_USERNAME}
 ENV DB1_PASSWORD=${DB1_PASSWORD}
 ENV NACOS_SERVER_ADDR=${NACOS_SERVER_ADDR}
 ENV USER_SERVICE_PORT=${USER_SERVICE_PORT}
-ENV JAVA_OPTS="-javaagent:/app/elastic-apm-agent-1.33.0.jar \
-              -Delastic.apm.service_name=user-service \
-              -Delastic.apm.server_urls=http://192.168.0.226:8200 \
-              -Delastic.apm.application_packages=org.example \
-              -Xms256m -Xmx256m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=128m"
+ENV TOMCAT_ACCEPT_COUNT=${TOMCAT_ACCEPT_COUNT}
+ENV TOMCAT_MAX_THREAD=${TOMCAT_MAX_THREAD}
+ENV TOMCAT_MIN_THREAD=${TOMCAT_MIN_THREAD}
+ENV TOMCAT_MAX_CONNECTIONS=${TOMCAT_MAX_CONNECTIONS}
+ENV HIKARI_MAX_POOL_SIZE=${HIKARI_MAX_POOL_SIZE}
+ENV HIKARI_MIN_IDLE=${HIKARI_MIN_IDLE}
+ENV JAVA_OPTS="-Xms256m -Xmx256m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=128m"
 # 指定docker容器启动时运行jar包
 ENTRYPOINT exec java ${JAVA_OPTS} -jar user-service-0.0.1-SNAPSHOT.jar
 # 指定维护者的名字
