@@ -122,6 +122,7 @@ sudo apt-get update
 sudo apt-get install -y kubelet=1.28.7-1.1 kubeadm=1.28.7-1.1 kubectl=1.28.7-1.1
 sudo apt-mark hold kubelet kubeadm kubectl
 sudo apt-mark unhold kubelet kubeadm kubectl
+sudo apt-get remove --purge kubelet kubeadm kubectl
 
 kubeadm version
 
@@ -129,14 +130,14 @@ systemctl enable kubelet --now
 
 sudo systemctl restart containerd
 
+
 sudo kubeadm init \
 --apiserver-advertise-address=192.168.0.226 \
 --image-repository=registry.aliyuncs.com/google_containers \
 --kubernetes-version=v1.28.7 \
---service-cidr=10.96.0.0/12 \
 --pod-network-cidr=10.244.0.0/16 \
+--service-cidr=10.96.0.0/12 \
 --cri-socket=unix:///run/containerd/containerd.sock
-
 ```
 
 本机执行
@@ -160,6 +161,8 @@ kubectl get nodes -o wide
 
 kubectl get all -o wide
 ```
+
+pip install requests==2.26.0
 
 #### 安装网络插件 Calico
 
@@ -229,7 +232,9 @@ watch kubectl get all -o wide -n event-service
 
 watch kubectl get all -o wide -n load-balance
 
-kubectl taint nodes ecs-c9ec node-role.kubernetes.io/master-
+kubectl taint nodes ecs-c9ec node-role.kubernetes.io/control-plane:NoSchedule-
+
+kubectl describe node ecs-c9ec | grep Taints
 
 kubectl get pods --all-namespaces -o wide
 
@@ -239,18 +244,22 @@ kubectl apply -f k8s_yml/
 
 kubectl delete -f k8s_yml/
 
-kubectl logs user-service-deployment-6b94bf89c6-9dxzk -c user-service -n user-service
+kubectl logs  user-service-deployment-675db6cb88-72lrr -c user-service -n user-service
 
 kubectl logs event-service-deployment-6b94bf89c6-9dxzk -c event-service -n event-service
 
-kubectl logs load-balance-deployment-85dbffd58f-69kvl -c load-balance -n load-balance
+kubectl logs load-balance-deployment-7d45f76f6b-hmgbt    -c load-balance -n load-balance
+
+kubectl describe pod user-service-deployment-675db6cb88-mz9n2  -n user-service
+
+kubectl describe pod load-balance-deployment-85dbffd58f-4gqqz  -n event-service
+
+kubectl describe pod load-balance-deployment-7d45f76f6b-58pzk  -n load-balance
 
 docker run -d \
   --name apm-server \
   -v /root/elk/apm-server.docker.yml:/usr/share/apm-server/apm-server.yml \
   -p 8200:8200 \
   elastic/apm-server:7.5.1
-
-
 
 ```
