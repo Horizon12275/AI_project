@@ -1,11 +1,11 @@
 server:
   port: ${LOAD_BALANCE_PORT}
   tomcat:
-    accept-count: ${TOMCAT_ACCEPT_COUNT} # 最大排队数
+    accept-count: 1000 # 服务端等待队列长度
     threads:
-      max: ${TOMCAT_MAX_THREAD} # 最大线程数
-      min-spare: ${TOMCAT_MIN_THREAD} # 最小线程数
-    max-connections: ${TOMCAT_MAX_CONNECTIONS} # 最大连接数
+      max: 800
+      min-spare: 100
+    max-connections: 10000
 
 spring:
   mvc:
