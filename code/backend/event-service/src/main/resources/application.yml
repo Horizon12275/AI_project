@@ -1,11 +1,11 @@
 server:
   port: ${EVENT_SERVICE_PORT}
   tomcat:
-    accept-count: 250 # 服务端等待队列长度
+    accept-count: 100 # 服务端等待队列长度
     threads:
-      max: 200
-      min-spare: 25
-    max-connections: 1000
+      max: 25
+      min-spare: 6
+    max-connections: 250
 
 spring:
   datasource:
