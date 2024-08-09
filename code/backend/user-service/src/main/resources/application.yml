@@ -1,11 +1,11 @@
 server:
   port: ${USER_SERVICE_PORT}
   tomcat:
-    accept-count: 100 # 服务端等待队列长度
+    accept-count: 150 # 服务端等待队列长度
     threads:
-      max: 25
-      min-spare: 6
-    max-connections: 250
+      max: 100
+      min-spare: 20
+    max-connections: 500
 
 spring:
   datasource:
