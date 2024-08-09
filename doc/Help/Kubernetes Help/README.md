@@ -232,7 +232,9 @@ watch kubectl get all -o wide -n event-service
 
 watch kubectl get all -o wide -n load-balance
 
-kubectl taint nodes ecs-c9ec node-role.kubernetes.io/master-
+kubectl taint nodes ecs-c9ec node-role.kubernetes.io/control-plane:NoSchedule-
+
+kubectl describe node ecs-c9ec | grep Taints
 
 kubectl get pods --all-namespaces -o wide
 
@@ -242,13 +244,17 @@ kubectl apply -f k8s_yml/
 
 kubectl delete -f k8s_yml/
 
-kubectl logs user-service-deployment-6b94bf89c6-9dxzk -c user-service -n user-service
+kubectl logs  user-service-deployment-675db6cb88-72lrr -c user-service -n user-service
 
 kubectl logs event-service-deployment-6b94bf89c6-9dxzk -c event-service -n event-service
 
-kubectl logs load-balance-deployment-7d45f76f6b-9c7nx   -c load-balance -n load-balance
+kubectl logs load-balance-deployment-7d45f76f6b-hmgbt    -c load-balance -n load-balance
 
-kubectl describe pod load-balance-deployment-85dbffd58f-4gqqz  -n load-balance
+kubectl describe pod user-service-deployment-675db6cb88-mz9n2  -n user-service
+
+kubectl describe pod load-balance-deployment-85dbffd58f-4gqqz  -n event-service
+
+kubectl describe pod load-balance-deployment-7d45f76f6b-58pzk  -n load-balance
 
 docker run -d \
   --name apm-server \

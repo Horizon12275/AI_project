@@ -901,7 +901,7 @@
           <collectionProp name="Arguments.arguments"/>
         </Arguments>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="自动注册">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="自动注册" enabled="false">
           <stringProp name="HTTPSampler.domain">123.60.63.215</stringProp>
           <stringProp name="HTTPSampler.port">8765</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -940,9 +940,9 @@
           </HeaderManager>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="自动注册" enabled="false">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="自动注册">
           <stringProp name="HTTPSampler.domain">123.60.63.215</stringProp>
-          <stringProp name="HTTPSampler.port">8765</stringProp>
+          <stringProp name="HTTPSampler.port">30765</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
           <stringProp name="HTTPSampler.path">/api/user/register</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
