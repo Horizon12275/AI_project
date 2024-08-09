@@ -122,6 +122,7 @@ sudo apt-get update
 sudo apt-get install -y kubelet=1.28.7-1.1 kubeadm=1.28.7-1.1 kubectl=1.28.7-1.1
 sudo apt-mark hold kubelet kubeadm kubectl
 sudo apt-mark unhold kubelet kubeadm kubectl
+sudo apt-get remove --purge kubelet kubeadm kubectl
 
 kubeadm version
 
@@ -160,6 +161,8 @@ kubectl get nodes -o wide
 
 kubectl get all -o wide
 ```
+
+pip install requests==2.26.0
 
 #### 安装网络插件 Calico
 
@@ -252,7 +255,5 @@ docker run -d \
   -v /root/elk/apm-server.docker.yml:/usr/share/apm-server/apm-server.yml \
   -p 8200:8200 \
   elastic/apm-server:7.5.1
-
-
 
 ```
