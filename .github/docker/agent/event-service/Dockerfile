@@ -6,7 +6,7 @@ RUN rm -f /etc/localtime \
 && echo "Asia/Shanghai" > /etc/timezone
 # 设置工作目录
 WORKDIR /app
-# 将当前目录下的jar包复制到docker容器的/目录下
+# 将当前目录下的jar包复制到docker容器的/ 目录下
 ADD ./code/backend/event-service/target/event-service-0.0.1-SNAPSHOT.jar /app/
 ADD ./.github/elastic-apm-agent-1.33.0.jar /app/
 # 设置环境变量
