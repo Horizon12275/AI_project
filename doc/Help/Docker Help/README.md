@@ -2,6 +2,8 @@
 
 - 根据官方文档，并结合 mobaxterm 的文本编辑器和文件上传进行安装（其中有步骤有问题） https://docs.docker.com/engine/install/ubuntu/
 
+- https://blog.csdn.net/u011278722/article/details/137673353
+
 - 安装工具和 GPG key
 
 ```bash
@@ -38,12 +40,35 @@ echo \
 sudo apt-get update
 ```
 
+```bash
+#添加 Docker 官方 GPG key （可能国内现在访问会存在问题）
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# 阿里源（推荐使用阿里的gpg KEY）
+curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+
+
+#添加 apt 源:
+#Docker官方源
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+
+#清华apt源
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+
+#更新源
+sudo apt update
+sudo apt-get update
+```
+
 - 这里也是 asc 文件、需要手动调整一下（和一开始下载的密钥文件格式一样、如果上面是 gpg 文件、这里也是 gpg 文件，如果上面是 asc 文件、这里也是 asc 文件）
 
 - 配置好上面的之后 根据官方文档 输入下方指令进行下载
 
 ```bash
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-compose
 ```
 
 - 可以 su root 进入超级权限控制台（因为 docker 需要 root 权限）
@@ -77,7 +102,7 @@ sudo tee /etc/docker/daemon.json <<EOF
         "https://docker.awsl9527.cn"
     ],
     "log-driver":"json-file",
-    "log-opts": {"max-size":"500m", "max-file":"3"}
+    "log-opts": {"max-size":"100m", "max-file":"3"}
 }
 EOF
 sudo systemctl daemon-reload
@@ -157,6 +182,10 @@ docker rm <container_id/container_name>
 服务器运行 node_exporter ： https://blog.csdn.net/qq_37688023/article/details/106532101
 
 - docker run -d -p 9100:9100 prom/node-exporter
+
+- crictl images|grep none|awk '{print $3}'|xargs crictl rmi
+
+- sudo ctr -n k8s.io image prune --all
 
 本地下载 prometheus 和 grafana 进行监控 ：https://blog.csdn.net/qq_27229113/article/details/125892854
 

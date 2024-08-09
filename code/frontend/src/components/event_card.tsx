@@ -275,7 +275,7 @@ const EventCard = ({
                           marginTop: 10,
                         }}>
                         <View style={styles.taskItemContainer}>
-                          <MyButton
+                          {/* <MyButton
                             icon={
                               reminder.done
                                 ? require('../assets/icons/checked.png')
@@ -283,7 +283,7 @@ const EventCard = ({
                             }
                             style={styles.taskIcon}
                             onPress={() => {}}
-                          />
+                          /> */}
                           <Text style={styles.taskTitle}>
                             {reminder.content}
                           </Text>
