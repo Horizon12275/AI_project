@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import {Alert} from 'react-native';
 import {getObject, pushAll, storeObject} from '../services/offlineService';
-import {useNavigation} from '@react-navigation/native';
 import {login} from '../services/loginService';
 import Loading from './loading';
 

@@ -1,4 +1,5 @@
 import time
+import nacos
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -24,14 +25,14 @@ app = FastAPI()
 SERVER_ADDRESSES = "192.168.0.226:8848"
 NAMESPACE = "public"
 
-# client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE)
-# client.add_naming_instance(
-#     service_name="AI-service",
-#     ip="192.168.0.106",
-#     port="8000",
-#     cluster_name="DEFAULT",
-#     heartbeat_interval=5,
-# )
+client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE)
+client.add_naming_instance(
+    service_name="AI-service",
+    ip="192.168.0.106",
+    port="8000",
+    cluster_name="DEFAULT",
+    heartbeat_interval=5,
+)
 
 # Set OpenAI API key and base URL
 

@@ -22,6 +22,7 @@ pip install fastapi
 pip install langchain==0.2.6
 pip install langchain-openai==0.1.15
 pip install langchain_community
+pip install faiss-cpu
 pip install openai==0.28 (这个最后安装)
 ```
 
