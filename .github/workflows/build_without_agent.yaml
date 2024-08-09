@@ -50,7 +50,7 @@ jobs:
           context: ./
           file: ./.github/docker/jar/load-balance/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/load-balance-with-skywalking:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/load-balance:latest
       # build and push user-service image
       - name: Build and push user-service image
         id: docker_build_user
@@ -59,7 +59,7 @@ jobs:
           context: ./
           file: ./.github/docker/jar/user-service/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/user-service-with-skywalking:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:latest
       # build and push event-service image
       - name: Build and push event-service image
         id: docker_build_event
@@ -68,4 +68,4 @@ jobs:
           context: ./
           file: ./.github/docker/jar/event-service/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/event-service-with-skywalking:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/event-service:latest
