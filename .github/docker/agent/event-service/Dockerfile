@@ -26,7 +26,7 @@ ENV JAVA_OPTS="-javaagent:/app/elastic-apm-agent-1.33.0.jar \
               -Delastic.apm.service_name=event-service \
               -Delastic.apm.server_urls=http://192.168.0.226:8200 \
               -Delastic.apm.application_packages=org.example \
-              -Xms256m -Xmx256m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=256m"
+              -Xms256m -Xmx256m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=256m -XX:+UseG1GC"
 # 指定docker容器启动时运行jar包
 ENTRYPOINT exec java ${JAVA_OPTS} -jar event-service-0.0.1-SNAPSHOT.jar
 # 指定维护者的名字
