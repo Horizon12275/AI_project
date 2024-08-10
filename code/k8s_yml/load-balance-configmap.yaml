@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: load-balance-configmap
+  namespace: load-balance
+data:
+  NACOS_SERVER_ADDR: "192.168.0.226:8848"
+  LOAD_BALANCE_PORT: "8765"
+  NACOS_IP: "192.168.0.212"

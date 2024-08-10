@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: event-service-configmap
+  namespace: event-service
+data:
+  DB_URL: "jdbc:mysql://192.168.0.106:3306/timegenie?createDatabaseIfNotExist=true"
+  DB_USERNAME: "root"
+  DB_PASSWORD: "2w3e4r5t6y7u8i9o0pIOP!"
+  NACOS_SERVER_ADDR: "192.168.0.226:8848"
+  EVENT_SERVICE_PORT: "8201"
+  ALLOWED_IPS: "['192.168.0.212','192.168.0.226','192.168.0.106']"
+  REDIS_HOST: "192.168.0.226"
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: "123456"
+  NACOS_IP: "192.168.0.226"

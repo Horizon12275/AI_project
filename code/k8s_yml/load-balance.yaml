@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-balance-deployment
+  namespace: load-balance
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: load-balance
+  template:
+    metadata:
+      labels:
+        app: load-balance
+    spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: load-balance
+          image: horizon12275/load-balance-with-skywalking:latest
+          ports:
+            - containerPort: 8765
+          envFrom:
+            - configMapRef:
+                name: load-balance-configmap  # ??????? ConfigMap
+      nodeSelector:
+        kubernetes.io/hostname: ecs-c9ec
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: load-balance-service-1
+  namespace: load-balance
+spec:
+  type: NodePort
+  ports:
+    - port: 30765
+      targetPort: 8765
+      nodePort: 30765
+  selector:
+    app: load-balance

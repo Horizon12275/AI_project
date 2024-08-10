@@ -1,0 +1,262 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-service-deployment-1
+  namespace: event-service
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: event-service
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      containers:
+        - name: event-service
+          image: horizon12275/event-service-with-skywalking:latest
+          ports:
+            - containerPort: 8201
+          envFrom:
+            - configMapRef:
+                name: event-service-configmap
+      nodeSelector:
+        kubernetes.io/hostname: ecs-c9ec
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-service-service-1
+  namespace: event-service
+spec:
+  type: NodePort
+  ports:
+    - port: 30201
+      targetPort: 8201
+      nodePort: 30201
+  selector:
+    app: event-service
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-service-deployment-2
+  namespace: event-service
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: event-service
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      containers:
+        - name: event-service
+          image: horizon12275/event-service-with-skywalking:latest
+          ports:
+            - containerPort: 8202
+          envFrom:
+            - configMapRef:
+                name: event-service-configmap
+      nodeSelector:
+        kubernetes.io/hostname: ecs-c9ec
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-service-service-2
+  namespace: event-service
+spec:
+  type: NodePort
+  ports:
+    - port: 30202
+      targetPort: 8202
+      nodePort: 30202
+  selector:
+    app: event-service
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-service-deployment-3
+  namespace: event-service
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: event-service
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      containers:
+        - name: event-service
+          image: horizon12275/event-service-with-skywalking:latest
+          ports:
+            - containerPort: 8203
+          envFrom:
+            - configMapRef:
+                name: event-service-configmap
+      nodeSelector:
+        kubernetes.io/hostname: ecs-9c23
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-service-service-3
+  namespace: event-service
+spec:
+  type: NodePort
+  ports:
+    - port: 30203
+      targetPort: 8203
+      nodePort: 30203
+  selector:
+    app: event-service
+    
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-service-deployment-4
+  namespace: event-service
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: event-service
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      containers:
+        - name: event-service
+          image: horizon12275/event-service-with-skywalking:latest
+          ports:
+            - containerPort: 8204
+          envFrom:
+            - configMapRef:
+                name: event-service-configmap
+      nodeSelector:
+        kubernetes.io/hostname: ecs-9c23
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-service-service-4
+  namespace: event-service
+spec:
+  type: NodePort
+  ports:
+    - port: 30204
+      targetPort: 8204
+      nodePort: 30204
+  selector:
+    app: event-service
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-service-deployment-5
+  namespace: event-service
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: event-service
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      containers:
+        - name: event-service
+          image: horizon12275/event-service-with-skywalking:latest
+          ports:
+            - containerPort: 8205
+          envFrom:
+            - configMapRef:
+                name: event-service-configmap
+      nodeSelector:
+        kubernetes.io/hostname: ecs-95b0
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-service-service-5
+  namespace: event-service
+spec:
+  type: NodePort
+  ports:
+    - port: 30205
+      targetPort: 8205
+      nodePort: 30205
+  selector:
+    app: event-service
+    
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-service-deployment-6
+  namespace: event-service
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: event-service
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      containers:
+        - name: event-service
+          image: horizon12275/event-service-with-skywalking:latest
+          ports:
+            - containerPort: 8206
+          envFrom:
+            - configMapRef:
+                name: event-service-configmap
+      nodeSelector:
+        kubernetes.io/hostname: ecs-95b0
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-service-service-6
+  namespace: event-service
+spec:
+  type: NodePort
+  ports:
+    - port: 30206
+      targetPort: 8206
+      nodePort: 30206
+  selector:
+    app: event-service
+
