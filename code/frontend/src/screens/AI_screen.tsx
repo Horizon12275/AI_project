@@ -66,7 +66,7 @@ const AIScreen = ({
       </View>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{`${
-          categoryOptions[event.category].label
+          categoryOptions[event.category-1].label
         } - ${event.title}`}</Text>
         <MyButton
           icon={require('../assets/icons/edit.png')}

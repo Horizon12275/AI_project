@@ -93,7 +93,7 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
         navigation.navigate('AI', {event}); //传入响应的event给ai界面 来渲染ai的帮助内容
       })
       .catch(err => {
-        console.log(err);
+        setLoading(false);
         Alert.alert('Error', err);
       });
   };
