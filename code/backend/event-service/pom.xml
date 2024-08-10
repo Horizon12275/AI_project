@@ -75,11 +75,11 @@
             <version>6.6</version>
         </dependency>
         <!--Elastic Agent相关依赖-->
-        <dependency>
-            <groupId>co.elastic.apm</groupId>
-            <artifactId>apm-agent-attach</artifactId>
-            <version>1.33.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>co.elastic.apm</groupId>-->
+<!--            <artifactId>apm-agent-attach</artifactId>-->
+<!--            <version>1.33.0</version>-->
+<!--        </dependency>-->
 
 
 
