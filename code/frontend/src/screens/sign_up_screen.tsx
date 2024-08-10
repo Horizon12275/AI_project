@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView, ScrollView} from 'react-native';
 import {Form, Input} from '@ant-design/react-native';
 
 
@@ -40,7 +40,8 @@ function SignUpScreen({navigation}: {navigation: any}) {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior="position">
+    <ScrollView style={styles.container}>
       <Form
         onFinish={handleSignUp}
         form={form}
@@ -104,13 +105,14 @@ function SignUpScreen({navigation}: {navigation: any}) {
           </TouchableOpacity>
         </Text>
       </Form>
-    </View>
+    </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'stretch',
+   
     backgroundColor: '#FFF',
     width: '100%',
     height: '100%',

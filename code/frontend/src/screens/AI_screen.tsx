@@ -35,6 +35,7 @@ const AIScreen = ({
     //除去所有不需要保存的任务
     let newEvent = {
       id: event.id,
+      ddl: event.ddl,
       subtasks: event.subtasks.filter(subtask => subtask.saved),
       reminders: event.reminders.filter(reminder => reminder.saved),
     };

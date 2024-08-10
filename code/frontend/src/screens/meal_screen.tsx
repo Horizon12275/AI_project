@@ -33,6 +33,7 @@ const MealScreen = ({navigation}: {navigation: any}) => {
         style={styles.icon}
       />
       <TextInput
+        multiline
         style={styles.input}
         placeholder="Type here"
         value={text}

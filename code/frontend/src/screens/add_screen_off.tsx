@@ -50,6 +50,7 @@ const AddOffScreen = () => {
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [event, setEvent] = useState<any>({
+    reminders: [],
     subtasks: [],
     ddlDate: new Date(),
     category: 1,
@@ -73,6 +74,7 @@ const AddOffScreen = () => {
     newEvent.category = event.category;
     newEvent.priority = event.priority;
     newEvent.subtasks = event.subtasks;
+    newEvent.reminders = event.reminders;
     newEvent.id = generateId();
     //离线存储
     Promise.all([getObject('events'), getObject('events_unpushed')]).then(
@@ -253,7 +255,7 @@ const AddOffScreen = () => {
                         style={styles.deleteIcon}
                       />
                     </View>
-                    <Text style={[styles.dueDate]}>{`Due: ${item.ddl}`}</Text>
+                    <Text style={[styles.dueDate]}>{`Due: ${toDate(item.ddl)}`}</Text>
                   </View>
                 ))}
               </View>

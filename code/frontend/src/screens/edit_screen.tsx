@@ -59,10 +59,12 @@ const EditScreen = ({
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [event, setEvent] = useState<any>({
+    id: route.params.event.id,
     details: route.params.event.details,
     title: route.params.event.title,
     location: route.params.event.location,
     subtasks: route.params.event.subtasks,
+    reminders: route.params.event.reminders,
     ddlDate: fromDate(route.params.event.ddl),
     category: route.params.event.category,
     priority: route.params.event.priority,
@@ -73,15 +75,15 @@ const EditScreen = ({
       ? fromTime(route.params.event.endTime)
       : null,
   });
-  const [subtask, setSubtask] = useState({content: '', ddl: new Date()});
+  const [subtask, setSubtask] = useState<{
+    content: string;
+    ddl: any;
+  }>({content: '', ddl: new Date()});
   const [subtaskCalendar, setSubtaskCalendar] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
-    console.log('route', route.params.event);
-    console.log('event', event);
     form.setFieldsValue(event);
-    console.log('form', form.getFieldsValue());
   }, [event]);
 
   const onSubmit = () => {
@@ -114,7 +116,7 @@ const EditScreen = ({
           ([events, events_unpushed]) => {
             events_unpushed.push(newEvent);
             storeObject('events_unpushed', events_unpushed);
-
+            console.log(newEvent);
             const eventIndex = events.findIndex(
               (e: any) => e.id === newEvent.id,
             );
@@ -136,7 +138,14 @@ const EditScreen = ({
       Alert.alert('Error', 'Subtask content cannot be empty');
       return;
     }
-    setEvent({...event, subtasks: [...event.subtasks, subtask]});
+
+    setEvent({
+      ...event,
+      subtasks: [
+        ...event.subtasks,
+        {content: subtask.content, ddl: toDate(subtask.ddl)},
+      ],
+    });
     setSubtask({content: '', ddl: new Date()});
   };
   const handleDeleteSubtask = (index: number) => {

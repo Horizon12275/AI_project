@@ -58,7 +58,9 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
   const [ddlDate, setDdlDate] = useState(new Date());
   const [form] = Form.useForm();
 
-  useEffect(() => {}, [ddlDate, startTime, endTime]);
+  useEffect(() => {
+
+  }, [ddlDate, startTime, endTime]);
 
   const onSubmit = () => {
     form.submit();
@@ -87,6 +89,7 @@ const AddOnScreen = ({navigation}: {navigation: any}) => {
           storeObject('events', events);
         });
         setLoading(false);
+        form.resetFields();
         navigation.navigate('AI', {event}); //传入响应的event给ai界面 来渲染ai的帮助内容
       })
       .catch(err => {

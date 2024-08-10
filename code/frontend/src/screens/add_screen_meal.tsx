@@ -95,8 +95,17 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
     newEvent.ddl = toDate(event.ddl);
     newEvent.category = event.category;
     newEvent.priority = event.priority;
-    newEvent.subtasks = event.subtasks;
-    newEvent.reminders = event.reminders;
+    newEvent.subtasks = [];
+    newEvent.reminders = [];
+    event.subtasks.forEach(subtask => {
+      if (subtask.saved) {
+        newEvent.subtasks.push({
+          content: subtask.content,
+          ddl: toDate(subtask.ddl),
+        });
+      }
+    });
+    newEvent.reminders = event.reminders.filter(reminder => reminder.saved);
     console.log(newEvent);
     getObject('mode').then(mode => {
       if (mode === 'offline') {
@@ -116,14 +125,6 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
           .catch(e => Alert.alert('Error', e));
       }
     });
-  };
-  const handleAddSubtask = () => {
-    if (!subtask.content) {
-      Alert.alert('Error', 'Subtask content cannot be empty');
-      return;
-    }
-    setEvent({...event, subtasks: [...event.subtasks, subtask]});
-    setSubtask({content: '', ddl: new Date(), saved: false});
   };
 
   const handleCheckSubtask = (index: number) => {
@@ -244,13 +245,6 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
                 justifyContent: 'space-between',
                 gap: 10,
               }}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => setSubtaskCalendar(true)}>
-                <Text style={styles.doneButtonText}>{`DUE: ${toDate(
-                  subtask.ddl,
-                )}`}</Text>
-              </TouchableOpacity>
               {subtaskCalendar && (
                 <Modal
                   animationType="fade" // 动画效果
@@ -278,11 +272,6 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
                   </TouchableWithoutFeedback>
                 </Modal>
               )}
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleAddSubtask}>
-                <Text style={styles.doneButtonText}>Add New Subtask</Text>
-              </TouchableOpacity>
             </View>
 
             <View style={styles.ddlContainer}>
@@ -309,23 +298,23 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
                   display="clock"
                   value={event.startTime || new Date()}
                   onChange={(e, selectedDate) => {
-                    if (event.endTime && selectedDate > event.endTime) {
-                      Alert.alert(
-                        'Error',
-                        'Start time should be earlier than end time',
-                      );
-                      setShowStartTimePicker(false);
-                      return;
-                    }
+                    // if (event.endTime && selectedDate > event.endTime) {
+                    //   Alert.alert(
+                    //     'Error',
+                    //     'Start time should be earlier than end time',
+                    //   );
+                    //   setShowStartTimePicker(false);
+                    //   return;
+                    // }
                     setEvent({
                       ...event,
-                      startTime: selectedDate || event.startTime,
+                      startTime: selectedDate,
                     });
-                    if (!event.endTime)
-                      setEvent({
-                        ...event,
-                        endTime: selectedDate || event.startTime,
-                      });
+                    // if (!event.endTime)
+                    //   // setEvent({
+                    //   //   ...event,
+                    //   //   endTime: event.startTime,
+                    //   // });
                     setShowStartTimePicker(false);
                   }}
                 />
@@ -336,14 +325,14 @@ const AddMealScreen = ({route}: {route: {params: {data: any}}}) => {
                   display="clock"
                   value={event.endTime || new Date()}
                   onChange={(e, selectedDate) => {
-                    if (event.startTime && selectedDate < event.startTime) {
-                      Alert.alert(
-                        'Error',
-                        'End time should be later than start time',
-                      );
-                      setShowEndTimePicker(false);
-                      return;
-                    }
+                    // if (event.startTime && selectedDate < event.startTime) {
+                    //   Alert.alert(
+                    //     'Error',
+                    //     'End time should be later than start time',
+                    //   );
+                    //   setShowEndTimePicker(false);
+                    //   return;
+                    // }
                     setEvent({
                       ...event,
                       endTime: selectedDate || event.endTime,

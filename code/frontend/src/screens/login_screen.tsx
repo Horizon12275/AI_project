@@ -6,6 +6,7 @@ import {
   Modal,
   ScrollView,
   Image,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {Form, Input} from '@ant-design/react-native';
 import {login} from '../services/loginService';
@@ -85,7 +86,6 @@ function LoginScreen({navigation}: {navigation: any}) {
         },
       );
     }, 1000);
-    
   }, [isConnected]);
 
   //登录+获取用户信息存储到本地+存储auth
@@ -121,81 +121,80 @@ function LoginScreen({navigation}: {navigation: any}) {
   };
 
   return (
-    <ScrollView>
-      <Form
-        onFinish={handleLogin}
-        form={form}
-        initialValues={{
-          username: auth?.username,
-          password: auth?.password,
-          rememberMe: auth?.rememberMe,
-        }}
-        style={{display: loading ? 'none' : 'flex', ...styles.container}}>
-        <Text style={styles.title}>Log In</Text>
-        <View style={styles.formContainer}>
-          <Text style={styles.formInstructions}>
-            Enter your email and password
-          </Text>
-          <InputField
-            label="Email"
-            props={{
-              name: 'username',
-              rules: [
-                {
-                  required: true,
-                  message: 'Please input your email!',
-                },
-              ],
-            }}
-          />
-          <InputField
-            label="Password"
-            isPassword
-            props={{
-              name: 'password',
-              rules: [
-                {
-                  required: true,
-                  message: 'Please input your password!',
-                },
-              ],
-            }}
-          />
-          <TouchableOpacity>
-            <Text style={styles.forgotPassword}>Forgot password?</Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.loginButton} onPress={onSubmit}>
-          <Text style={styles.loginButtonText}>LOGIN</Text>
-        </TouchableOpacity>
-        <Text style={styles.signUpText}>
-          Don't have an account?{' '}
-          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text style={styles.signUpLink}>Sign up</Text>
-          </TouchableOpacity>
-        </Text>
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-          <View style={styles.divider} />
-        </View>
-      </Form>
-      <Modal
-        visible={loading}
-        animationType="fade"
-        transparent={true}>
-        <Image
-          source={require('../assets/images/initializing.png')}
-          style={{
-            backgroundColor: '#7092B1',
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
+    <KeyboardAvoidingView behavior="position">
+      <ScrollView>
+        <Form
+          onFinish={handleLogin}
+          form={form}
+          initialValues={{
+            username: auth?.username,
+            password: auth?.password,
+            rememberMe: auth?.rememberMe,
           }}
-        />
-      </Modal>
+          style={{display: loading ? 'none' : 'flex', ...styles.container}}>
+          <Text style={styles.title}>Log In</Text>
+          <View style={styles.formContainer}>
+            <Text style={styles.formInstructions}>
+              Enter your email and password
+            </Text>
+            <InputField
+              label="Email"
+              props={{
+                name: 'username',
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please input your email!',
+                  },
+                ],
+              }}
+            />
+            <InputField
+              label="Password"
+              isPassword
+              props={{
+                name: 'password',
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please input your password!',
+                  },
+                ],
+              }}
+            />
+            <TouchableOpacity>
+              <Text style={styles.forgotPassword}>Forgot password?</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.loginButton} onPress={onSubmit}>
+            <Text style={styles.loginButtonText}>LOGIN</Text>
+          </TouchableOpacity>
+          <Text style={styles.signUpText}>
+            Don't have an account?{' '}
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+              <Text style={styles.signUpLink}>Sign up</Text>
+            </TouchableOpacity>
+          </Text>
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <View style={styles.divider} />
+          </View>
+        </Form>
+        <Modal visible={loading} animationType="fade" transparent={true}>
+          <Image
+            source={require('../assets/images/initializing.png')}
+            style={{
+              backgroundColor: '#7092B1',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        </Modal>
 
-      <Loading visible={logging && !loading} />
-    </ScrollView>
+        <Loading visible={logging && !loading} />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

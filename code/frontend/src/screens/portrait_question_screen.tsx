@@ -33,7 +33,6 @@ const PortraitQuestionScreen: React.FC<QuestionScreenProps> = ({
   navigation,
 }) => {
   const {type, question, options, nextScreen} = route.params;
-  console.log(route.params);
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -67,6 +66,10 @@ const PortraitQuestionScreen: React.FC<QuestionScreenProps> = ({
                       password: user.password,
                     })
                       .then(() => {
+                        storeObject('auth', {
+                          username: user.email,
+                          password: user.password,
+                        });
                         Alert.alert(
                           'Sign up and Log in successfully!',
                           'Welcome to the app!',
@@ -76,7 +79,7 @@ const PortraitQuestionScreen: React.FC<QuestionScreenProps> = ({
                               onPress: () => {
                                 storeObject('mode', 'online');
                                 storeObject('user', user);
-                                navigation.navigate('Tabs');
+                                navigation.replace('Tabs');
                               },
                             },
                           ],

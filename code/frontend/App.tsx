@@ -69,7 +69,7 @@ const TabNavigator = () => {
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
-              source={require('./src/assets/icons/add.png')}
+              source={require('./src/assets/icons/ice_cream.png')}
               style={{width: size, height: size, tintColor: color}}
             />
           ),

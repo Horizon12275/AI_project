@@ -37,8 +37,8 @@ client.add_naming_instance(
 # Set OpenAI API key and base URL
 
 
-api_key = "sk-XysyZtmVqlQayx6tD75eBc6705B5426fA9F422Ad2a38D44c"
-api_base = "https://api.openai-hub.com/v1"
+api_key = "sk-tcegYgeYLJyxYhzWRdPIxEvLqS8aotCcv35rASiIX79Ke368"
+api_base = "https://api.chatanywhere.tech/v1"
 os.environ["OPENAI_API_KEY"] = api_key
 os.environ["OPENAI_API_BASE"] = api_base
 logging.basicConfig(level=logging.INFO)
@@ -63,7 +63,7 @@ class PriorityLevelResponse(BaseModel):
 
 
 # Initialize LLM and Memory
-llm = OpenAI(model_name="gpt-3.5-turbo")
+llm = OpenAI(model_name="gpt-3.5-turbo",api_key=api_key,api_base=api_base)
 memory = ConversationBufferMemory()
 
 user_memory = {}
@@ -274,8 +274,8 @@ class OpenAIHandler:
 
 # Initialize the OpenAIHandler with the desired model
 llm_handler = OpenAIHandler(
-    api_key="sk-XysyZtmVqlQayx6tD75eBc6705B5426fA9F422Ad2a38D44c",
-    api_base="https://api.openai-hub.com/v1",
+    api_key="sk-tcegYgeYLJyxYhzWRdPIxEvLqS8aotCcv35rASiIX79Ke368",
+    api_base="https://api.chatanywhere.tech/v1",
     model_name="gpt-3.5-turbo",
 )
 
