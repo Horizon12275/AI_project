@@ -61,23 +61,11 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
 
   const handleRefresh = () => {
     setLoading(true);
-    getObject('mode').then(mode => {
-      if (mode == 'online') {
-        //用户已登录 且为在线模式 从云端获取数据
-        getUser().then(user => {
-          storeObject('user', user);
-          setUser(user);
-          setLoading(false);
-        });
-      } else {
-        //用户已登录 但为离线模式 从本地获取数据
-        getObject('user').then(user => {
-          if (user) {
-            setUser(user);
-          }
-          setLoading(false);
-        });
+    getObject('user').then(user => {
+      if (user) {
+        setUser(user);
       }
+      setLoading(false);
     });
   };
 
@@ -102,11 +90,8 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
         });
       } else {
         //用户已登录 但为离线模式 保存数据到unpushed 然后更新本地数据
-        Alert.alert(
-          'Offline',
-          'You are in offline mode now, your data will be uploaded when you are online again',
-        );
-        storeObject('user_unpushed', user); //保存未上传的数据
+        Alert.alert('Success', 'Profile updated successfully');
+        // storeObject('user_unpushed', user); //保存未上传的数据
         //更新本地数据
         getObject('user').then(() => {
           storeObject('user', user);
@@ -118,43 +103,6 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
     //setUser(user);
   };
 
-  const handleLogout = () => {
-    setLoading(true);
-    getObject('mode').then(mode => {
-      if (mode == 'online')
-        logout()
-          .then(() => {
-            removeObject('auth'); //清除登录信息
-            removeObject('user'); //清除用户信息
-            setLoading(false);
-            navigation.replace('Login');
-          })
-          .catch(err => {
-            setLoading(false);
-            Alert.alert('Error', err);
-          });
-      else {
-        setLoading(false);
-        Alert.alert(
-          'Warning',
-          "You are in offline mode now, if you logout, you'll lose all unsynced data, are you sure to logout?",
-          [
-            {text: 'Cancel', onPress: () => {}},
-            {
-              text: 'OK',
-              onPress: () => {
-                clearAllUnpushed(); //清除未上传的数据
-                removeObject('auth'); //清除登录信息
-                removeObject('user'); //清除用户信息
-                navigation.replace('Login');
-              },
-            },
-          ],
-        );
-      }
-    });
-  };
-
   return (
     user && (
       <ScrollView
@@ -164,7 +112,7 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
         }>
         <Loading visible={loading} />
         <View style={styles.container}>
-          <Text style={styles.titleText}>My Portrait</Text>
+          <Text style={styles.titleText}>My Profile</Text>
           <View style={styles.imageContainer}>
             <View style={styles.imageWrapper}>
               {user.identity && (
@@ -221,9 +169,9 @@ const ProfileScreen = ({navigation}: {navigation: any}) => {
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleLogout} style={styles.quitButton}>
+        {/* <TouchableOpacity onPress={handleLogout} style={styles.quitButton}>
           <Text style={styles.quitButtonText}>Logout</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <Modal
           animationType="fade"

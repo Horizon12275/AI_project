@@ -19,9 +19,7 @@ import {
   exerciseOptions,
   sleepOptions,
 } from './src/utils/offline.tsx';
-import {useNetInfo} from '@react-native-community/netinfo';
 import {getObject, storeObject} from './src/services/offlineService.tsx';
-import NetworkListener from './src/components/network_listener.tsx';
 import AddOffScreen from './src/screens/add_screen_off.tsx';
 import EditScreen from './src/screens/edit_screen.tsx';
 import MealScreen from './src/screens/meal_screen.tsx';
@@ -31,25 +29,11 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
-  const {isConnected} = useNetInfo();
   const options = {
     headerShown: false,
   };
   return (
-    <Tab.Navigator>
-      <Tab.Screen
-        name="Today"
-        component={TodayScreen}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <Image
-              source={require('./src/assets/icons/today.png')}
-              style={{width: size, height: size, tintColor: color}}
-            />
-          ),
-          ...options,
-        }}
-      />
+    <Tab.Navigator initialRouteName="Today">
       <Tab.Screen
         name="Stats"
         component={StatsScreen}
@@ -77,8 +61,21 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
+        name="Today"
+        component={TodayScreen}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <Image
+              source={require('./src/assets/icons/today.png')}
+              style={{width: size, height: size, tintColor: color}}
+            />
+          ),
+          ...options,
+        }}
+      />
+      <Tab.Screen
         name="Add"
-        component={isConnected ? AddOnScreen : AddOffScreen}
+        component={AddOffScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image
@@ -107,20 +104,23 @@ const TabNavigator = () => {
 };
 
 function App() {
-  const [user, setUser] = useState<null | any>(null);
-  const [auth, setAuth] = useState<null | any>(null);
-  const [mode, setMode] = useState<null | any>(null);
-  const {isConnected} = useNetInfo();
-
   useEffect(() => {
     Appearance.setColorScheme('light'); //强制设置为light模式 默认字体颜色为灰色 否则为白色会看不清
-    Promise.all([getObject('user'), getObject('auth'), getObject('mode')]).then(
-      ([user, auth, mode]) => {
-        setUser(user);
-        setAuth(auth);
-        setMode(mode);
-      },
-    );
+    getObject('mode').then(mode => {
+      //第一次打开app
+      if (mode === null) {
+        storeObject('mode', 'offline'); //默认离线模式
+        storeObject('user', {
+          sleep_schedule: null,
+          exercise: null,
+          challenge: null,
+          identity: 1,
+          username: 'user',
+          email: '',
+        }); //初始化用户数据
+        storeObject('events', []); //初始化事件数据
+      }
+    });
   }, []);
 
   const options = {
@@ -128,16 +128,20 @@ function App() {
   };
   return (
     <NavigationContainer>
-      <NetworkListener />
+      {/* <NetworkListener /> */}
       <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginScreen} options={options} />
+        {/* <Stack.Screen name="Login" component={LoginScreen} options={options} /> */}
         <Stack.Screen name="Tabs" component={TabNavigator} options={options} />
         <Stack.Screen
           name="Signup"
           component={SignUpScreen}
           options={options}
         />
-        <Stack.Screen name="AddMeal" component={AddMealScreen} options={options} />
+        <Stack.Screen
+          name="AddMeal"
+          component={AddMealScreen}
+          options={options}
+        />
         <Stack.Screen name="Edit" component={EditScreen} options={options} />
         <Stack.Screen name="AI" component={AIScreen} options={options} />
         <Stack.Screen

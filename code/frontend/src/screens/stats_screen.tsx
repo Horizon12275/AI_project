@@ -8,7 +8,6 @@ import {
   Modal,
   Alert,
   TouchableWithoutFeedback,
-  TextInput,
 } from 'react-native';
 import PieGraph from '../components/pie_graph';
 import MyButton from '../utils/my_button';
@@ -26,41 +25,43 @@ const StatsScreen = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [summaryText, setSummaryText] = useState(
-    "Click the button to get your summary!",
+    'Click the button to get your summary!',
   );
 
   const handleSummary = () => {
-    getObject('mode').then(mode => {
-      if (mode === 'offline') {
-        Alert.alert('You are offline, please connect to the internet');
-      } else {
-        if (startDate > endDate) {
-          Alert.alert('Start date should be before end date');
-          return;
-        }
-        setLoading(true);
-        getSummary(toDate(startDate), toDate(endDate))
-          .then(({percentages, ai_summary}) => {
-            ai_summary = ai_summary.replace(/\"/g, '').replace(/\\n/g, '\n');
-            setSummaryText(ai_summary);
-            setLoading(false);
-            if (percentages.length === 0)
-              Alert.alert('No Visualizations found for the selected date range');
-            let data = percentages.map(item => {
-              return {
-                x: categoryOptions.find(cat => cat.value === item.category)
-                  ?.label,
-                y: item.percentage.toFixed(2),
-              };
-            });
-            if (data.length > 0) setData(data);
-          })
-          .catch(err => {
-            setLoading(false);
-            Alert.alert('Error', err);
-          });
-      }
-    });
+    Alert.alert('Now Unvailable', '离线版不支持此功能！');
+    
+    // getObject('mode').then(mode => {
+    //   if (mode === 'offline') {
+    //     Alert.alert('You are offline, please connect to the internet');
+    //   } else {
+    //     if (startDate > endDate) {
+    //       Alert.alert('Start date should be before end date');
+    //       return;
+    //     }
+    //     setLoading(true);
+    //     getSummary(toDate(startDate), toDate(endDate))
+    //       .then(({percentages, ai_summary}) => {
+    //         ai_summary = ai_summary.replace(/\"/g, '').replace(/\\n/g, '\n');
+    //         setSummaryText(ai_summary);
+    //         setLoading(false);
+    //         if (percentages.length === 0)
+    //           Alert.alert('No Visualizations found for the selected date range');
+    //         let data = percentages.map(item => {
+    //           return {
+    //             x: categoryOptions.find(cat => cat.value === item.category)
+    //               ?.label,
+    //             y: item.percentage.toFixed(2),
+    //           };
+    //         });
+    //         if (data.length > 0) setData(data);
+    //       })
+    //       .catch(err => {
+    //         setLoading(false);
+    //         Alert.alert('Error', err);
+    //       });
+    //   }
+    // });
   };
 
   return (

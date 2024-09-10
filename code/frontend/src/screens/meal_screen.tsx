@@ -5,6 +5,7 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {getEat} from '../services/aiService';
 import {useState} from 'react';
@@ -15,11 +16,13 @@ const MealScreen = ({navigation}: {navigation: any}) => {
   const [loading, setLoading] = useState(false);
 
   const handleEat = () => {
-    setLoading(true);
-    getEat(text).then(res => {
-      setLoading(false);
-      navigation.navigate('AddMeal', {data: res});
-    });
+    Alert.alert('Now Unvailable', '离线版不支持此功能！');
+
+    // setLoading(true);
+    // getEat(text).then(res => {
+    //   setLoading(false);
+    //   navigation.navigate('AddMeal', {data: res});
+    // });
   };
 
   return (
